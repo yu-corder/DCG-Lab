@@ -5,8 +5,10 @@ import type { Card } from '../../shared/types';
 function App() {
   const [hand, setHand] = useState<Card[]>([]);
   const [field, setField] = useState<Card[]>([]);
-  const [pp, setPP] = useState(10);
+  const [pp, setPP] = useState(1);
   const [health, setHealth] = useState(20);
+  const [maxPP, setMaxPP] = useState(1);
+  const [turn, setTurn] = useState(1);
 
   useEffect(() => {
     fetch('http://localhost:3000/api/cards')
@@ -15,6 +17,16 @@ function App() {
         setHand(data);
       });
   }, []);
+
+  const endTurn = () => {
+    setTurn(prev => prev + 1);
+
+    const nextMaxPP = Math.min(maxPP + 1, 10);
+    setMaxPP(nextMaxPP);
+
+    setPP(nextMaxPP);
+    console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
+  }
 
 
   const playCard = (targetCard: Card) => {
@@ -47,7 +59,14 @@ function App() {
     <>
     <p>Hello Word!</p>
     <div>相手のHP: {health}</div>
-    <div>現在のPP: {pp}</div>
+    <div style={{ marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px' }}>
+      <h2>第 {turn} ターン</h2>
+      <div>相手のHP: {health}</div>
+      <div>PP: {pp} / {maxPP}</div>
+      <button onClick={endTurn} style={{ backgroundColor: '#444', marginTop: '10px' }}>
+        ターン終了
+      </button>
+    </div>
     <h3>盤面</h3>
     <div style={{ 
       display: 'flex', 
