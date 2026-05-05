@@ -36,7 +36,7 @@ function App() {
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
         console.log(`[Fanfare発動]: ${ability.description}`);
-        if (ability.description === '疾走') {
+        if (ability.effectType === 'Damage') {
           setHealth(prev => prev - (targetCard.attack || 0));
         }
       }

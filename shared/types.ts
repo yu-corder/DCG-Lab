@@ -2,6 +2,8 @@ export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
 export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike';
 
+export type AbilityType = 'STORM' | 'WARD' | 'DRAIN';
+
 export interface Ability {
   trigger: AbilityTrigger;
   description: string;

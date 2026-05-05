@@ -22,7 +22,7 @@ app.get('/api/cards', (c) => {
       attack: 3,
       defense: 5,
       abilities: [
-        {trigger: 'Fanfare', description: '疾走'}
+        {trigger: 'Fanfare', description: '疾走', effectType: 'Damage'}
       ]
     },
     {
@@ -33,7 +33,7 @@ app.get('/api/cards', (c) => {
       attack: 3,
       defense: 5,
       abilities: [
-        {trigger: 'Fanfare', description: '疾走'}
+        {trigger: 'Fanfare', description: '疾走', effectType: 'Damage'}
       ]
     },
   ]
