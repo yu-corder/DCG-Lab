@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "concurrently \"bun --cwd backend dev\" \"bun --cwd frontend dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
