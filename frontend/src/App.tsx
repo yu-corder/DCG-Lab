@@ -48,6 +48,30 @@ function App() {
     <p>Hello Word!</p>
     <div>相手のHP: {health}</div>
     <div>現在のPP: {pp}</div>
+    <h3>盤面</h3>
+    <div style={{ 
+      display: 'flex', 
+      gap: '10px', 
+      justifyContent: 'center', 
+      minHeight: '120px', 
+      border: '1px dashed #666',
+      padding: '20px' 
+    }}>
+      {field.map((card, index) => (
+        <div key={`${card.id}-${index}`} style={{
+          border: '2px solid #555',
+          borderRadius: '8px',
+          padding: '10px',
+          width: '80px',
+          backgroundColor: '#222'
+        }}>
+          <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
+          <div style={{ fontWeight: 'bold' }}>
+            {card.attack} / {card.defense}
+          </div>
+        </div>
+      ))}
+    </div>
     <h3>手札</h3>
     {hand.map(card => (
       <button key={card.id} onClick={() => playCard(card)}>
