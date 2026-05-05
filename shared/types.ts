@@ -20,6 +20,7 @@ export interface Card {
   attack?: number;
   defense?: number;
   abilities: Ability[];
+  hasAttacked: boolean;
 }
 
 export interface GameState {

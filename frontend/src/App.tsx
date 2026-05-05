@@ -25,7 +25,27 @@ function App() {
     setMaxPP(nextMaxPP);
 
     setPP(nextMaxPP);
+    setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false})));
     console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
+  }
+
+  const attackToLeader = (cardIndex: number) => {
+    const targetCard = field[cardIndex];
+
+    if (targetCard.hasAttacked) {
+      alert("このフォロワーはもう攻撃できません。");
+      return;
+    }
+
+    setHealth(prev => prev - (targetCard.attack || 0));
+
+    setField(prevField => {
+      const newField = [...prevField];
+      newField[cardIndex] = { ...targetCard, hasAttacked: true};
+      return newField;
+    });
+
+    console.log(`${targetCard.name}の攻撃!`);
   }
 
 
@@ -88,6 +108,13 @@ function App() {
           <div style={{ fontWeight: 'bold' }}>
             {card.attack} / {card.defense}
           </div>
+          <button
+            onClick={() => attackToLeader(index)}
+            disabled={card.hasAttacked}
+            style={{ fontSize: '0.6rem', marginTop: '5px' }}
+          >
+            {card.hasAttacked ? '待機中' : '攻撃'}
+          </button>
         </div>
       ))}
     </div>

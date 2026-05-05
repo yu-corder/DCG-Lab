@@ -23,7 +23,8 @@ app.get('/api/cards', (c) => {
       defense: 5,
       abilities: [
         {trigger: 'Fanfare', description: '疾走', effectType: 'Damage'}
-      ]
+      ],
+      hasAttacked: false
     },
     {
       id: 'c2',
@@ -34,7 +35,8 @@ app.get('/api/cards', (c) => {
       defense: 5,
       abilities: [
         {trigger: 'Fanfare', description: '疾走', effectType: 'Damage'}
-      ]
+      ],
+      hasAttacked: false
     },
   ]
   return c.json(albert)
