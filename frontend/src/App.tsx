@@ -56,6 +56,8 @@ function App() {
       return;
     }
 
+    if (field.length >= 5) return;
+
     console.log("aiueo");
 
     setHand(prev => prev.filter(c => c.id !== targetCard.id));
