@@ -9,12 +9,40 @@ function App() {
   const [health, setHealth] = useState(20);
   const [maxPP, setMaxPP] = useState(1);
   const [turn, setTurn] = useState(1);
+  const [deck, setDeck] = useState<Card[]>([]);
+
+  function shuffle<T>(array: T[]) {
+    const out = Array.from(array);
+    for (let i = out.length - 1; i > 0; i--) {
+      const r = Math.floor(Math.random() * (i + 1));
+      const tmp = out[i];
+      out[i] = out[r];
+      out[r] = tmp;
+    }
+    return out;
+  }
+
+  const drawCard = (array: Card[], array2: Card[]) => {
+    const [firstCard, ...rest] = array2;
+    console.log(firstCard);
+    console.log(rest);
+    setHand([...array, firstCard]);
+    setDeck(rest);
+  }
+
+  const startTurn = (array: Card[], array2: Card[]) => {
+    drawCard(array, array2);
+  }
 
   useEffect(() => {
     fetch('http://localhost:3000/api/cards')
       .then(res => res.json())
       .then((data: Card[]) => {
-        setHand(data);
+        const shuffled = shuffle(data);
+
+        const initialHand = shuffled.slice(0,4);
+        const remainigDeck = shuffled.slice(4);
+        startTurn(initialHand, remainigDeck);
       });
   }, []);
 
@@ -27,6 +55,8 @@ function App() {
     setPP(nextMaxPP);
     setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false})));
     console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
+
+    startTurn(hand, deck);
   }
 
   const attackToLeader = (cardIndex: number) => {
@@ -126,6 +156,8 @@ function App() {
         {card.name} をプレイ (コスト: {card.cost})
       </button>
     ))}
+    <h3>デッキ</h3>
+    <p>残り枚数: {deck.length}</p>
     </>
   )
 }
