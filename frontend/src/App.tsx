@@ -67,6 +67,12 @@ function App() {
       return;
     }
 
+    if (health - targetCard.attack === 0) {
+      setHealth(prev => prev - (targetCard.attack || 0));
+      alert("バトルに勝利しました。");
+      return 0;
+    }
+
     setHealth(prev => prev - (targetCard.attack || 0));
 
     setField(prevField => {
