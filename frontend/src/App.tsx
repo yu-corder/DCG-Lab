@@ -12,6 +12,7 @@ function App() {
   const [turn, setTurn] = useState(1);
   const [deck, setDeck] = useState<Card[]>([]);
   const [isMulligan, setIsMulligan] = useState(true);
+  const [enemyField, setEnemyField]  = useState<Card[]>([]);
 
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
@@ -114,6 +115,15 @@ function App() {
     console.log(`${targetCard.name}の攻撃!`);
   }
 
+  const enemyPlayCard = () => {
+    console.log("EnemyPlay!");
+
+    const enemyCard = deck.slice(0, 1);
+
+    if (enemyField.length >= 5) return;
+    setEnemyField(enemyCard);
+  }
+
 
   const playCard = (targetCard: Card) => {
     
@@ -156,6 +166,9 @@ function App() {
       ) : (
         <>
         <div>相手のHP: {health}</div>
+        <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
+          相手の盤面にフォロワー展開
+        </button>
         <div style={{ marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px' }}>
           <h2>第 {turn} ターン</h2>
           <div>相手のHP: {health}</div>
@@ -164,7 +177,6 @@ function App() {
             ターン終了
           </button>
         </div>
-        <h3>盤面</h3>
         <div style={{ 
           display: 'flex', 
           gap: '10px', 
@@ -172,6 +184,39 @@ function App() {
           minHeight: '120px', 
           border: '1px dashed #666',
           padding: '20px' 
+        }}>
+          {enemyField.map((card, index) => (
+            <div key={`${card.id}-${index}`} style={{
+              border: '2px solid #555',
+              borderRadius: '8px',
+              padding: '10px',
+              width: '80px',
+              backgroundColor: '#222'
+            }}>
+              <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
+              <div style={{ fontWeight: 'bold' }}>
+                {card.attack} / {card.defense}
+              </div>
+              <button
+                onClick={() => attackToLeader(index)}
+                disabled={card.hasAttacked}
+                style={{ fontSize: '0.6rem', marginTop: '5px' }}
+              >
+                {card.hasAttacked ? '待機中' : '攻撃'}
+              </button>
+            </div>
+            
+          ))}
+        </div>
+
+        <div style={{ 
+          display: 'flex', 
+          gap: '10px', 
+          justifyContent: 'center', 
+          minHeight: '120px', 
+          border: '1px dashed #666',
+          padding: '20px', 
+          marginTop: '10px',
         }}>
           {field.map((card, index) => (
             <div key={`${card.id}-${index}`} style={{
