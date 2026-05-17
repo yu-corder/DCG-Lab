@@ -123,7 +123,7 @@ function App() {
     console.log("aiueo");
 
     setHand(prev => prev.filter(c => c.id !== targetCard.id));
-    setField(prev => [...prev, targetCard]);
+    
 
     setPP(prev => prev - targetCard.cost);
 
@@ -132,11 +132,13 @@ function App() {
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
         console.log(`[Fanfare発動]: ${ability.description}`);
-        if (ability.effectType === 'Damage') {
-          setHealth(prev => prev - (targetCard.attack || 0));
-        }
+      }
+      if (ability.abilityType === 'SHISSOU') {
+        targetCard.hasAttacked = false;
+        console.log(targetCard.hasAttacked);
       }
     });
+    setField(prev => [...prev, targetCard]);
   }
 
   return (

@@ -2,7 +2,7 @@ export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
 export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance';
 
-export type AbilityType = 'STORM' | 'WARD' | 'DRAIN';
+export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
 
 export interface Ability {
   trigger: AbilityTrigger;
@@ -10,6 +10,7 @@ export interface Ability {
   // 将来的にロジックを組むためのプロパティ
   effectType?: 'Damage' | 'Draw' | 'Heal';
   value?: number;
+  abilityType?: AbilityType;
 }
 
 export interface Card {
