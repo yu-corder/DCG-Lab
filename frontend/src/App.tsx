@@ -45,9 +45,11 @@ function App() {
   }
 
   const drawCard = (array: Card[], array2: Card[]) => {
+    if (array2.length == 0) {
+      alert("バトルに敗北しました。");
+      return 0;
+    }
     const [firstCard, ...rest] = array2;
-    console.log(firstCard);
-    console.log(rest);
     setHand([...array, firstCard]);
     setDeck(rest);
   }
