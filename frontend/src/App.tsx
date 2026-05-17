@@ -50,7 +50,11 @@ function App() {
       return 0;
     }
     const [firstCard, ...rest] = array2;
-    setHand([...array, firstCard]);
+    if (array.length + 1 >= 10) {
+      setHand(array);
+    } else {
+      setHand([...array, firstCard]);
+    }
     setDeck(rest);
   }
 
