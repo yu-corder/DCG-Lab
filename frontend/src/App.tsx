@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import type { Card } from '../../shared/types';
 import MulliganView  from './components/MulliganView';
+import SelectView from './components/selectView';
 
 function App() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -13,6 +14,8 @@ function App() {
   const [deck, setDeck] = useState<Card[]>([]);
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField]  = useState<Card[]>([]);
+  const [isSelecct, setIsSelect] = useState(false);
+  const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
 
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
@@ -115,6 +118,49 @@ function App() {
     console.log(`${targetCard.name}の攻撃!`);
   }
 
+  const attackToFollower = (selectCard: number) => {
+    const targetCard = field[selectedMyCardIndex];
+    const targetEnemyCard = enemyField[selectCard];
+    const currentDefense = targetCard.defense - targetEnemyCard.attack;
+
+    const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
+
+    if (currentDefense <= 0) {
+      const finalField = field.filter(f => f.id !== targetCard.id);
+      setField(finalField);
+    } else {
+      setField(prevField => {
+        const newField = [...prevField];
+        newField[selectedMyCardIndex] = { ...targetCard, hasAttacked: true, defense: currentDefense};
+        return newField;
+      });
+    }
+
+    if (currentEnemyDefense <= 0) {
+      const finalEnemyField = enemyField.filter(f => f.id !== targetEnemyCard.id);
+      setEnemyField(finalEnemyField);
+    } else {
+      setEnemyField(prevEnemyField => {
+        const newField = [...prevEnemyField];
+        newField[selectCard] = { ...targetEnemyCard, defense: currentEnemyDefense};
+        return newField;
+      });
+    }
+
+    setSelectedMyCardIndex(null);
+    setIsSelect(false);
+  }
+
+  const selectFlower = (myCardIndex: number) => {
+    if (enemyField.length === 0){
+      alert('相手フィールドにフォロワーがいません。'); 
+      return;
+    }
+
+    setSelectedMyCardIndex(myCardIndex);
+    setIsSelect(true);
+  }
+
   const enemyPlayCard = () => {
     console.log("EnemyPlay!");
 
@@ -165,90 +211,106 @@ function App() {
         </>
       ) : (
         <>
-        <div>相手のHP: {health}</div>
-        <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
-          相手の盤面にフォロワー展開
-        </button>
-        <div style={{ marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px' }}>
-          <h2>第 {turn} ターン</h2>
+        {isSelecct ? (
+          <>
+          <p>相手フィールドのカードを選択してください。</p>
+          <SelectView enemyField={enemyField} onConfirm={attackToFollower}/>
+          </>
+        ) : (
+          <>
           <div>相手のHP: {health}</div>
-          <div>PP: {pp} / {maxPP}</div>
-          <button onClick={endTurn} style={{ backgroundColor: '#444', marginTop: '10px' }}>
-            ターン終了
+          <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
+            相手の盤面にフォロワー展開
           </button>
-        </div>
-        <div style={{ 
-          display: 'flex', 
-          gap: '10px', 
-          justifyContent: 'center', 
-          minHeight: '120px', 
-          border: '1px dashed #666',
-          padding: '20px' 
-        }}>
-          {enemyField.map((card, index) => (
-            <div key={`${card.id}-${index}`} style={{
-              border: '2px solid #555',
-              borderRadius: '8px',
-              padding: '10px',
-              width: '80px',
-              backgroundColor: '#222'
-            }}>
-              <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
-              <div style={{ fontWeight: 'bold' }}>
-                {card.attack} / {card.defense}
+          <div style={{ marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px' }}>
+            <h2>第 {turn} ターン</h2>
+            <div>相手のHP: {health}</div>
+            <div>PP: {pp} / {maxPP}</div>
+            <button onClick={endTurn} style={{ backgroundColor: '#444', marginTop: '10px' }}>
+              ターン終了
+            </button>
+          </div>
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'center', 
+            minHeight: '120px', 
+            border: '1px dashed #666',
+            padding: '20px' 
+          }}>
+            {enemyField.map((card, index) => (
+              <div key={`${card.id}-${index}`} style={{
+                border: '2px solid #555',
+                borderRadius: '8px',
+                padding: '10px',
+                width: '80px',
+                backgroundColor: '#222'
+              }}>
+                <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
+                <div style={{ fontWeight: 'bold' }}>
+                  {card.attack} / {card.defense}
+                </div>
+                <button
+                  onClick={() => attackToLeader(index)}
+                  disabled={card.hasAttacked}
+                  style={{ fontSize: '0.6rem', marginTop: '5px' }}
+                >
+                  {card.hasAttacked ? '待機中' : '攻撃'}
+                </button>
               </div>
-              <button
-                onClick={() => attackToLeader(index)}
-                disabled={card.hasAttacked}
-                style={{ fontSize: '0.6rem', marginTop: '5px' }}
-              >
-                {card.hasAttacked ? '待機中' : '攻撃'}
-              </button>
-            </div>
-            
-          ))}
-        </div>
+              
+            ))}
+          </div>
 
-        <div style={{ 
-          display: 'flex', 
-          gap: '10px', 
-          justifyContent: 'center', 
-          minHeight: '120px', 
-          border: '1px dashed #666',
-          padding: '20px', 
-          marginTop: '10px',
-        }}>
-          {field.map((card, index) => (
-            <div key={`${card.id}-${index}`} style={{
-              border: '2px solid #555',
-              borderRadius: '8px',
-              padding: '10px',
-              width: '80px',
-              backgroundColor: '#222'
-            }}>
-              <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
-              <div style={{ fontWeight: 'bold' }}>
-                {card.attack} / {card.defense}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'center', 
+            minHeight: '120px', 
+            border: '1px dashed #666',
+            padding: '20px', 
+            marginTop: '10px',
+          }}>
+            {field.map((card, index) => (
+              <div key={`${card.id}-${index}`} style={{
+                border: '2px solid #555',
+                borderRadius: '8px',
+                padding: '10px',
+                width: '80px',
+                backgroundColor: '#222'
+              }}>
+                <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
+                <div style={{ fontWeight: 'bold' }}>
+                  {card.attack} / {card.defense}
+                </div>
+                <button
+                  onClick={() => attackToLeader(index)}
+                  disabled={card.hasAttacked}
+                  style={{ fontSize: '0.6rem', marginTop: '5px' }}
+                >
+                  {card.hasAttacked ? '待機中' : '攻撃'}
+                </button>
+                <button
+                  onClick={() => selectFlower(index)}
+                  disabled={card.hasAttacked}
+                  style={{ fontSize: '0.6rem', marginTop: '5px'}}
+                >
+                  {card.hasAttacked ? '待機中' : 'フォロワー攻撃'}
+                </button>
               </div>
-              <button
-                onClick={() => attackToLeader(index)}
-                disabled={card.hasAttacked}
-                style={{ fontSize: '0.6rem', marginTop: '5px' }}
-              >
-                {card.hasAttacked ? '待機中' : '攻撃'}
-              </button>
-            </div>
-            
+              
+            ))}
+          </div>
+          <h3>手札</h3>
+          {hand.map(card => (
+            <button key={card.id} onClick={() => playCard(card)}>
+              {card.name} をプレイ (コスト: {card.cost})
+            </button>
           ))}
-        </div>
-        <h3>手札</h3>
-        {hand.map(card => (
-          <button key={card.id} onClick={() => playCard(card)}>
-            {card.name} をプレイ (コスト: {card.cost})
-          </button>
-        ))}
-        <h3>デッキ</h3>
-        <p>残り枚数: {deck.length}</p>
+          <h3>デッキ</h3>
+          <p>残り枚数: {deck.length}</p>
+          </>
+        )}
         </>
       )}
     </div>
