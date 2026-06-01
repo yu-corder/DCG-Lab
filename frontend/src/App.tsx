@@ -149,7 +149,7 @@ function App() {
     const enemyCard = deck.slice(0, 1);
 
     if (enemyField.length >= 5) return;
-    setEnemyField(enemyCard);
+    setEnemyField(prev => [...prev, ...enemyCard]);
   }
 
 
