@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import type { Card } from '../../shared/types';
 import MulliganView  from './components/MulliganView';
-import SelectView from './components/selectView';
 
 function App() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -14,7 +13,6 @@ function App() {
   const [deck, setDeck] = useState<Card[]>([]);
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField]  = useState<Card[]>([]);
-  const [isSelecct, setIsSelect] = useState(false);
   const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
 
   function shuffle<T>(array: T[]) {
@@ -118,47 +116,30 @@ function App() {
     console.log(`${targetCard.name}の攻撃!`);
   }
 
-  const attackToFollower = (selectCard: number) => {
-    const targetCard = field[selectedMyCardIndex];
-    const targetEnemyCard = enemyField[selectCard];
-    const currentDefense = targetCard.defense - targetEnemyCard.attack;
+  const attackToFollower = (myCardIndex: number, enemyCardIndex: number) => {
+    const targetCard = field[myCardIndex];
+    const targetEnemyCard = enemyField[enemyCardIndex];
 
+    const currentDefense = targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
 
     if (currentDefense <= 0) {
-      const finalField = field.filter(f => f.id !== targetCard.id);
-      setField(finalField);
+      setField(prev => prev.filter(f => f.id !== targetCard.id));
     } else {
-      setField(prevField => {
-        const newField = [...prevField];
-        newField[selectedMyCardIndex] = { ...targetCard, hasAttacked: true, defense: currentDefense};
-        return newField;
-      });
+      setField(prev => prev.map((c, i) => 
+        i === myCardIndex ? { ...c, hasAttacked: true, defense: currentDefense } : c
+      ));
     }
 
     if (currentEnemyDefense <= 0) {
-      const finalEnemyField = enemyField.filter(f => f.id !== targetEnemyCard.id);
-      setEnemyField(finalEnemyField);
+      setEnemyField(prev => prev.filter(f => f.id !== targetEnemyCard.id));
     } else {
-      setEnemyField(prevEnemyField => {
-        const newField = [...prevEnemyField];
-        newField[selectCard] = { ...targetEnemyCard, defense: currentEnemyDefense};
-        return newField;
-      });
+      setEnemyField(prev => prev.map((c, i) => 
+        i === enemyCardIndex ? { ...c, defense: currentEnemyDefense } : c
+      ));
     }
 
     setSelectedMyCardIndex(null);
-    setIsSelect(false);
-  }
-
-  const selectFlower = (myCardIndex: number) => {
-    if (enemyField.length === 0){
-      alert('相手フィールドにフォロワーがいません。'); 
-      return;
-    }
-
-    setSelectedMyCardIndex(myCardIndex);
-    setIsSelect(true);
   }
 
   const enemyPlayCard = () => {
@@ -211,13 +192,6 @@ function App() {
         </>
       ) : (
         <>
-        {isSelecct ? (
-          <>
-          <p>相手フィールドのカードを選択してください。</p>
-          <SelectView enemyField={enemyField} onConfirm={attackToFollower}/>
-          </>
-        ) : (
-          <>
           <div>相手のHP: {health}</div>
           <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
             相手の盤面にフォロワー展開
@@ -244,8 +218,15 @@ function App() {
                 borderRadius: '8px',
                 padding: '10px',
                 width: '80px',
-                backgroundColor: '#222'
-              }}>
+                backgroundColor: '#222',
+                cursor: selectedMyCardIndex !== null ? 'pointer' : 'default'
+              }}
+              onClick={() => {
+                if (selectedMyCardIndex !== null) {
+                    attackToFollower(selectedMyCardIndex, index);
+                  }
+                }}
+              >
                 <div style={{ fontSize: '0.8rem', marginBottom: '5px' }}>{card.name}</div>
                 <div style={{ fontWeight: 'bold' }}>
                   {card.attack} / {card.defense}
@@ -273,7 +254,7 @@ function App() {
           }}>
             {field.map((card, index) => (
               <div key={`${card.id}-${index}`} style={{
-                border: '2px solid #555',
+                border: selectedMyCardIndex === index ? '2px solid gold' : '2px solid #555',
                 borderRadius: '8px',
                 padding: '10px',
                 width: '80px',
@@ -291,9 +272,9 @@ function App() {
                   {card.hasAttacked ? '待機中' : '攻撃'}
                 </button>
                 <button
-                  onClick={() => selectFlower(index)}
+                  onClick={() => setSelectedMyCardIndex(index)}
                   disabled={card.hasAttacked}
-                  style={{ fontSize: '0.6rem', marginTop: '5px'}}
+                  style={{ fontSize: '0.6rem', marginTop: '5px' }}
                 >
                   {card.hasAttacked ? '待機中' : 'フォロワー攻撃'}
                 </button>
@@ -309,8 +290,6 @@ function App() {
           ))}
           <h3>デッキ</h3>
           <p>残り枚数: {deck.length}</p>
-          </>
-        )}
         </>
       )}
     </div>
