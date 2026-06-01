@@ -192,7 +192,15 @@ function App() {
         </>
       ) : (
         <>
-          <div>相手のHP: {health}</div>
+          <div
+            style={{cursor: selectedMyCardIndex !== null ? 'pointer' : 'default' }}
+            onClick={() => {
+            if (selectedMyCardIndex !== null) {
+                attackToLeader(selectedMyCardIndex);
+              }
+            }}
+          >
+            相手のHP: {health}</div>
           <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
             相手の盤面にフォロワー展開
           </button>
@@ -265,18 +273,11 @@ function App() {
                   {card.attack} / {card.defense}
                 </div>
                 <button
-                  onClick={() => attackToLeader(index)}
-                  disabled={card.hasAttacked}
-                  style={{ fontSize: '0.6rem', marginTop: '5px' }}
-                >
-                  {card.hasAttacked ? '待機中' : '攻撃'}
-                </button>
-                <button
                   onClick={() => setSelectedMyCardIndex(index)}
                   disabled={card.hasAttacked}
                   style={{ fontSize: '0.6rem', marginTop: '5px' }}
                 >
-                  {card.hasAttacked ? '待機中' : 'フォロワー攻撃'}
+                  {card.hasAttacked ? '待機中' : '攻撃'}
                 </button>
               </div>
               
