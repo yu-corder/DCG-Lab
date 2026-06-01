@@ -7,7 +7,8 @@ function App() {
   const [hand, setHand] = useState<Card[]>([]);
   const [field, setField] = useState<Card[]>([]);
   const [pp, setPP] = useState(1);
-  const [health, setHealth] = useState(20);
+  const [enemyHealth, setEnemyHealth] = useState(20);
+  const [myHealth, setMyHealth] = useState(20);
   const [maxPP, setMaxPP] = useState(1);
   const [turn, setTurn] = useState(1);
   const [deck, setDeck] = useState<Card[]>([]);
@@ -99,13 +100,13 @@ function App() {
       return;
     }
 
-    if (health - targetCard.attack === 0) {
-      setHealth(prev => prev - (targetCard.attack || 0));
+    if (enemyHealth - targetCard.attack === 0) {
+      setEnemyHealth(prev => prev - (targetCard.attack || 0));
       alert("バトルに勝利しました。");
       return 0;
     }
 
-    setHealth(prev => prev - (targetCard.attack || 0));
+    setEnemyHealth(prev => prev - (targetCard.attack || 0));
 
     setField(prevField => {
       const newField = [...prevField];
@@ -200,13 +201,13 @@ function App() {
               }
             }}
           >
-            相手のHP: {health}</div>
+            相手のHP: {enemyHealth}</div>
           <button onClick={enemyPlayCard} style={{ backgroundColor: '#444', marginTop: '10px' }}>
             相手の盤面にフォロワー展開
           </button>
           <div style={{ marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px' }}>
             <h2>第 {turn} ターン</h2>
-            <div>相手のHP: {health}</div>
+            <div>相手のHP: {enemyHealth}</div>
             <div>PP: {pp} / {maxPP}</div>
             <button onClick={endTurn} style={{ backgroundColor: '#444', marginTop: '10px' }}>
               ターン終了
@@ -291,6 +292,7 @@ function App() {
           ))}
           <h3>デッキ</h3>
           <p>残り枚数: {deck.length}</p>
+          <div>自分のHP: {myHealth}</div>
         </>
       )}
     </div>
