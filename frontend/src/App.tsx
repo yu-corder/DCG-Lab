@@ -11,6 +11,9 @@ function App() {
   const [myHealth, setMyHealth] = useState(20);
   const [maxPP, setMaxPP] = useState(1);
   const [turn, setTurn] = useState(1);
+  const [myEp, setMyEP] = useState(2);
+  const [enemyEp, setEnemyEP] = useState(2);
+  const [hasEvolvedThisTurn, setHasEvolvedThisTurn] = useState(false);
   const [deck, setDeck] = useState<Card[]>([]);
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField]  = useState<Card[]>([]);
@@ -87,6 +90,7 @@ function App() {
 
     setPP(nextMaxPP);
     setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false})));
+    setHasEvolvedThisTurn(false);
     console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
 
     startTurn(hand, deck);
@@ -115,6 +119,40 @@ function App() {
     });
     setSelectedMyCardIndex(null);
     console.log(`${targetCard.name}の攻撃!`);
+  }
+
+  const evolveFollower = (cardIndex: number) => {
+    const targetCard = field[cardIndex];
+
+    if (myEp <= 0) {
+      alert("EPが足りません。");
+      return;
+    }
+
+    if (hasEvolvedThisTurn) {
+      alert("1ターンに進化できるのは1度だけです。");
+      return;
+    }
+
+    if (targetCard.isEvolved)  {
+      alert("すでに進化済みのフォロワーです。");
+      return;
+    }
+
+    setMyEP(prev => prev - 1);
+    setHasEvolvedThisTurn(true);
+
+    setField(prevField => {
+      const newField = [...prevField];
+      newField[cardIndex] = {
+        ...targetCard,
+        attack: targetCard.attack + 2,
+        defense: targetCard.defense + 2,
+        isEvolved: true,
+        hasAttacked: false,
+      };
+      return newField;
+    });
   }
 
   const attackToFollower = (myCardIndex: number, enemyCardIndex: number) => {
@@ -280,6 +318,13 @@ function App() {
                 >
                   {card.hasAttacked ? '待機中' : '攻撃'}
                 </button>
+                
+                <button 
+                disabled={card.isEvolved}
+                onClick={() => {
+                if (card.isEvolved !== null) {
+                  evolveFollower(index)}
+                }}>進化する</button>
               </div>
               
             ))}
@@ -293,6 +338,7 @@ function App() {
           <h3>デッキ</h3>
           <p>残り枚数: {deck.length}</p>
           <div>自分のHP: {myHealth}</div>
+          <div>自分の残りEP: {myEp}</div>
         </>
       )}
     </div>

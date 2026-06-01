@@ -22,6 +22,7 @@ export interface Card {
   defense?: number;
   abilities: Ability[];
   hasAttacked: boolean;
+  isEvolved: boolean;
 }
 
 export interface GameState {
