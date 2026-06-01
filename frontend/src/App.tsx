@@ -112,7 +112,7 @@ function App() {
       newField[cardIndex] = { ...targetCard, hasAttacked: true};
       return newField;
     });
-
+    setSelectedMyCardIndex(null);
     console.log(`${targetCard.name}の攻撃!`);
   }
 
