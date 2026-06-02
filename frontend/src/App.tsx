@@ -129,6 +129,11 @@ function App() {
   const evolveFollower = (cardIndex: number) => {
     const targetCard = field[cardIndex];
 
+    if (turn < 4) {
+      alert("進化可能ターンではありません。");
+      return;
+    }
+
     if (myEp <= 0) {
       alert("EPが足りません。");
       return;
@@ -326,7 +331,7 @@ function App() {
                 </button>
                 
                 <button 
-                disabled={card.isEvolved}
+                disabled={turn < 4 || card.isEvolved}
                 onClick={() => {
                 if (card.isEvolved !== null) {
                   evolveFollower(index)}
