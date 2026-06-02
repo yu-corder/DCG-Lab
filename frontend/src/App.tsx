@@ -89,7 +89,7 @@ function App() {
     setMaxPP(nextMaxPP);
 
     setPP(nextMaxPP);
-    setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false})));
+    setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false, playedThisTurn: false})));
     setHasEvolvedThisTurn(false);
     console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
 
@@ -98,6 +98,11 @@ function App() {
 
   const attackToLeader = (cardIndex: number) => {
     const targetCard = field[cardIndex];
+    const hasStrom = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
+    if (targetCard.playedThisTurn && !hasStrom) {
+      alert("このフォロワーは、場に出たターンにはリーダーを攻撃できません。");
+      return;
+    }
 
     if (targetCard.hasAttacked) {
       alert("このフォロワーはもう攻撃できません。");
@@ -209,6 +214,7 @@ function App() {
 
     console.log(targetCard);
 
+    targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
         console.log(`[Fanfare発動]: ${ability.description}`);

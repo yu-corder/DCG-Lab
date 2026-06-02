@@ -23,6 +23,7 @@ export interface Card {
   abilities: Ability[];
   hasAttacked: boolean;
   isEvolved: boolean;
+  playedThisTurn: boolean;
 }
 
 export interface GameState {
