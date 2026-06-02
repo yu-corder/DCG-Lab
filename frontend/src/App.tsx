@@ -13,6 +13,8 @@ function App() {
   const [turn, setTurn] = useState(1);
   const [myEp, setMyEP] = useState(2);
   const [enemyEp, setEnemyEP] = useState(2);
+  const [myExEp, setMyExEp] = useState(2);
+  const [enemyExEp, setEnemyExEP] = useState(2);
   const [hasEvolvedThisTurn, setHasEvolvedThisTurn] = useState(false);
   const [deck, setDeck] = useState<Card[]>([]);
   const [isMulligan, setIsMulligan] = useState(true);
@@ -165,12 +167,57 @@ function App() {
     });
   }
 
+  const exEvolveFollower = (cardIndex: number) => {
+    const targetCard = field[cardIndex];
+
+    if (turn < 6) {
+      alert("超進化可能ターンではありません。");
+      return;
+    }
+
+    if (myExEp <= 0) {
+      alert("EXEPが足りません。");
+      return;
+    }
+
+    if (hasEvolvedThisTurn) {
+      alert("1ターンに進化できるのは1度だけです。");
+      return;
+    }
+
+    if (targetCard.isEvolved)  {
+      alert("すでに進化済みのフォロワーです。");
+      return;
+    }
+
+    setMyExEp(prev => prev - 1);
+    setHasEvolvedThisTurn(true);
+
+    setField(prevField => {
+      const newField = [...prevField];
+      newField[cardIndex] = {
+        ...targetCard,
+        attack: targetCard.attack + 3,
+        defense: targetCard.defense + 3,
+        isEvolved: true,
+        hasAttacked: false,
+        isExEvolved: true,
+      };
+      return newField;
+    });
+  }
+
+
   const attackToFollower = (myCardIndex: number, enemyCardIndex: number) => {
     const targetCard = field[myCardIndex];
     const targetEnemyCard = enemyField[enemyCardIndex];
 
-    const currentDefense = targetCard.defense - targetEnemyCard.attack;
+    const isExEvoled = targetCard.isExEvolved;
+
+    const currentDefense = isExEvoled ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
+
+    
 
     if (currentDefense <= 0) {
       setField(prev => prev.filter(f => f.id !== targetCard.id));
@@ -182,6 +229,8 @@ function App() {
 
     if (currentEnemyDefense <= 0) {
       setEnemyField(prev => prev.filter(f => f.id !== targetEnemyCard.id));
+      const damage = isExEvoled ? 1 : 0;
+      setEnemyHealth(prev => prev - damage);
     } else {
       setEnemyField(prev => prev.map((c, i) => 
         i === enemyCardIndex ? { ...c, defense: currentEnemyDefense } : c
@@ -336,6 +385,13 @@ function App() {
                 if (card.isEvolved !== null) {
                   evolveFollower(index)}
                 }}>進化する</button>
+
+                <button 
+                disabled={turn < 6 || card.isEvolved}
+                onClick={() => {
+                if (card.isEvolved !== null) {
+                  exEvolveFollower(index)}
+                }}>超進化する</button>
               </div>
               
             ))}
@@ -350,6 +406,7 @@ function App() {
           <p>残り枚数: {deck.length}</p>
           <div>自分のHP: {myHealth}</div>
           <div>自分の残りEP: {myEp}</div>
+          <div>自分の残りExEP: {myExEp}</div>
         </>
       )}
     </div>

@@ -24,6 +24,7 @@ export interface Card {
   hasAttacked: boolean;
   isEvolved: boolean;
   playedThisTurn: boolean;
+  isExEvolved: boolean;
 }
 
 export interface GameState {
