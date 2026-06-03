@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import type { Card } from '../../../shared/types';
 import { EffectRegistry } from '../effects';
+import type { TargetingContext } from '../effects/selectTarget';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -20,6 +21,7 @@ export function useGameState() {
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField] = useState<Card[]>([]);
   const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
+  const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
 
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
@@ -241,6 +243,18 @@ export function useGameState() {
     if (result.deck) setDeck(result.deck);
   };
 
+  const selectTargetFollower = (targetIndex: number) => {
+    if (!targetingContext) return;
+    if (targetingContext.effectType === 'SelectDamage') {
+      const effect = EffectRegistry['SelectDamage'];
+      if (effect) {
+        const result = effect.execute({ field, enemyField, hand, deck }, targetingContext.value, targetIndex);
+        if (result.enemyField) setEnemyField(result.enemyField);
+      }
+    }
+    setTargetingContext(null);
+  };
+
   const playCard = (targetCard: Card) => {
     if (pp < targetCard.cost) {
       alert("ppが足りません。");
@@ -256,7 +270,16 @@ export function useGameState() {
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
-        applyCardEffect(ability.effectType, ability.value);
+        if (ability.effectType === 'SelectDamage') {
+          setTargetingContext({
+            sourceCardId: targetCard.id,
+            effectType: 'SelectDamage',
+            value: ability.value || 0
+          });
+        } else {
+          applyCardEffect(ability.effectType, ability.value);
+        }
+        
       }
       if (ability.abilityType === 'SHISSOU') {
         targetCard.hasAttacked = false;
@@ -280,6 +303,8 @@ export function useGameState() {
     isMulligan,
     enemyField,
     selectedMyCardIndex,
+    targetingContext,
+    selectTargetFollower,
     setSelectedMyCardIndex,
     handleMulliganConfirm,
     endTurn,

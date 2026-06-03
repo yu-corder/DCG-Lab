@@ -15,5 +15,5 @@ export interface EffectResult {
 }
 
 export interface CardEffect {
-  execute(context: EffectContext, value: number): EffectResult;
+  execute(context: EffectContext, value: number, targetIndex?: number): EffectResult;
 }

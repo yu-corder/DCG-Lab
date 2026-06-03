@@ -17,6 +17,8 @@ function App() {
     isMulligan,
     enemyField,
     selectedMyCardIndex,
+    targetingContext,
+    selectTargetFollower,
     setSelectedMyCardIndex,
     handleMulliganConfirm,
     endTurn,
@@ -111,7 +113,11 @@ return (
                     transition: 'transform 0.1s'
                   }}
                   onClick={() => {
-                    if (selectedMyCardIndex !== null) attackToFollower(selectedMyCardIndex, index);
+                    if (targetingContext) {
+                      selectTargetFollower(index);
+                    } else if (selectedMyCardIndex !== null) {
+                      attackToFollower(selectedMyCardIndex, index);
+                    }
                   }}
                 >
                   <div style={{ fontSize: '0.75rem', padding: '5px', textAlign: 'center', borderBottom: '1px solid #333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.name}</div>
