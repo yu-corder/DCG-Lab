@@ -1,6 +1,7 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
 import type { Card } from '../../../shared/types';
+import { EffectRegistry } from '../effects';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -229,6 +230,17 @@ export function useGameState() {
     setEnemyField(prev => [...prev, ...enemyCard]);
   };
 
+  const applyCardEffect = (effectType: string, value: number) => {
+    const effect = EffectRegistry[effectType];
+    if (!effect) return;
+
+    const result = effect.execute({ field, enemyField, hand, deck }, value);
+    if (result.enemyField) setEnemyField(result.enemyField);
+    if (result.myField) setField(result.myField);
+    if (result.hand) setHand(result.hand);
+    if (result.deck) setDeck(result.deck);
+  };
+
   const playCard = (targetCard: Card) => {
     if (pp < targetCard.cost) {
       alert("ppが足りません。");
@@ -244,7 +256,7 @@ export function useGameState() {
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
-        console.log(`[Fanfare発動]: ${ability.description}`);
+        applyCardEffect(ability.effectType, ability.value);
       }
       if (ability.abilityType === 'SHISSOU') {
         targetCard.hasAttacked = false;
