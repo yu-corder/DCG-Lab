@@ -270,7 +270,7 @@ export function useGameState() {
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
       if (ability.trigger === 'Fanfare') {
-        if (ability.effectType === 'SelectDamage') {
+        if (ability.effectType === 'SelectDamage' && enemyField.length >= 1) {
           setTargetingContext({
             sourceCardId: targetCard.id,
             effectType: 'SelectDamage',
