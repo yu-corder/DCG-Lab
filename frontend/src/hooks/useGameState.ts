@@ -243,9 +243,28 @@ export function useGameState() {
     if (result.deck) setDeck(result.deck);
   };
 
+  const executeCardPlay = (targetCard: Card) => {
+    setHand(prev => prev.filter(c => c.id !== targetCard.id));
+    setPP(prev => prev - targetCard.cost);
+    
+    targetCard.playedThisTurn = true;
+    targetCard.abilities.forEach(ability => {
+      if (ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage') {
+        applyCardEffect(ability.effectType, ability.value);
+      }
+      if (ability.abilityType === 'SHISSOU') {
+        targetCard.hasAttacked = false;
+      }
+    });
+
+    setField(prev => [...prev, targetCard]);
+  };
+
+
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
     if (targetingContext.effectType === 'SelectDamage') {
+      executeCardPlay(targetingContext.card);
       const effect = EffectRegistry['SelectDamage'];
       if (effect) {
         const result = effect.execute({ field, enemyField, hand, deck }, targetingContext.value, targetIndex);
@@ -255,6 +274,7 @@ export function useGameState() {
     setTargetingContext(null);
   };
 
+
   const playCard = (targetCard: Card) => {
     if (pp < targetCard.cost) {
       alert("ppが足りません。");
@@ -262,31 +282,21 @@ export function useGameState() {
     }
     if (field.length >= 5) return;
 
-    console.log("aiueo");
-    setHand(prev => prev.filter(c => c.id !== targetCard.id));
-    setPP(prev => prev - targetCard.cost);
+    const hasSelectDamageFanfare = targetCard.abilities.some(
+      ability => ability.trigger === 'Fanfare' && ability.effectType === 'SelectDamage'
+    );
 
-    console.log(targetCard);
-    targetCard.playedThisTurn = true;
-    targetCard.abilities.forEach(ability => {
-      if (ability.trigger === 'Fanfare') {
-        if (ability.effectType === 'SelectDamage' && enemyField.length >= 1) {
-          setTargetingContext({
-            sourceCardId: targetCard.id,
-            effectType: 'SelectDamage',
-            value: ability.value || 0
-          });
-        } else {
-          applyCardEffect(ability.effectType, ability.value);
-        }
-        
-      }
-      if (ability.abilityType === 'SHISSOU') {
-        targetCard.hasAttacked = false;
-        console.log(targetCard.hasAttacked);
-      }
-    });
-    setField(prev => [...prev, targetCard]);
+    if (hasSelectDamageFanfare && enemyField.length >= 1) {
+      const fanfareAbility = targetCard.abilities.find(a => a.effectType === 'SelectDamage');
+      setTargetingContext({
+        card: targetCard,
+        effectType: 'SelectDamage',
+        value: fanfareAbility?.value || 0
+      });
+      return;
+    }
+
+    executeCardPlay(targetCard);
   };
 
   return {

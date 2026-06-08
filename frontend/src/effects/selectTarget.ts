@@ -1,5 +1,7 @@
+import type { Card } from '../../../shared/types';
+
 export interface TargetingContext {
-  sourceCardId: string;
+  card: Card;
   effectType: 'SelectDamage' | 'SelectBuff';
   value: number;
 }
