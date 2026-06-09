@@ -1,7 +1,7 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
 import type { Card } from '../../../shared/types';
-import { EffectRegistry } from '../effects';
+import { applyCardEffect as executeGameEffect } from '../effects';
 import type { TargetingContext } from '../effects/selectTarget';
 
 export function useGameState() {
@@ -232,11 +232,19 @@ export function useGameState() {
     setEnemyField(prev => [...prev, ...enemyCard]);
   };
 
-  const applyCardEffect = (effectType: string, value: number) => {
-    const effect = EffectRegistry[effectType];
-    if (!effect) return;
+  const applyCardEffect = (effectType: string | undefined, value: number = 0, targetIndex?: number) => {
+    if (!effectType) return;
 
-    const result = effect.execute({ field, enemyField, hand, deck }, value);
+    let effectObj: any = null;
+    if (effectType === 'SelectDamage') {
+      effectObj = { type: 'SelectDamage', value };
+    } else if (effectType === 'AoeDamage') {
+      effectObj = { type: 'AoEDamage', value };
+    }
+
+    if (!effectObj) return;
+    const result = executeGameEffect({ field, enemyField, hand, deck }, effectObj, targetIndex);
+    
     if (result.enemyField) setEnemyField(result.enemyField);
     if (result.myField) setField(result.myField);
     if (result.hand) setHand(result.hand);
@@ -260,15 +268,14 @@ export function useGameState() {
     setField(prev => [...prev, targetCard]);
   };
 
-
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
     if (targetingContext.effectType === 'SelectDamage') {
       executeCardPlay(targetingContext.card);
-      const effect = EffectRegistry['SelectDamage'];
-      if (effect) {
-        const result = effect.execute({ field, enemyField, hand, deck }, targetingContext.value, targetIndex);
-        if (result.enemyField) setEnemyField(result.enemyField);
+      
+      const fanfareAbility = targetingContext.card.abilities.find(a => a.effectType === 'SelectDamage');
+      if (fanfareAbility) {
+        applyCardEffect(fanfareAbility.effectType, fanfareAbility.value, targetIndex);
       }
     }
     setTargetingContext(null);
