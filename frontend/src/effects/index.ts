@@ -1,5 +1,6 @@
 import type { Card } from '../../../shared/types';
 import { aoeDamageEffect, selectDamageEffect } from './damage/damage';
+import { selectDestroyEffect } from './destory/destroy';
 
 export interface SelectDamageEffect {
   type: 'SelectDamage';
@@ -11,8 +12,8 @@ export interface AoEDamageEffect {
   value: number;
 }
 
-export interface DestroyEffect {
-  type: 'Destroy';
+export interface SelectDestroyEffect {
+  type: 'SelectDestroy';
 }
 
 export interface BuffEffect {
@@ -24,7 +25,7 @@ export interface BuffEffect {
 export type CardEffect = 
   | SelectDamageEffect 
   | AoEDamageEffect 
-  | DestroyEffect 
+  | SelectDestroyEffect 
   | BuffEffect;
 
 export interface EffectContext {
@@ -53,8 +54,8 @@ export const applyCardEffect = (
     case 'AoEDamage':
       return aoeDamageEffect.execute(context, effect.value);
 
-    case 'Destroy':
-      return {};
+    case 'SelectDestroy':
+      return selectDestroyEffect.execute(context, targetIndex);
 
     case 'Buff':
       return {};

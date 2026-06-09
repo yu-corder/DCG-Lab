@@ -240,6 +240,8 @@ export function useGameState() {
       effectObj = { type: 'SelectDamage', value };
     } else if (effectType === 'AoeDamage') {
       effectObj = { type: 'AoEDamage', value };
+    } else if (effectType === 'SelectDestroy') {
+      effectObj = { type: 'SelectDestroy'};
     }
 
     if (!effectObj) return;
@@ -257,7 +259,7 @@ export function useGameState() {
     
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
-      if (ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage') {
+      if (ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
         applyCardEffect(ability.effectType, ability.value);
       }
       if (ability.abilityType === 'SHISSOU') {
@@ -270,13 +272,9 @@ export function useGameState() {
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
-    if (targetingContext.effectType === 'SelectDamage') {
+    if (targetingContext.effectType === 'SelectDamage' || targetingContext.effectType === 'SelectDestroy') {
       executeCardPlay(targetingContext.card);
-      
-      const fanfareAbility = targetingContext.card.abilities.find(a => a.effectType === 'SelectDamage');
-      if (fanfareAbility) {
-        applyCardEffect(fanfareAbility.effectType, fanfareAbility.value, targetIndex);
-      }
+      applyCardEffect(targetingContext.effectType, targetingContext.value, targetIndex);
     }
     setTargetingContext(null);
   };
@@ -292,15 +290,16 @@ export function useGameState() {
     }
     if (field.length >= 5) return;
 
-    const hasSelectDamageFanfare = targetCard.abilities.some(
-      ability => ability.trigger === 'Fanfare' && ability.effectType === 'SelectDamage'
+    const hasSelectFanfare = targetCard.abilities.some(
+      ability => ability.trigger === 'Fanfare' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')
     );
 
-    if (hasSelectDamageFanfare && enemyField.length >= 1) {
-      const fanfareAbility = targetCard.abilities.find(a => a.effectType === 'SelectDamage');
+    if (hasSelectFanfare && enemyField.length >= 1) {
+      const fanfareAbility = targetCard.abilities.find(a => a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy');
+      console.log(fanfareAbility);
       setTargetingContext({
         card: targetCard,
-        effectType: 'SelectDamage',
+        effectType: fanfareAbility.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
         value: fanfareAbility?.value || 0
       });
       return;
