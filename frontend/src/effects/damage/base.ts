@@ -1,4 +1,4 @@
-import type { Card } from '../../../shared/types';
+import type { Card } from '../../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
