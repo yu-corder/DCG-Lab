@@ -274,6 +274,9 @@ export function useGameState() {
     setTargetingContext(null);
   };
 
+  const cancelTargeting = () => {
+    setTargetingContext(null);
+  };
 
   const playCard = (targetCard: Card) => {
     if (pp < targetCard.cost) {
@@ -324,5 +327,6 @@ export function useGameState() {
     attackToFollower,
     enemyPlayCard,
     playCard,
+    cancelTargeting,
   };
 }

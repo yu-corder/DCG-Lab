@@ -28,6 +28,7 @@ function App() {
     attackToFollower,
     enemyPlayCard,
     playCard,
+    cancelTargeting,
   } = useGameState();
 
   const isTargetMode = targetingContext !== null;
@@ -114,6 +115,7 @@ function App() {
                 </button>
               </div>
 
+              {/* 敵フィールドエリア */}
               <div style={{
                 display: 'flex',
                 gap: '15px',
@@ -124,8 +126,15 @@ function App() {
                 borderRadius: '16px',
                 border: isTargetMode ? '1px solid rgba(255,77,77,0.3)' : '1px solid rgba(255,255,255,0.05)',
                 padding: '10px',
-                transition: 'all 0.3s'
-              }}>
+                transition: 'all 0.3s',
+                cursor: isTargetMode ? 'pointer' : 'default'
+              }}
+              onClick={() => {
+                if (isTargetMode) {
+                  cancelTargeting();
+                }
+              }}
+              >
                 {enemyField.map((card, index) => (
                   <div 
                     key={`${card.id}-${index}`} 
@@ -147,7 +156,9 @@ function App() {
                       transform: isTargetMode ? 'scale(1.03)' : 'scale(1)',
                       transition: 'all 0.2s'
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+
                       if (isTargetMode) {
                         selectTargetFollower(index);
                       } else if (selectedMyCardIndex !== null) {
