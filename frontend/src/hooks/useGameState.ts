@@ -242,6 +242,8 @@ export function useGameState() {
       effectObj = { type: 'AoEDamage', value };
     } else if (effectType === 'SelectDestroy') {
       effectObj = { type: 'SelectDestroy'};
+    } else if (effectType === 'Draw') {
+      effectObj = { type: 'Draw'};
     }
 
     if (!effectObj) return;
@@ -254,7 +256,6 @@ export function useGameState() {
   };
 
   const executeCardPlay = (targetCard: Card) => {
-    setHand(prev => prev.filter(c => c.id !== targetCard.id));
     setPP(prev => prev - targetCard.cost);
     
     targetCard.playedThisTurn = true;
@@ -266,7 +267,7 @@ export function useGameState() {
         targetCard.hasAttacked = false;
       }
     });
-
+    setHand(prev => prev.filter(c => c.id !== targetCard.id));
     setField(prev => [...prev, targetCard]);
   };
 
