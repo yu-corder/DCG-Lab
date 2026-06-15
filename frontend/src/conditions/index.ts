@@ -1,47 +1,35 @@
 import type { Card } from '../../../shared/types';
+import { fieldCondition } from './field/field';
 
-// export interface SelectDamageEffect {
-//   type: 'SelectDamage';
-//   value: number;
-// }
+export interface FieldCondition {
+  type: 'FieldCondition';
+  trriger: 'HAS_EVOLED_FOLLOWER';
+  value?: number;
+}
 
-// export interface AoEDamageEffect {
-//   type: 'AoEDamage';
-//   value: number;
-// }
+export type Condition = 
+  | FieldCondition;
 
-// export interface SelectDestroyEffect {
-//   type: 'SelectDestroy';
-// }
+export interface ConditionContext {
+  field: Card[];
+  enemyField: Card[];
+  hand: Card[];
+  deck: Card[];
+}
 
-// export interface BuffEffect {
-//   type: 'Buff';
-//   attack: number;
-//   defense: number;
-// }
+export interface ConditionResult {
+  condition: boolean;
+}
 
-// export interface DrawEffect {
-//   type: 'Draw';
-// }
+export const conditionCheck = (
+  context: ConditionContext, 
+  condition: Condition, 
+): ConditionResult => {
+  switch (condition.type) {
+    case 'FieldCondition':
+      return fieldCondition.conditionDispatcher(context, condition.trriger);
 
-// export type ConditionText = 
-//   | HasEvoledFollower;
-
-// export interface ConditionContext {
-//   field: Card[];
-//   enemyField: Card[];
-//   hand: Card[];
-//   deck: Card[];
-// }
-// export const applyCardEffect = (
-//   context: ConditionContext, 
-//   condition: ConditionText, 
-//   conditionVal?: number
-// ) => {
-//   switch (condition.type) {
-//     case 'HAS_EVOLED_FOLLOWER':
-//       return {};
-//     default:
-//       return {};
-//   }
-// };
+    default:
+      return;
+  }
+};

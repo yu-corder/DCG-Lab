@@ -4,6 +4,8 @@ export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance';
 
 export type TriggerConditions = 'HAS_EVOLED_FOLLOWER';
 
+export type ConditionType = 'FieldCondition';
+
 export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
 
 export interface Ability {
@@ -13,6 +15,7 @@ export interface Ability {
   effectType?: 'Damage' | 'Draw' | 'Heal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw';
   value?: number;
   abilityType?: AbilityType;
+  conditionType?: ConditionType;
   triggerConditions?: TriggerConditions;
 }
 

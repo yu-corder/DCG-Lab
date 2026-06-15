@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import type { Card } from '../../../shared/types';
 import { applyCardEffect as executeGameEffect } from '../effects';
+import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 
 export function useGameState() {
@@ -260,7 +261,18 @@ export function useGameState() {
     
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
-      if (ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
+      let conditionObj: any = null;
+      let conditionType = ability.conditionType;
+      let triggerConditions = ability.triggerConditions;
+
+      conditionObj = {type: conditionType, trriger: triggerConditions};
+      let condition = true;
+      if (conditionType && triggerConditions) {
+        let resultObj = conditionCheck({ field, enemyField, hand, deck }, conditionObj);
+        condition = resultObj.condition;
+      }
+
+      if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
         applyCardEffect(ability.effectType, ability.value);
       }
       if (ability.abilityType === 'SHISSOU') {
