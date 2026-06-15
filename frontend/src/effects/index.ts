@@ -2,6 +2,7 @@ import type { Card } from '../../../shared/types';
 import { aoeDamageEffect, selectDamageEffect } from './damage/damage';
 import { selectDestroyEffect } from './destory/destroy';
 import { DrawEffect } from './draw/draw';
+import { MyHealthHealEffect } from './heal/heal';
 
 export interface SelectDamageEffect {
   type: 'SelectDamage';
@@ -27,18 +28,26 @@ export interface DrawEffect {
   type: 'Draw';
 }
 
+export interface MyHealthHealEffect {
+  type: 'MyHealthHeal';
+  value: number;
+}
+
 export type CardEffect = 
   | SelectDamageEffect 
   | AoEDamageEffect 
   | SelectDestroyEffect 
   | BuffEffect
-  | DrawEffect;
+  | DrawEffect
+  | MyHealthHealEffect;
 
 export interface EffectContext {
   field: Card[];
   enemyField: Card[];
   hand: Card[];
   deck: Card[];
+  myHealth: number;
+  enemyHealth: number;
 }
 
 export interface EffectResult {
@@ -46,6 +55,8 @@ export interface EffectResult {
   enemyField?: Card[];
   hand?: Card[];
   deck?: Card[];
+  myHealth?: number;
+  enemyHealth?: number;
 }
 
 export const applyCardEffect = (
@@ -68,6 +79,9 @@ export const applyCardEffect = (
 
     case 'Draw':
       return DrawEffect.execute(context);
+    
+    case 'MyHealthHeal':
+      return MyHealthHealEffect.execute(context, effect.value);
 
     default:
       return {};

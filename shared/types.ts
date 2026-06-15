@@ -12,7 +12,7 @@ export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'Heal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw';
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw';
   value?: number;
   abilityType?: AbilityType;
   conditionType?: ConditionType;

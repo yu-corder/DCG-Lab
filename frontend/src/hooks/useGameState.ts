@@ -245,15 +245,19 @@ export function useGameState() {
       effectObj = { type: 'SelectDestroy'};
     } else if (effectType === 'Draw') {
       effectObj = { type: 'Draw'};
+    } else if (effectType === 'MyHealthHeal') {
+      effectObj = { type: 'MyHealthHeal', value};
     }
 
     if (!effectObj) return;
-    const result = executeGameEffect({ field, enemyField, hand, deck }, effectObj, targetIndex);
+    const result = executeGameEffect({ field, enemyField, hand, deck, myHealth, enemyHealth }, effectObj, targetIndex);
     
     if (result.enemyField) setEnemyField(result.enemyField);
     if (result.myField) setField(result.myField);
     if (result.hand) setHand(result.hand);
     if (result.deck) setDeck(result.deck);
+    if (result.myHealth) setMyHealth(result.myHealth);
+    if (result.enemyHealth) setEnemyHealth(result.enemyHealth);
   };
 
   const executeCardPlay = (targetCard: Card) => {
