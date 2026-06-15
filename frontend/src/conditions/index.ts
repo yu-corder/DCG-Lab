@@ -1,14 +1,12 @@
 import type { Card } from '../../../shared/types';
-import { fieldCondition } from './field/field';
+import { checkFieldCondition } from './field/field';
 
-export interface FieldCondition {
+export interface HasEvolvedFollowerCondition {
   type: 'FieldCondition';
-  trriger: 'HAS_EVOLED_FOLLOWER';
-  value?: number;
+  subType: 'HAS_EVOLED_FOLLOWER';
 }
 
-export type Condition = 
-  | FieldCondition;
+export type CardCondition = HasEvolvedFollowerCondition;
 
 export interface ConditionContext {
   field: Card[];
@@ -22,14 +20,13 @@ export interface ConditionResult {
 }
 
 export const conditionCheck = (
-  context: ConditionContext, 
-  condition: Condition, 
+  context: ConditionContext,
+  condition: CardCondition
 ): ConditionResult => {
   switch (condition.type) {
     case 'FieldCondition':
-      return fieldCondition.conditionDispatcher(context, condition.trriger);
-
+      return checkFieldCondition(context, condition);
     default:
-      return;
+      return {condition: true};
   }
 };

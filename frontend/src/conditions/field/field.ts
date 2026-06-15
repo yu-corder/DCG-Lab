@@ -1,21 +1,20 @@
-import type { Conditions, ConditionContext, ConditionResult } from "../base";
+import type { ConditionContext, ConditionResult, CardCondition } from "../index";
+
+const hasEvoledFollower = (context: ConditionContext): ConditionResult => {
+  const isEvolvedInField = context.field.some(card => card.isEvolved || card.isExEvolved);
+  return { condition: isEvolvedInField };
+};
 
 
-const hasEvoledFollower = ( context: ConditionContext ): ConditionResult => {
-    const hasEvoledFollower = context.field.some(card => card.isEvolved || card.isExEvolved);
-    return { condition: hasEvoledFollower};
-}
+export const checkFieldCondition = (
+  context: ConditionContext,
+  condition: CardCondition
+): ConditionResult => {
+  switch (condition.subType) {
+    case 'HAS_EVOLED_FOLLOWER':
+      return hasEvoledFollower(context);
 
-export const fieldCondition: Conditions = {
-  conditionDispatcher(context: ConditionContext, trigger: string, value?: number): ConditionResult {
-    switch (trigger) {
-        case 'HAS_EVOLED_FOLLOWER':
-        return hasEvoledFollower(context);
-
-        default:
-        return;
-    }
-    
-    return { condition: true};
+    default:
+      return { condition: true };
   }
 };
