@@ -1,6 +1,7 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
-import type { Card } from '../../../shared/types';
+import type { Card, Leader } from '../../../shared/types';
+import type { TurnActionLog } from '../../../shared/types';
 import type { GameInitResponse } from '../../../shared/types';
 import { applyCardEffect as executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
@@ -20,10 +21,17 @@ export function useGameState() {
   const [enemyExEp, setEnemyExEP] = useState(2);
   const [hasEvolvedThisTurn, setHasEvolvedThisTurn] = useState(false);
   const [deck, setDeck] = useState<Card[]>([]);
+  const [myLeader, setMyLeader] = useState<Leader>();
+  const [enemyLeader, setEnemyLeader] = useState<Leader>();
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField] = useState<Card[]>([]);
   const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
   const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
+  const [turnLog, setTurnLog] = useState<TurnActionLog>({
+    cardPlayed: [],
+    followersSummoned: 0,
+    spellsCast: 0
+  });
 
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
@@ -82,6 +90,8 @@ export function useGameState() {
 
         setHand(initialHand);
         setDeck(remainigDeck);
+        setMyLeader(data.myLeader);
+        setEnemyLeader(data.enemyLeader);
       });
   }, []);
 

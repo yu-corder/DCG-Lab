@@ -49,3 +49,9 @@ export interface GameInitResponse {
   myLeader: Leader;
   enemyLeader: Leader;
 }
+
+export interface TurnActionLog {
+  cardPlayed: Card[];
+  followersSummoned: number;
+  spellsCast: number;
+}
