@@ -1,6 +1,7 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
 import type { Card } from '../../../shared/types';
+import type { GameInitResponse } from '../../../shared/types';
 import { applyCardEffect as executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
@@ -72,10 +73,10 @@ export function useGameState() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/cards')
+    fetch('http://localhost:3000/api/game-start')
       .then(res => res.json())
-      .then((data: Card[]) => {
-        const shuffled = shuffle(data);
+      .then((data: GameInitResponse) => {
+        const shuffled = shuffle(data.cards);
         const initialHand = shuffled.slice(0, 4);
         const remainigDeck = shuffled.slice(4);
 

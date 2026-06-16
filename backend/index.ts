@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { Card } from '../shared/types';
 import { albert } from './decks';
+import { myLeader } from './leader';
+import { enemyLeader } from './leader';
 
 const app = new Hono()
 
@@ -13,8 +15,9 @@ app.get('/api/hello', (c) => {
   })
 })
 
-app.get('/api/cards', (c) => {
-  return c.json(albert)
+app.get('/api/game-start', (c) => {
+  const respons = {cards: albert, myLeader: myLeader, enemyLeader: enemyLeader};
+  return c.json(respons);
 })
 
 export default app

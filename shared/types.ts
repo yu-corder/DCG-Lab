@@ -8,6 +8,8 @@ export type ConditionType = 'FieldCondition';
 
 export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
 
+export type Leader = 'Royal' | 'Nemesis' | 'Bishop' | 'Nightmare' | 'Elf' | 'Dragon' | 'Witch';
+
 export interface Ability {
   trigger: AbilityTrigger;
   description: string;
@@ -40,4 +42,10 @@ export interface GameState {
   maxPP: number;
   hand: Card[];
   field: Card[];
+}
+
+export interface GameInitResponse {
+  cards: Card[];
+  myLeader: Leader;
+  enemyLeader: Leader;
 }
