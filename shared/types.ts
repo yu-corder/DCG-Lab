@@ -2,7 +2,7 @@ export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
 export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance';
 
-export type TriggerConditions = 'HAS_EVOLED_FOLLOWER';
+export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER';
 
 export type ConditionType = 'FieldCondition';
 
@@ -17,6 +17,7 @@ export interface Ability {
   abilityType?: AbilityType;
   conditionType?: ConditionType;
   triggerConditions?: TriggerConditions;
+  conditionValue?: number;
 }
 
 export interface Card {

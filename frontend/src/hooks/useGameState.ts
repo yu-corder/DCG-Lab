@@ -268,8 +268,9 @@ export function useGameState() {
       let conditionObj: any = null;
       let conditionType = ability.conditionType;
       let triggerConditions = ability.triggerConditions;
+      let conditionValue = ability.conditionValue ? ability.conditionValue : null;
 
-      conditionObj = {type: conditionType, subType: triggerConditions};
+      conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
       let condition = true;
       if (conditionType && triggerConditions) {
         let resultObj = conditionCheck({ field, enemyField, hand, deck }, conditionObj);

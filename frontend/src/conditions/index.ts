@@ -4,9 +4,16 @@ import { checkFieldCondition } from './field/field';
 export interface HasEvolvedFollowerCondition {
   type: 'FieldCondition';
   subType: 'HAS_EVOLED_FOLLOWER';
+  value?: number;
 }
 
-export type CardCondition = HasEvolvedFollowerCondition;
+export interface HasMatchingCostFollowerCondition {
+  type: 'FieldCondition';
+  subType: 'HAS_MATCHING_COST_FOLLOWER';
+  value: number;
+}
+
+export type CardCondition = HasEvolvedFollowerCondition | HasMatchingCostFollowerCondition;
 
 export interface ConditionContext {
   field: Card[];
