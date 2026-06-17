@@ -30,7 +30,8 @@ export function useGameState() {
   const [turnLog, setTurnLog] = useState<TurnActionLog>({
     cardPlayed: [],
     followersSummoned: 0,
-    spellsCast: 0
+    spellsCast: 0,
+    oneTurnPlayCount: 0,
   });
 
   function shuffle<T>(array: T[]) {
@@ -98,8 +99,11 @@ export function useGameState() {
   const endTurn = () => {
     setTurn(prev => prev + 1);
     const nextMaxPP = Math.min(maxPP + 1, 10);
+    const currentLog = turnLog;
+    currentLog.oneTurnPlayCount = 0;
     setMaxPP(nextMaxPP);
     setPP(nextMaxPP);
+    setTurnLog(currentLog);
     setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false, playedThisTurn: false })));
     setHasEvolvedThisTurn(false);
     console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
@@ -273,6 +277,16 @@ export function useGameState() {
 
   const executeCardPlay = (targetCard: Card) => {
     setPP(prev => prev - targetCard.cost);
+    const currentLog = turnLog;
+    if (targetCard.type === 'Follower') {
+      currentLog.followersSummoned++;
+    } else if (targetCard.type === 'Spell') {
+      currentLog.spellsCast++;
+    }
+    currentLog.oneTurnPlayCount++;
+    const finalPlayed = [...currentLog.cardPlayed, targetCard];
+    currentLog.cardPlayed = finalPlayed;
+    setTurnLog(currentLog);
     
     targetCard.playedThisTurn = true;
     targetCard.abilities.forEach(ability => {
@@ -284,7 +298,7 @@ export function useGameState() {
       conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
       let condition = true;
       if (conditionType && triggerConditions) {
-        let resultObj = conditionCheck({ field, enemyField, hand, deck }, conditionObj);
+        let resultObj = conditionCheck({ field, enemyField, hand, deck, turnLog}, conditionObj);
         condition = resultObj.condition;
       }
 

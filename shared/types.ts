@@ -2,9 +2,9 @@ export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
 export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance';
 
-export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER';
+export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO';
 
-export type ConditionType = 'FieldCondition';
+export type ConditionType = 'FieldCondition' | 'PlayCondition';
 
 export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
 
@@ -54,4 +54,5 @@ export interface TurnActionLog {
   cardPlayed: Card[];
   followersSummoned: number;
   spellsCast: number;
+  oneTurnPlayCount: number;
 }

@@ -1,5 +1,6 @@
-import type { Card } from '../../../shared/types';
+import type { Card, TurnActionLog } from '../../../shared/types';
 import { checkFieldCondition } from './field/field';
+import { checkPlayCondition } from './play/play';
 
 export interface HasEvolvedFollowerCondition {
   type: 'FieldCondition';
@@ -13,13 +14,20 @@ export interface HasMatchingCostFollowerCondition {
   value: number;
 }
 
-export type CardCondition = HasEvolvedFollowerCondition | HasMatchingCostFollowerCondition;
+export interface HasMatchingConboCondition {
+  type: 'PlayCondition';
+  subType: 'HAS_MATCHING_CONBO';
+  value: number;
+}
+
+export type CardCondition = HasEvolvedFollowerCondition | HasMatchingCostFollowerCondition | HasMatchingConboCondition;
 
 export interface ConditionContext {
   field: Card[];
   enemyField: Card[];
   hand: Card[];
   deck: Card[];
+  turnLog: TurnActionLog;
 }
 
 export interface ConditionResult {
@@ -33,6 +41,10 @@ export const conditionCheck = (
   switch (condition.type) {
     case 'FieldCondition':
       return checkFieldCondition(context, condition);
+
+    case 'PlayCondition': 
+      return checkPlayCondition(context, condition);
+
     default:
       return {condition: true};
   }
