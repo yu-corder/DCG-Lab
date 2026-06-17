@@ -27,6 +27,7 @@ export function useGameState() {
   const [enemyField, setEnemyField] = useState<Card[]>([]);
   const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
   const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
+  const [evoledSelectTarget, setEvoledSelectTarget] = useState<number | null>(null);
   const [turnLog, setTurnLog] = useState<TurnActionLog>({
     cardPlayed: [],
     followersSummoned: 0,
@@ -140,6 +141,24 @@ export function useGameState() {
     setSelectedMyCardIndex(null);
     console.log(`${targetCard.name}の攻撃!`);
   };
+  
+  const applyEvolution = (cardIndex: number) => {
+    const targetCard = field[cardIndex];
+    setMyEP(prev => prev - 1);
+    setHasEvolvedThisTurn(true);
+
+    setField(prevField => {
+      const newField = [...prevField];
+      newField[cardIndex] = {
+        ...targetCard,
+        attack: targetCard.attack + 2,
+        defense: targetCard.defense + 2,
+        isEvolved: true,
+        hasAttacked: false,
+      };
+      return newField;
+    });
+  }
 
   const evolveFollower = (cardIndex: number) => {
     const targetCard = field[cardIndex];
@@ -159,7 +178,7 @@ export function useGameState() {
       alert("すでに進化済みのフォロワーです。");
       return;
     }
-
+    let applyChk = false;
     targetCard.abilities.forEach(ability => {
       let conditionObj: any = null;
       let conditionType = ability.conditionType;
@@ -175,23 +194,23 @@ export function useGameState() {
 
       if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
         applyCardEffect(ability.effectType, ability.value);
+      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')) {
+
+        if (enemyField.length >= 1) {
+          setTargetingContext({
+            card: targetCard,
+            effectType: ability.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
+            value: ability?.value || 0
+          });
+          setEvoledSelectTarget(cardIndex);
+          applyChk = true;
+        }
       }
     });
 
-    setMyEP(prev => prev - 1);
-    setHasEvolvedThisTurn(true);
-
-    setField(prevField => {
-      const newField = [...prevField];
-      newField[cardIndex] = {
-        ...targetCard,
-        attack: targetCard.attack + 2,
-        defense: targetCard.defense + 2,
-        isEvolved: true,
-        hasAttacked: false,
-      };
-      return newField;
-    });
+    if (!applyChk) {
+      applyEvolution(cardIndex);
+    }
   };
 
   const exEvolveFollower = (cardIndex: number) => {
@@ -337,11 +356,18 @@ export function useGameState() {
       executeCardPlay(targetingContext.card);
       applyCardEffect(targetingContext.effectType, targetingContext.value, targetIndex);
     }
+
+    if (evoledSelectTarget !== null) {
+      const evoledFollwer = evoledSelectTarget;
+      applyEvolution(evoledFollwer);
+      setEvoledSelectTarget(null);
+    }
     setTargetingContext(null);
   };
 
   const cancelTargeting = () => {
     setTargetingContext(null);
+    setEvoledSelectTarget(null);
   };
 
   const playCard = (targetCard: Card) => {
