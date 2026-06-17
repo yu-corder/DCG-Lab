@@ -1,6 +1,6 @@
 export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
-export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance';
+export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve';
 
 export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO';
 

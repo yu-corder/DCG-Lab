@@ -160,6 +160,24 @@ export function useGameState() {
       return;
     }
 
+    targetCard.abilities.forEach(ability => {
+      let conditionObj: any = null;
+      let conditionType = ability.conditionType;
+      let triggerConditions = ability.triggerConditions;
+      let conditionValue = ability.conditionValue ? ability.conditionValue : null;
+
+      conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
+      let condition = true;
+      if (conditionType && triggerConditions) {
+        let resultObj = conditionCheck({ field, enemyField, hand, deck, turnLog}, conditionObj);
+        condition = resultObj.condition;
+      }
+
+      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
+        applyCardEffect(ability.effectType, ability.value);
+      }
+    });
+
     setMyEP(prev => prev - 1);
     setHasEvolvedThisTurn(true);
 
