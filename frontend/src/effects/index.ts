@@ -3,6 +3,7 @@ import { aoeDamageEffect, selectDamageEffect } from './damage/damage';
 import { selectDestroyEffect } from './destory/destroy';
 import { DrawEffect } from './draw/draw';
 import { MyHealthHealEffect } from './heal/heal';
+import { getTokenEffect } from './token/token';
 
 export interface EffectContext {
   field: Card[];
@@ -49,7 +50,7 @@ export const applyCardEffect = (
       return MyHealthHealEffect.execute(context, values);
 
     case 'GetToken':
-      return {};
+      return getTokenEffect.execute(context, values);
 
     default:
       return {};
