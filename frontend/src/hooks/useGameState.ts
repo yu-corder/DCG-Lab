@@ -21,6 +21,7 @@ export function useGameState() {
   const [enemyExEp, setEnemyExEP] = useState(2);
   const [hasEvolvedThisTurn, setHasEvolvedThisTurn] = useState(false);
   const [deck, setDeck] = useState<Card[]>([]);
+  const [token, setToken] = useState<Card[]>([]);
   const [myLeader, setMyLeader] = useState<Leader>();
   const [enemyLeader, setEnemyLeader] = useState<Leader>();
   const [isMulligan, setIsMulligan] = useState(true);
@@ -94,6 +95,7 @@ export function useGameState() {
         setDeck(remainigDeck);
         setMyLeader(data.myLeader);
         setEnemyLeader(data.enemyLeader);
+        setToken(data.token);
       });
   }, []);
 

@@ -48,6 +48,7 @@ export interface GameInitResponse {
   cards: Card[];
   myLeader: Leader;
   enemyLeader: Leader;
+  token: Card[];
 }
 
 export interface TurnActionLog {
