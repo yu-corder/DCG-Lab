@@ -280,7 +280,14 @@ export function useGameState() {
 
   const enemyPlayCard = () => {
     console.log("EnemyPlay!");
-    const enemyCard = deck.slice(0, 1);
+    let enemyCard;
+    for (let i:number = 0; i < deck.length; i++) {
+      enemyCard = deck.slice(i, i + 1);
+      if (enemyCard[0].type === 'Follower') {
+        break;
+      }
+    }
+    console.log(enemyCard);
     if (enemyField.length >= 5) return;
     setEnemyField(prev => [...prev, ...enemyCard]);
   };
