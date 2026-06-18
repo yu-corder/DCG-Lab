@@ -1,11 +1,15 @@
 import type { HealEffectProcessor, EffectContext, EffectResult } from "./base";
+import type { EfectValues } from "../../../../shared/types";
 
 export const MyHealthHealEffect: HealEffectProcessor = {
-  execute(context: EffectContext, value: number): EffectResult {
-    const myHealth = context.myHealth + value > 20 ? 20 : context.myHealth + value;
+  execute(context: EffectContext, values: EfectValues): EffectResult {
+    const healAmount = values.value1 ?? 0;
+    const updatedMyHealth = context.myHealth + healAmount > 20 
+      ? 20 
+      : context.myHealth + healAmount;
 
     return {
-      myHealth: myHealth
+      myHealth: updatedMyHealth
     };
   }
 };

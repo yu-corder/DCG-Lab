@@ -1,11 +1,14 @@
 import type { CardEffect, EffectContext, EffectResult } from "./base";
+import type { EfectValues } from "../../../../shared/types";
 
 export const aoeDamageEffect: CardEffect = {
-  execute(context: EffectContext, value: number): EffectResult {
+  execute(context: EffectContext, values: EfectValues): EffectResult {
+    const damage = values.value1 ?? 0; 
+
     const updatedEnemyField = context.enemyField
       .map(follower => ({
         ...follower,
-        defense: follower.defense - value
+        defense: follower.defense - damage
       }))
       .filter(follower => follower.defense > 0);
     
@@ -16,13 +19,15 @@ export const aoeDamageEffect: CardEffect = {
 };
 
 export const selectDamageEffect: CardEffect = {
-  execute(context: EffectContext, value: number, targetIndex?: number): EffectResult {
+  execute(context: EffectContext, values: EfectValues, targetIndex?: number): EffectResult {
     if (targetIndex === undefined) return {};
+    
+    const damage = values.value1 ?? 0;
 
     const updatedEnemyField = context.enemyField
       .map((follower, index) => {
         if (index !== targetIndex) return follower;
-        return { ...follower, defense: follower.defense - value };
+        return { ...follower, defense: follower.defense - damage };
       })
       .filter(follower => follower.defense > 0);
 

@@ -1,6 +1,6 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
-import type { Card, Leader } from '../../../shared/types';
+import type { Card, Leader, EfectValues } from '../../../shared/types';
 import type { TurnActionLog } from '../../../shared/types';
 import type { GameInitResponse } from '../../../shared/types';
 import { applyCardEffect as executeGameEffect } from '../effects';
@@ -195,14 +195,14 @@ export function useGameState() {
       }
 
       if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
-        applyCardEffect(ability.effectType, ability.value);
+        applyCardEffect(ability.effectType, ability.values ?? {});
       } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')) {
 
         if (enemyField.length >= 1) {
           setTargetingContext({
             card: targetCard,
             effectType: ability.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
-            value: ability?.value || 0
+            values: ability.values ?? {}
           });
           setEvoledSelectTarget(cardIndex);
           applyChk = true;
@@ -294,24 +294,10 @@ export function useGameState() {
     setEnemyField(prev => [...prev, ...enemyCard]);
   };
 
-  const applyCardEffect = (effectType: string | undefined, value: number = 0, targetIndex?: number) => {
+  const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number) => {
     if (!effectType) return;
 
-    let effectObj: any = null;
-    if (effectType === 'SelectDamage') {
-      effectObj = { type: 'SelectDamage', value };
-    } else if (effectType === 'AoeDamage') {
-      effectObj = { type: 'AoEDamage', value };
-    } else if (effectType === 'SelectDestroy') {
-      effectObj = { type: 'SelectDestroy'};
-    } else if (effectType === 'Draw') {
-      effectObj = { type: 'Draw'};
-    } else if (effectType === 'MyHealthHeal') {
-      effectObj = { type: 'MyHealthHeal', value};
-    }
-
-    if (!effectObj) return;
-    const result = executeGameEffect({ field, enemyField, hand, deck, myHealth, enemyHealth }, effectObj, targetIndex);
+    const result = executeGameEffect(effectType, values, { field, enemyField, hand, deck, myHealth, enemyHealth, token }, targetIndex);
     
     if (result.enemyField) setEnemyField(result.enemyField);
     if (result.myField) setField(result.myField);
@@ -349,7 +335,7 @@ export function useGameState() {
       }
 
       if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
-        applyCardEffect(ability.effectType, ability.value);
+        applyCardEffect(ability.effectType, ability.values ?? {});
       }
       if (ability.abilityType === 'SHISSOU') {
         targetCard.hasAttacked = false;
@@ -361,11 +347,10 @@ export function useGameState() {
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
-    if (targetingContext.effectType === 'SelectDamage' || targetingContext.effectType === 'SelectDestroy') {
+    if (evoledSelectTarget === null) {
       executeCardPlay(targetingContext.card);
-      applyCardEffect(targetingContext.effectType, targetingContext.value, targetIndex);
     }
-
+    applyCardEffect(targetingContext.effectType, targetingContext.values, targetIndex);
     if (evoledSelectTarget !== null) {
       const evoledFollwer = evoledSelectTarget;
       applyEvolution(evoledFollwer);
@@ -396,7 +381,7 @@ export function useGameState() {
       setTargetingContext({
         card: targetCard,
         effectType: fanfareAbility.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
-        value: fanfareAbility?.value || 0
+        values: fanfareAbility.values ?? {}
       });
       return;
     }

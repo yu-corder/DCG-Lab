@@ -1,45 +1,8 @@
-import type { Card } from '../../../shared/types';
+import type { Card, EfectValues } from '../../../shared/types';
 import { aoeDamageEffect, selectDamageEffect } from './damage/damage';
 import { selectDestroyEffect } from './destory/destroy';
 import { DrawEffect } from './draw/draw';
 import { MyHealthHealEffect } from './heal/heal';
-
-export interface SelectDamageEffect {
-  type: 'SelectDamage';
-  value: number;
-}
-
-export interface AoEDamageEffect {
-  type: 'AoEDamage';
-  value: number;
-}
-
-export interface SelectDestroyEffect {
-  type: 'SelectDestroy';
-}
-
-export interface BuffEffect {
-  type: 'Buff';
-  attack: number;
-  defense: number;
-}
-
-export interface DrawEffect {
-  type: 'Draw';
-}
-
-export interface MyHealthHealEffect {
-  type: 'MyHealthHeal';
-  value: number;
-}
-
-export type CardEffect = 
-  | SelectDamageEffect 
-  | AoEDamageEffect 
-  | SelectDestroyEffect 
-  | BuffEffect
-  | DrawEffect
-  | MyHealthHealEffect;
 
 export interface EffectContext {
   field: Card[];
@@ -48,6 +11,7 @@ export interface EffectContext {
   deck: Card[];
   myHealth: number;
   enemyHealth: number;
+  token: Card[];
 }
 
 export interface EffectResult {
@@ -60,16 +24,17 @@ export interface EffectResult {
 }
 
 export const applyCardEffect = (
-  context: EffectContext, 
-  effect: CardEffect, 
+  effectType: string,
+  values: EfectValues,
+  context: EffectContext,
   targetIndex?: number
 ): EffectResult => {
-  switch (effect.type) {
+  switch (effectType) {
     case 'SelectDamage':
-      return selectDamageEffect.execute(context, effect.value, targetIndex);
+      return selectDamageEffect.execute(context, values, targetIndex);
 
     case 'AoEDamage':
-      return aoeDamageEffect.execute(context, effect.value);
+      return aoeDamageEffect.execute(context, values);
 
     case 'SelectDestroy':
       return selectDestroyEffect.execute(context, targetIndex);
@@ -81,7 +46,10 @@ export const applyCardEffect = (
       return DrawEffect.execute(context);
     
     case 'MyHealthHeal':
-      return MyHealthHealEffect.execute(context, effect.value);
+      return MyHealthHealEffect.execute(context, values);
+
+    case 'GetToken':
+      return {};
 
     default:
       return {};

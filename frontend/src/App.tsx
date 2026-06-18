@@ -72,7 +72,7 @@ function App() {
               alignItems: 'center',
               gap: '15px'
             }}>
-              ⚠️ 効果の対象となる敵フォロワーを選択してください（ダメージ: {targetingContext.value}）
+              ⚠️ 効果の対象となる敵フォロワーを選択してください
             </div>
           )}
 

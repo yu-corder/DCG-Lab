@@ -1,5 +1,5 @@
 // frontend/src/effects/destroy/base.ts
-import type { Card } from '../../../../shared/types';
+import type { Card, EfectValues } from '../../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
@@ -20,5 +20,5 @@ export interface EffectResult {
 }
 
 export interface HealEffectProcessor {
-  execute(context: EffectContext, value: number): EffectResult;
+  execute(context: EffectContext, values: EfectValues): EffectResult;
 }

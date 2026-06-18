@@ -1,10 +1,11 @@
-import type { Card } from '../../../../shared/types';
+import type { Card, EfectValues } from '../../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
   enemyField: Card[];
   hand: Card[];
   deck: Card[];
+  token: Card[];
 }
 
 export interface EffectResult {
@@ -15,5 +16,5 @@ export interface EffectResult {
 }
 
 export interface CardEffect {
-  execute(context: EffectContext, value: number, targetIndex?: number): EffectResult;
+  execute(context: EffectContext, values: EfectValues, targetIndex?: number): EffectResult;
 }

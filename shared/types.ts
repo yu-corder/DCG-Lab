@@ -10,12 +10,19 @@ export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
 
 export type Leader = 'Royal' | 'Nemesis' | 'Bishop' | 'Nightmare' | 'Elf' | 'Dragon' | 'Witch';
 
+export interface EfectValues {
+  attack?: number;
+  defense?: number;
+  value1?: number;
+  value2?: number;
+}
+
 export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
   effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw';
-  value?: number;
+  values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;
   triggerConditions?: TriggerConditions;
@@ -23,7 +30,7 @@ export interface Ability {
 }
 
 export interface Card {
-  id: string;
+  id: number;
   name: string;
   cost: number;
   type: CardType;
