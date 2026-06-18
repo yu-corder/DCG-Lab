@@ -33,7 +33,7 @@ export const applyCardEffect = (
     case 'SelectDamage':
       return selectDamageEffect.execute(context, values, targetIndex);
 
-    case 'AoEDamage':
+    case 'AoeDamage':
       return aoeDamageEffect.execute(context, values);
 
     case 'SelectDestroy':
