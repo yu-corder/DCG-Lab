@@ -41,6 +41,7 @@ export interface Card {
   isEvolved: boolean;
   playedThisTurn: boolean;
   isExEvolved: boolean;
+  instanceId?: string;
 }
 
 export interface GameState {

@@ -83,11 +83,19 @@ export function useGameState() {
     drawCard(array, array2);
   };
 
+  const assignInstanceIds = (cards: Card[]): Card[] => {
+    return cards.map(card => ({
+      ...card,
+      instanceId: crypto.randomUUID()
+    }));
+  };
+
   useEffect(() => {
     fetch('http://localhost:3000/api/game-start')
       .then(res => res.json())
       .then((data: GameInitResponse) => {
-        const shuffled = shuffle(data.cards);
+        const cardsWithId = assignInstanceIds(data.cards);
+        const shuffled = shuffle(cardsWithId);
         const initialHand = shuffled.slice(0, 4);
         const remainigDeck = shuffled.slice(4);
 
