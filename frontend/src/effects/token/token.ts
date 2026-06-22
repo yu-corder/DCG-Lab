@@ -14,7 +14,10 @@ export const getTokenEffect: CardEffect = {
     }
 
     for (let i:number = 0; i < size; i++) {
-        currentHand = [...currentHand, { ...targetToken }];
+        currentHand = [...currentHand, { 
+          ...targetToken, 
+          instanceId: crypto.randomUUID()
+        }];
     }
 
     return {

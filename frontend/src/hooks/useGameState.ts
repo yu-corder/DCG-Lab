@@ -349,7 +349,7 @@ export function useGameState() {
         targetCard.hasAttacked = false;
       }
     });
-    setHand(prev => prev.filter(c => c.id !== targetCard.id));
+    setHand(prev => prev.filter(c => c.instanceId !== targetCard.instanceId));
     setField(prev => [...prev, targetCard]);
   };
 
