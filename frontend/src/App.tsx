@@ -16,10 +16,10 @@ function App() {
     myExEp,
     isMulligan,
     enemyField,
-    selectedMyCardIndex,
+    selectedMyCardId,
     targetingContext,
     selectTargetFollower,
-    setSelectedMyCardIndex,
+    setSelectedMyCardId,
     handleMulliganConfirm,
     endTurn,
     attackToLeader,
@@ -32,6 +32,7 @@ function App() {
   } = useGameState();
 
   const isTargetMode = targetingContext !== null;
+  const isCardSelected = selectedMyCardId !== null;
 
   return (
     <div className="App" style={{
@@ -91,17 +92,17 @@ function App() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '20px',
-                  cursor: (selectedMyCardIndex !== null && !isTargetMode) ? 'pointer' : 'default',
+                  cursor: (isCardSelected && !isTargetMode) ? 'pointer' : 'default',
                   padding: '10px',
-                  background: (selectedMyCardIndex !== null && !isTargetMode) ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255,255,255,0.02)',
-                  border: (selectedMyCardIndex !== null && !isTargetMode) ? '2px dashed #ff4d4d' : '1px solid rgba(255,255,255,0.05)',
+                  background: (isCardSelected && !isTargetMode) ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255,255,255,0.02)',
+                  border: (isCardSelected && !isTargetMode) ? '2px dashed #ff4d4d' : '1px solid rgba(255,255,255,0.05)',
                   borderRadius: '12px',
                   transition: 'all 0.2s',
                   opacity: isTargetMode ? 0.4 : 1,
                   pointerEvents: isTargetMode ? 'none' : 'auto'
                 }}
                 onClick={() => {
-                  if (selectedMyCardIndex !== null && !isTargetMode) attackToLeader(selectedMyCardIndex);
+                  if (isCardSelected && !isTargetMode) attackToLeader(selectedMyCardId!);
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
@@ -137,12 +138,12 @@ function App() {
               >
                 {enemyField.map((card, index) => (
                   <div 
-                    key={`${card.id}-${index}`} 
+                    key={card.instanceId || `${card.id}-${index}`}
                     style={{
                       position: 'relative',
                       border: isTargetMode 
                         ? '2px solid #ff4d4d' 
-                        : selectedMyCardIndex !== null 
+                        : isCardSelected 
                           ? '2px solid #ff9900' 
                           : '2px solid #555',
                       borderRadius: '10px',
@@ -152,7 +153,7 @@ function App() {
                       boxShadow: isTargetMode 
                         ? '0 0 15px rgba(255,77,77,0.8)' 
                         : '0 4px 10px rgba(0,0,0,0.5)',
-                      cursor: (isTargetMode || selectedMyCardIndex !== null) ? 'pointer' : 'default',
+                      cursor: (isTargetMode || isCardSelected) ? 'pointer' : 'default',
                       transform: isTargetMode ? 'scale(1.03)' : 'scale(1)',
                       transition: 'all 0.2s'
                     }}
@@ -161,8 +162,8 @@ function App() {
 
                       if (isTargetMode) {
                         selectTargetFollower(index);
-                      } else if (selectedMyCardIndex !== null) {
-                        attackToFollower(selectedMyCardIndex, index);
+                      } else if (isCardSelected) {
+                        attackToFollower(selectedMyCardId!, card.instanceId!);
                       }
                     }}
                   >
@@ -188,10 +189,10 @@ function App() {
                 pointerEvents: isTargetMode ? 'none' : 'auto'
               }}>
                 {field.map((card, index) => {
-                  const isSelected = selectedMyCardIndex === index;
+                  const isSelected = selectedMyCardId === card.instanceId;
                   return (
                     <div 
-                      key={`${card.id}-${index}`} 
+                      key={card.instanceId || `${card.id}-${index}`}
                       style={{
                         position: 'relative',
                         border: isSelected ? '2px solid #ffcc00' : card.isExEvolved ? '2px solid #b300ff' : card.isEvolved ? '2px solid #00ffcc' : '2px solid #888',
@@ -210,7 +211,7 @@ function App() {
                       <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#e0a3ff' : card.isEvolved ? '#a3ffee' : '#fff' }}>{card.name}</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '0 4px', zIndex: 2 }}>
                         <button
-                          onClick={() => setSelectedMyCardIndex(isSelected ? null : index)}
+                          onClick={() => setSelectedMyCardId(isSelected ? null : card.instanceId!)}
                           disabled={card.hasAttacked}
                           style={{ fontSize: '0.6rem', padding: '2px', backgroundColor: card.hasAttacked ? '#333' : '#ffcc00', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
                         >
@@ -219,14 +220,14 @@ function App() {
                         <div style={{ display: 'flex', gap: '2px' }}>
                           <button
                             disabled={turn < 4 || card.isEvolved}
-                            onClick={() => evolveFollower(index)}
+                            onClick={() => evolveFollower(card.instanceId!)}
                             style={{ flex: 1, fontSize: '0.5rem', padding: '2px 0', backgroundColor: '#00ffcc', color: '#000', border: 'none', borderRadius: '2px', cursor: 'pointer', opacity: (turn < 4 || card.isEvolved) ? 0.4 : 1 }}
                           >
                             進化
                           </button>
                           <button
                             disabled={turn < 6 || card.isEvolved}
-                            onClick={() => exEvolveFollower(index)}
+                            onClick={() => exEvolveFollower(card.instanceId!)}
                             style={{ flex: 1, fontSize: '0.5rem', padding: '2px 0', backgroundColor: '#b300ff', color: '#fff', border: 'none', borderRadius: '2px', cursor: 'pointer', opacity: (turn < 6 || card.isEvolved) ? 0.4 : 1 }}
                           >
                             超進
@@ -240,9 +241,9 @@ function App() {
                 })}
               </div>
 
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
                 gap: '5px',
                 opacity: isTargetMode ? 0.4 : 1,
                 pointerEvents: isTargetMode ? 'none' : 'auto'
@@ -259,7 +260,7 @@ function App() {
                 }}>
                   {hand.map(card => (
                     <button 
-                      key={card.id} 
+                      key={card.instanceId}
                       onClick={() => playCard(card)}
                       style={{
                         backgroundColor: pp >= card.cost ? '#2c323f' : '#1a1d24',

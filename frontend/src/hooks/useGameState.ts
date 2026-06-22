@@ -26,9 +26,9 @@ export function useGameState() {
   const [enemyLeader, setEnemyLeader] = useState<Leader>();
   const [isMulligan, setIsMulligan] = useState(true);
   const [enemyField, setEnemyField] = useState<Card[]>([]);
-  const [selectedMyCardIndex, setSelectedMyCardIndex] = useState<number | null>(null);
+  const [selectedMyCardId, setSelectedMyCardId] = useState<string | null>(null);
   const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
-  const [evoledSelectTarget, setEvoledSelectTarget] = useState<number | null>(null);
+  const [evoledSelectTargetId, setEvoledSelectTargetId] = useState<string | null>(null);
   const [turnLog, setTurnLog] = useState<TurnActionLog>({
     cardPlayed: [],
     followersSummoned: 0,
@@ -53,7 +53,7 @@ export function useGameState() {
     const remainigDeck = deck.slice(count);
 
     const finalHand = hand
-      .filter(h => !selectCards.some(s => s.id === h.id))
+      .filter(h => !selectCards.some(s => s.instanceId === h.instanceId))
       .concat(newDrawnCards);
 
     const finalDeck = shuffle([...remainigDeck, ...selectCards]);
@@ -86,7 +86,7 @@ export function useGameState() {
   const assignInstanceIds = (cards: Card[]): Card[] => {
     return cards.map(card => ({
       ...card,
-      instanceId: crypto.randomUUID()
+      instanceId: card.instanceId || crypto.randomUUID()
     }));
   };
 
@@ -122,8 +122,10 @@ export function useGameState() {
     startTurn(hand, deck);
   };
 
-  const attackToLeader = (cardIndex: number) => {
-    const targetCard = field[cardIndex];
+  const attackToLeader = (targetInstanceId: string) => {
+    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    if (!targetCard) return;
+
     const hasStrom = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
     if (targetCard.playedThisTurn && !hasStrom) {
       alert("このフォロワーは、場に出たターンにはリーダーを攻撃できません。");
@@ -142,36 +144,32 @@ export function useGameState() {
     }
 
     setEnemyHealth(prev => prev - (targetCard.attack || 0));
-
-    setField(prevField => {
-      const newField = [...prevField];
-      newField[cardIndex] = { ...targetCard, hasAttacked: true };
-      return newField;
-    });
-    setSelectedMyCardIndex(null);
+    setField(prevField => prevField.map(card => 
+      card.instanceId === targetInstanceId ? { ...card, hasAttacked: true } : card
+    ));
+    setSelectedMyCardId(null);
     console.log(`${targetCard.name}の攻撃!`);
   };
   
-  const applyEvolution = (cardIndex: number) => {
-    const targetCard = field[cardIndex];
+  const applyEvolution = (targetInstanceId: string) => {
     setMyEP(prev => prev - 1);
     setHasEvolvedThisTurn(true);
 
-    setField(prevField => {
-      const newField = [...prevField];
-      newField[cardIndex] = {
-        ...targetCard,
-        attack: targetCard.attack + 2,
-        defense: targetCard.defense + 2,
+    setField(prevField => prevField.map(card => 
+      card.instanceId === targetInstanceId ? {
+        ...card,
+        attack: card.attack + 2,
+        defense: card.defense + 2,
         isEvolved: true,
         hasAttacked: false,
-      };
-      return newField;
-    });
+      } : card
+    ));
   }
 
-  const evolveFollower = (cardIndex: number) => {
-    const targetCard = field[cardIndex];
+  const evolveFollower = (targetInstanceId: string) => {
+    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    if (!targetCard) return;
+
     if (turn < 4) {
       alert("進化可能ターンではありません。");
       return;
@@ -212,19 +210,21 @@ export function useGameState() {
             effectType: ability.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
             values: ability.values ?? {}
           });
-          setEvoledSelectTarget(cardIndex);
+          setEvoledSelectTargetId(targetInstanceId);
           applyChk = true;
         }
       }
     });
 
     if (!applyChk) {
-      applyEvolution(cardIndex);
+      applyEvolution(targetInstanceId);
     }
   };
 
-  const exEvolveFollower = (cardIndex: number) => {
-    const targetCard = field[cardIndex];
+  const exEvolveFollower = (targetInstanceId: string) => {
+    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    if (!targetCard) return;
+
     if (turn < 6) {
       alert("超進化可能ターンではありません。");
       return;
@@ -245,61 +245,59 @@ export function useGameState() {
     setMyExEp(prev => prev - 1);
     setHasEvolvedThisTurn(true);
 
-    setField(prevField => {
-      const newField = [...prevField];
-      newField[cardIndex] = {
-        ...targetCard,
-        attack: targetCard.attack + 3,
-        defense: targetCard.defense + 3,
+    setField(prevField => prevField.map(card => 
+      card.instanceId === targetInstanceId ? {
+        ...card,
+        attack: card.attack + 3,
+        defense: card.defense + 3,
         isEvolved: true,
         hasAttacked: false,
         isExEvolved: true,
-      };
-      return newField;
-    });
+      } : card
+    ));
   };
 
-  const attackToFollower = (myCardIndex: number, enemyCardIndex: number) => {
-    const targetCard = field[myCardIndex];
-    const targetEnemyCard = enemyField[enemyCardIndex];
-    const isExEvoled = targetCard.isExEvolved;
+  const attackToFollower = (myInstanceId: string, enemyInstanceId: string) => {
+    const targetCard = field.find(f => f.instanceId === myInstanceId);
+    const targetEnemyCard = enemyField.find(f => f.instanceId === enemyInstanceId);
+    if (!targetCard || !targetEnemyCard) return;
 
+    const isExEvoled = targetCard.isExEvolved;
     const currentDefense = isExEvoled ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
 
     if (currentDefense <= 0) {
-      setField(prev => prev.filter(f => f.id !== targetCard.id));
+      setField(prev => prev.filter(f => f.instanceId !== myInstanceId));
     } else {
-      setField(prev => prev.map((c, i) =>
-        i === myCardIndex ? { ...c, hasAttacked: true, defense: currentDefense } : c
+      setField(prev => prev.map(c =>
+        c.instanceId === myInstanceId ? { ...c, hasAttacked: true, defense: currentDefense } : c
       ));
     }
 
     if (currentEnemyDefense <= 0) {
-      setEnemyField(prev => prev.filter(f => f.id !== targetEnemyCard.id));
+      setEnemyField(prev => prev.filter(f => f.instanceId !== enemyInstanceId));
       const damage = isExEvoled ? 1 : 0;
       setEnemyHealth(prev => prev - damage);
     } else {
-      setEnemyField(prev => prev.map((c, i) =>
-        i === enemyCardIndex ? { ...c, defense: currentEnemyDefense } : c
+      setEnemyField(prev => prev.map(c =>
+        c.instanceId === enemyInstanceId ? { ...c, defense: currentEnemyDefense } : c
       ));
     }
-
-    setSelectedMyCardIndex(null);
+    setSelectedMyCardId(null);
   };
 
   const enemyPlayCard = () => {
     console.log("EnemyPlay!");
-    let enemyCard;
-    for (let i:number = 0; i < deck.length; i++) {
-      enemyCard = deck.slice(i, i + 1);
-      if (enemyCard[0].type === 'Follower') {
+    let enemyCard: Card | null = null;
+    for (let i = 0; i < deck.length; i++) {
+      if (deck[i].type === 'Follower') {
+        enemyCard = deck[i];
         break;
       }
     }
-    console.log(enemyCard);
-    if (enemyField.length >= 5) return;
-    setEnemyField(prev => [...prev, ...enemyCard]);
+    if (!enemyCard || enemyField.length >= 5) return;
+    const enemyCardWithId = enemyCard.instanceId ? enemyCard : { ...enemyCard, instanceId: crypto.randomUUID() };
+    setEnemyField(prev => [...prev, enemyCardWithId]);
   };
 
   const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number) => {
@@ -350,26 +348,27 @@ export function useGameState() {
       }
     });
     setHand(prev => prev.filter(c => c.instanceId !== targetCard.instanceId));
-    setField(prev => [...prev, targetCard]);
+    if (targetCard.type === 'Follower') {
+      setField(prev => [...prev, targetCard]);
+    }
   };
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
-    if (evoledSelectTarget === null) {
+    if (evoledSelectTargetId === null) {
       executeCardPlay(targetingContext.card);
     }
     applyCardEffect(targetingContext.effectType, targetingContext.values, targetIndex);
-    if (evoledSelectTarget !== null) {
-      const evoledFollwer = evoledSelectTarget;
-      applyEvolution(evoledFollwer);
-      setEvoledSelectTarget(null);
+    if (evoledSelectTargetId !== null) {
+      applyEvolution(evoledSelectTargetId);
+      setEvoledSelectTargetId(null);
     }
     setTargetingContext(null);
   };
 
   const cancelTargeting = () => {
     setTargetingContext(null);
-    setEvoledSelectTarget(null);
+    setEvoledSelectTargetId(null);
   };
 
   const playCard = (targetCard: Card) => {
@@ -385,7 +384,6 @@ export function useGameState() {
 
     if (hasSelectFanfare && enemyField.length >= 1) {
       const fanfareAbility = targetCard.abilities.find(a => a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy');
-      console.log(fanfareAbility);
       setTargetingContext({
         card: targetCard,
         effectType: fanfareAbility.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
@@ -410,10 +408,10 @@ export function useGameState() {
     myExEp,
     isMulligan,
     enemyField,
-    selectedMyCardIndex,
+    selectedMyCardId,
     targetingContext,
     selectTargetFollower,
-    setSelectedMyCardIndex,
+    setSelectedMyCardId,
     handleMulliganConfirm,
     endTurn,
     attackToLeader,
