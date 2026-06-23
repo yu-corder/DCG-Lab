@@ -197,3 +197,44 @@ export const testDeck_2: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_3: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 200 + index,
+  name: '選択火力のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 2,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'SelectDamage',
+      values: { value1: 2 },
+      description: 'ファンファーレ 相手の場のフォロワー1体を選ぶ。それに2ダメージ。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_4: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 300 + index,
+  name: '確定除去のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 2,
+  defense: 5,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'SelectDestroy',
+      description: 'ファンファーレ 相手の場のフォロワー1体を選ぶ。それを破壊する。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
