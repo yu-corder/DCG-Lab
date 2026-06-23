@@ -47,4 +47,28 @@ describe("useGameState", () => {
     expect(result.current.hand.some(c => c.instanceId === initialHandIds[1])).toBe(false);
     expect(result.current.hand.length).toBe(5);
   });
+
+  it("should advance turn and refresh PP when turn ends", async () => {
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    expect(result.current.turn).toBe(1);
+    expect(result.current.pp).toBe(1);
+    expect(result.current.maxPP).toBe(1);
+
+    act(() => {
+      result.current.endTurn();
+    });
+
+    expect(result.current.turn).toBe(2);
+    expect(result.current.maxPP).toBe(2);
+    expect(result.current.pp).toBe(2);
+  });
 });
