@@ -176,3 +176,24 @@ export const testDeck_1: Card[] = [
       isExEvolved: false,
     },
 ];
+
+export const testDeck_2: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 100 + index,
+  name: '全体火力のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 2,
+  defense: 2,
+  abilities: [
+    {
+        trigger: 'Fanfare',
+        effectType: 'AoeDamage',
+        values: { value1: 1 },
+        description: 'ファンファーレ 相手の場のフォロワーすべてに1ダメージ。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
