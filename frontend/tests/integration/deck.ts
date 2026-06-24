@@ -238,3 +238,24 @@ export const testDeck_4: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_5: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 400 + index,
+  name: '知恵のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'Draw',
+      values: { value1: 3 },
+      description: 'ファンファーレ カードを2枚引く。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));

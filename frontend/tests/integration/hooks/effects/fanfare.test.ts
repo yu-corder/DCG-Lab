@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5 } from "../../deck";
 
 describe("Fanfare Effect", () => {
   it("should deal 1 damage to all enemy followers and they should survive with 1 defense", async () => {
@@ -150,6 +150,40 @@ describe("Fanfare Effect", () => {
     });
 
     expect(result.current.enemyField.length).toBe(0);
+    expect(result.current.targetingContext).toBeNull();
+    expect(result.current.field.some(c => c.instanceId === playableCard.instanceId)).toBe(true);
+  });
+
+  it("should draw 2 cards from deck when draw fanfare follower is played", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_5,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+    expect(result.current.hand.length).toBe(5);
+    const playableCard = result.current.hand[0];
+
+    act(() => {
+      result.current.playCard(playableCard);
+    });
+
+    expect(result.current.hand.length).toBe(7);
     expect(result.current.targetingContext).toBeNull();
     expect(result.current.field.some(c => c.instanceId === playableCard.instanceId)).toBe(true);
   });
