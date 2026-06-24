@@ -44,7 +44,7 @@ export const applyCardEffect = (
       return {};
 
     case 'Draw':
-      return DrawEffect.execute(context);
+      return DrawEffect.execute(context, values);
     
     case 'MyHealthHeal':
       return MyHealthHealEffect.execute(context, values);

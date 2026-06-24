@@ -1,11 +1,12 @@
 // frontend/src/effects/destroy/base.ts
-import type { Card } from '../../../../shared/types';
+import type { Card, EfectValues } from '../../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
   enemyField: Card[];
   hand: Card[];
   deck: Card[];
+  token: Card[];
 }
 
 export interface EffectResult {
@@ -15,6 +16,6 @@ export interface EffectResult {
   deck?: Card[];
 }
 
-export interface DrawEffectProcessor {
-  execute(context: EffectContext): EffectResult;
+export interface CardEffect {
+  execute(context: EffectContext, values: EfectValues): EffectResult;
 }
