@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4, testDeck_5 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6 } from "../../deck";
 
 describe("Fanfare Effect", () => {
   it("should deal 1 damage to all enemy followers and they should survive with 1 defense", async () => {
@@ -186,5 +186,52 @@ describe("Fanfare Effect", () => {
     expect(result.current.hand.length).toBe(7);
     expect(result.current.targetingContext).toBeNull();
     expect(result.current.field.some(c => c.instanceId === playableCard.instanceId)).toBe(true);
+  });
+
+  it("should heal my leader health by 3 when heal fanfare follower is played", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_6,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+    act(() => {
+      result.current.damageMyLeader(5);
+    });
+    expect(result.current.myHealth).toBe(15);
+
+    const playableCard = result.current.hand[0];
+    act(() => {
+      result.current.playCard(playableCard);
+    });
+
+    expect(result.current.myHealth).toBe(19);
+    expect(result.current.targetingContext).toBeNull();
+    expect(result.current.field.some(c => c.instanceId === playableCard.instanceId)).toBe(true);
+
+    act(() => {
+      result.current.endTurn();
+    });
+
+    const playableCard2 = result.current.hand[0];
+    act(() => {
+      result.current.playCard(playableCard2);
+    });
+    expect(result.current.myHealth).toBe(20);
+
   });
 });

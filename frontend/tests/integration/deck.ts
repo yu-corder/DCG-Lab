@@ -259,3 +259,24 @@ export const testDeck_5: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_6: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 500 + index,
+  name: '癒やしのテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'MyHealthHeal',
+      values: { value1: 4 },
+      description: 'ファンファーレ 自分のリーダーの体力を3回復する。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
