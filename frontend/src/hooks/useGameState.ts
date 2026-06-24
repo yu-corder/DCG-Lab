@@ -395,6 +395,10 @@ export function useGameState() {
     executeCardPlay(targetCard);
   };
 
+  const damageMyLeader = (amount: number) => {
+    setMyHealth(prev => Math.max(0, prev - amount));
+  };
+
   return {
     deck,
     hand,
@@ -421,5 +425,6 @@ export function useGameState() {
     enemyPlayCard,
     playCard,
     cancelTargeting,
+    damageMyLeader,
   };
 }

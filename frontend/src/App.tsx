@@ -29,6 +29,7 @@ function App() {
     enemyPlayCard,
     playCard,
     cancelTargeting,
+    damageMyLeader,
   } = useGameState();
 
   const isTargetMode = targetingContext !== null;
@@ -316,6 +317,21 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.8rem', color: '#aaa' }}>自分のHP:</span>
                   <span style={{ fontWeight: 'bold', color: '#ff4d4d', fontSize: '1.2rem' }}>{myHealth}</span>
+                  <button
+                      onClick={() => damageMyLeader(1)}
+                      style={{
+                        backgroundColor: '#3a1a1a',
+                        color: '#ff4d4d',
+                        border: '1px solid #662222',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.65rem',
+                        fontWeight: 'bold'
+                      }}
+                  >
+                    自傷
+                  </button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.8rem', color: '#aaa' }}>残りEP:</span>
