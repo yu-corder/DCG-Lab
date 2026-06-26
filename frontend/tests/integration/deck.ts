@@ -301,3 +301,24 @@ export const testDeck_7: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_8: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 700 + index,
+  name: '進化のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'Draw',
+      values: { value1: 1 },
+      description: '進化時 カードを1枚引く。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
