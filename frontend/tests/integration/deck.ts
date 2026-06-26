@@ -280,3 +280,24 @@ export const testDeck_6: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_7: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 600 + index,
+  name: 'フェアリーテイマー',
+  cost: 1,
+  type: 'Follower',
+  attack: 2,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'GetToken',
+      values: { value1: 2, value2: 1 },
+      description: 'ファンファーレ フェアリー2枚を自分の手札に加える。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));

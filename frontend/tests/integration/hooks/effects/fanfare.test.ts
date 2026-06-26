@@ -2,7 +2,8 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7 } from "../../deck";
+import { token } from '../../../../../backend/token.ts';
 
 describe("Fanfare Effect", () => {
   it("should deal 1 damage to all enemy followers and they should survive with 1 defense", async () => {
@@ -233,5 +234,50 @@ describe("Fanfare Effect", () => {
     });
     expect(result.current.myHealth).toBe(20);
 
+  });
+
+  it("should add 2 token cards to hand when token generation fanfare follower is played", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_7,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: token,
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    const playableCard = result.current.hand[0];
+
+    act(() => {
+      result.current.playCard(playableCard);
+    });
+
+    expect(result.current.hand.length).toBe(6);
+
+    const lastTwoCards = result.current.hand.slice(-2);
+    
+    lastTwoCards.forEach(card => {
+      expect(card.id).toBe(1);
+      expect(card.name).toBe('フェアリー');
+      expect(card.instanceId).toBeDefined();
+    });
+
+    expect(lastTwoCards[0].instanceId).not.toBe(lastTwoCards[1].instanceId);
+
+    expect(result.current.targetingContext).toBeNull();
   });
 });
