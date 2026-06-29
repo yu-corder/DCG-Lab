@@ -363,7 +363,15 @@ export const albert: Card[] = [
       attack: 2,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'MyFieldAllBuf',
+          values: {attack: 1, defense: 1},
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -378,7 +386,16 @@ export const albert: Card[] = [
       attack: 2,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'MyFieldAllBuf',
+          values: {attack: 1, defense: 1},
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' 
+        }
+
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -393,7 +410,15 @@ export const albert: Card[] = [
       attack: 2,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'MyFieldAllBuf',
+          values: {attack: 1, defense: 1},
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: 'ファンファーレ コンボ_3 自分の場の他のフォロワーすべては+1/+1する。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,

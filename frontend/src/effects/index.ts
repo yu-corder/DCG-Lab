@@ -4,6 +4,7 @@ import { selectDestroyEffect } from './destory/destroy';
 import { DrawEffect } from './draw/draw';
 import { MyHealthHealEffect } from './heal/heal';
 import { getTokenEffect } from './token/token';
+import { myFieldAllBufEffect } from './buf/buf';
 
 export interface EffectContext {
   field: Card[];
@@ -51,6 +52,9 @@ export const applyCardEffect = (
 
     case 'GetToken':
       return getTokenEffect.execute(context, values);
+
+    case 'MyFieldAllBuf':
+      return myFieldAllBufEffect.execute(context, values);
 
     default:
       return {};
