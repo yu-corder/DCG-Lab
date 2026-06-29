@@ -462,3 +462,75 @@ export const testDeck_15: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_16: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1500 + index,
+  name: 'コンボドローテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'Draw',
+      values: { value1: 2 },
+      conditionType: 'PlayCondition', 
+      triggerConditions: 'HAS_MATCHING_CONBO', 
+      conditionValue: 2,
+      description: '【コンボ_2】ファンファーレ カードを2枚引く。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_17: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1600 + index,
+  name: '進化参照AoEテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'AoeDamage',
+      values: { value1: 1 },
+      conditionType: 'FieldCondition', 
+      triggerConditions: 'HAS_EVOLED_FOLLOWER', 
+      conditionValue: 0,
+      description: 'ファンファーレ 自分の場に進化フォロワーがいるなら、相手のフォロワーすべてに1ダメージ。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_18: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1700 + index,
+  name: 'コスト参照回復テストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'MyHealthHeal',
+      values: { value1: 3 },
+      conditionType: 'FieldCondition', 
+      triggerConditions: 'HAS_MATCHING_COST_FOLLOWER', 
+      conditionValue: 1,
+      description: 'ファンファーレ 場にコスト1のフォロワーがいるなら、自分のリーダーを3回復。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
