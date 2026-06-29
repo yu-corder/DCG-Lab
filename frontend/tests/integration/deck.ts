@@ -336,3 +336,129 @@ export const testDeck_9: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_10: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 900 + index,
+  name: '進化時ドローテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 1,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'Draw',
+      values: { value1: 2 },
+      description: '進化時 カードを2枚引く。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_11: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1000 + index,
+  name: '進化AoEテスト',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'AoeDamage',
+      values: { value1: 1 },
+      description: '進化時 相手のフォロワーすべてに1ダメージ。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_12: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1100 + index,
+  name: '進化単体除去テスト',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'SelectDamage',
+      values: { value1: 4 },
+      description: '進化時 相手のフォロワー1体を選択して4ダメージ。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_13: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1200 + index,
+  name: '進化確定破壊テスト',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'SelectDestroy',
+      values: {},
+      description: '進化時 相手のフォロワー1体を選択して破壊する。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_14: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1300 + index,
+  name: '進化回復テスト',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'MyHealthHeal',
+      values: { value1: 3 },
+      description: '進化時 自分のリーダーを3回復。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
+
+export const testDeck_15: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1400 + index,
+  name: '進化トークンテスト',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'GetToken',
+      values: { value1: 2, value2: 1 },
+      description: '進化時 フェアリー2枚を手札に加える。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
