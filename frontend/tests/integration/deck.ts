@@ -322,3 +322,17 @@ export const testDeck_8: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_9: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 800 + index,
+  name: '戦闘のテストフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  defense: 2,
+  abilities: [],
+  hasAttacked: true,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
