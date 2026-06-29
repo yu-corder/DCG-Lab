@@ -35,6 +35,10 @@ function App() {
   const isTargetMode = targetingContext !== null;
   const isCardSelected = selectedMyCardId !== null;
 
+  const handleDragStart = (e: React.DragEvent, evolveType: 'normal' | 'ex') => {
+    e.dataTransfer.setData('evolveType', evolveType);
+  };
+
   return (
     <div className="App" style={{
       backgroundColor: '#11141a',
@@ -176,6 +180,7 @@ function App() {
                 ))}
               </div>
 
+              {/* 自分フィールドエリア */}
               <div style={{
                 display: 'flex',
                 gap: '15px',
@@ -194,6 +199,20 @@ function App() {
                   return (
                     <div 
                       key={card.instanceId || `${card.id}-${index}`}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const evolveType = e.dataTransfer.getData('evolveType');
+                        if (evolveType === 'normal') {
+                          evolveFollower(card.instanceId!);
+                        } else if (evolveType === 'ex') {
+                          exEvolveFollower(card.instanceId!);
+                        }
+                      }}
+                      onClick={() => {
+                        if (card.hasAttacked) return;
+                        setSelectedMyCardId(isSelected ? null : card.instanceId!);
+                      }}
                       style={{
                         position: 'relative',
                         border: isSelected ? '2px solid #ffcc00' : card.isExEvolved ? '2px solid #b300ff' : card.isEvolved ? '2px solid #00ffcc' : '2px solid #888',
@@ -206,35 +225,20 @@ function App() {
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         padding: '4px',
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        cursor: card.hasAttacked ? 'not-allowed' : 'pointer',
+                        opacity: card.hasAttacked ? 0.6 : 1,
+                        transition: 'all 0.2s'
                       }}
                     >
-                      <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#e0a3ff' : card.isEvolved ? '#a3ffee' : '#fff' }}>{card.name}</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '0 4px', zIndex: 2 }}>
-                        <button
-                          onClick={() => setSelectedMyCardId(isSelected ? null : card.instanceId!)}
-                          disabled={card.hasAttacked}
-                          style={{ fontSize: '0.6rem', padding: '2px', backgroundColor: card.hasAttacked ? '#333' : '#ffcc00', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-                        >
-                          {card.hasAttacked ? '待機中' : isSelected ? '解除' : '攻撃選択'}
-                        </button>
-                        <div style={{ display: 'flex', gap: '2px' }}>
-                          <button
-                            disabled={turn < 4 || card.isEvolved}
-                            onClick={() => evolveFollower(card.instanceId!)}
-                            style={{ flex: 1, fontSize: '0.5rem', padding: '2px 0', backgroundColor: '#00ffcc', color: '#000', border: 'none', borderRadius: '2px', cursor: 'pointer', opacity: (turn < 4 || card.isEvolved) ? 0.4 : 1 }}
-                          >
-                            進化
-                          </button>
-                          <button
-                            disabled={turn < 6 || card.isEvolved}
-                            onClick={() => exEvolveFollower(card.instanceId!)}
-                            style={{ flex: 1, fontSize: '0.5rem', padding: '2px 0', backgroundColor: '#b300ff', color: '#fff', border: 'none', borderRadius: '2px', cursor: 'pointer', opacity: (turn < 6 || card.isEvolved) ? 0.4 : 1 }}
-                          >
-                            超進
-                          </button>
-                        </div>
+                      <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#e0a3ff' : card.isEvolved ? '#a3ffee' : '#fff' }}>
+                        {card.name}
                       </div>
+                      
+                      <div style={{ textAlign: 'center', fontSize: '0.65rem', color: isSelected ? '#ffcc00' : '#888', zIndex: 2, pointerEvents: 'none' }}>
+                        {card.hasAttacked ? '【待機中】' : isSelected ? '【攻撃選択中】' : '選択可'}
+                      </div>
+
                       <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: card.isEvolved ? '#00cc88' : '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.attack}</div>
                       <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.defense}</div>
                     </div>
@@ -333,12 +337,50 @@ function App() {
                     自傷
                   </button>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#aaa' }}>残りEP:</span>
+                
+                {/* 残りEP（通常進化用ドラッグソース） */}
+                <div 
+                  draggable={myEp > 0 && turn >= 4}
+                  onDragStart={(e) => handleDragStart(e, 'normal')}
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    border: (myEp > 0 && turn >= 4) ? '1px dashed #00ffcc' : '1px solid transparent',
+                    cursor: (myEp > 0 && turn >= 4) ? 'grab' : 'not-allowed',
+                    backgroundColor: (myEp > 0 && turn >= 4) ? 'rgba(0, 255, 204, 0.05)' : 'transparent',
+                    transition: 'all 0.2s'
+                  }}
+                  title={(myEp > 0 && turn >= 4) ? "フォロワーにドラッグして進化" : ""}
+                >
+                  <span style={{ fontSize: '0.8rem', color: '#aaa' }}>
+                    {(myEp > 0 && turn >= 4) ? '⣿ 残りEP:' : '残りEP:'}
+                  </span>
                   <span style={{ fontWeight: 'bold', color: '#00ffcc' }}>{myEp}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#aaa' }}>残りExEP:</span>
+
+                {/* 残りExEP（超進化用ドラッグソース） */}
+                <div 
+                  draggable={myExEp > 0 && turn >= 6}
+                  onDragStart={(e) => handleDragStart(e, 'ex')}
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    border: (myExEp > 0 && turn >= 6) ? '1px dashed #b300ff' : '1px solid transparent',
+                    cursor: (myExEp > 0 && turn >= 6) ? 'grab' : 'not-allowed',
+                    backgroundColor: (myExEp > 0 && turn >= 6) ? 'rgba(179, 0, 255, 0.05)' : 'transparent',
+                    transition: 'all 0.2s'
+                  }}
+                  title={(myExEp > 0 && turn >= 6) ? "フォロワーにドラッグして超進化" : ""}
+                >
+                  <span style={{ fontSize: '0.8rem', color: '#aaa' }}>
+                    {(myExEp > 0 && turn >= 6) ? '⣿ 残りExEP:' : '残りExEP:'}
+                  </span>
                   <span style={{ fontWeight: 'bold', color: '#b300ff' }}>{myExEp}</span>
                 </div>
               </div>
