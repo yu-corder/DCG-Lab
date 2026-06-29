@@ -376,7 +376,7 @@ export function useGameState() {
       alert("ppが足りません。");
       return;
     }
-    if (field.length >= 5) return;
+    if (field.length >= 5 && targetCard.type === 'Follower') return;
 
     const hasSelectFanfare = targetCard.abilities.some(
       ability => ability.trigger === 'Fanfare' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')

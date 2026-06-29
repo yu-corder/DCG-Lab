@@ -175,7 +175,12 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: 'フェアリー2枚を自分の手札に加える。' }
+        {
+          trigger: 'Fanfare',
+          effectType: 'GetToken',
+          values: {value1: 2, value2: 1},
+          description: 'フェアリー2枚を自分の手札に加える。'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -188,7 +193,12 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: 'フェアリー2枚を自分の手札に加える。' }
+        {
+          trigger: 'Fanfare',
+          effectType: 'GetToken',
+          values: {value1: 2, value2: 1},
+          description: 'フェアリー2枚を自分の手札に加える。'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -201,7 +211,12 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: 'フェアリー2枚を自分の手札に加える。' }
+        {
+          trigger: 'Fanfare',
+          effectType: 'GetToken',
+          values: {value1: 2, value2: 1},
+          description: 'フェアリー2枚を自分の手札に加える。'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
