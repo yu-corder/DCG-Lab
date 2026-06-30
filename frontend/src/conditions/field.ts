@@ -1,4 +1,4 @@
-import type { ConditionContext, ConditionResult, CardCondition } from "../index";
+import type { ConditionContext, ConditionResult, CardCondition } from "./index";
 
 const hasEvoledFollower = (context: ConditionContext): ConditionResult => {
   const isEvolvedInField = context.field.some(card => card.isEvolved || card.isExEvolved);

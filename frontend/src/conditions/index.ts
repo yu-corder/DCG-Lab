@@ -1,6 +1,6 @@
 import type { Card, TurnActionLog } from '../../../shared/types';
-import { checkFieldCondition } from './field/field';
-import { checkPlayCondition } from './play/play';
+import { checkFieldCondition } from './field';
+import { checkPlayCondition } from './play';
 
 export interface HasEvolvedFollowerCondition {
   type: 'FieldCondition';

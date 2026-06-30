@@ -1,4 +1,4 @@
-import type { ConditionContext, ConditionResult, CardCondition } from "../index";
+import type { ConditionContext, ConditionResult, CardCondition } from "./index";
 
 const hasMatchingConbo = (context: ConditionContext, value: number): ConditionResult => {
   const isMatchingConbo = value <= context.turnLog.oneTurnPlayCount;
