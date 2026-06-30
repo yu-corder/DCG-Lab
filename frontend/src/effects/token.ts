@@ -1,5 +1,5 @@
-import type { CardEffect, EffectContext, EffectResult } from "./base";
-import type { EfectValues } from "../../../../shared/types";
+import type { EffectContext, EffectResult, CardEffect } from './types';
+import type { EfectValues } from "../../../shared/types";
 
 export const getTokenEffect: CardEffect = {
   execute(context: EffectContext, values: EfectValues): EffectResult {

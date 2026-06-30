@@ -1,11 +1,12 @@
-// frontend/src/effects/destroy/base.ts
-import type { Card, EfectValues } from '../../../../shared/types';
+import type { Card, EfectValues, TurnActionLog } from '../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
   enemyField: Card[];
   hand: Card[];
   deck: Card[];
+  token: Card[];
+  turnLog: TurnActionLog;
   myHealth: number;
   enemyHealth: number;
 }
@@ -19,6 +20,11 @@ export interface EffectResult {
   enemyHealth?: number;
 }
 
-export interface HealEffectProcessor {
-  execute(context: EffectContext, values: EfectValues): EffectResult;
+export interface CardEffect {
+  execute(
+    context: EffectContext, 
+    values?: EfectValues, 
+    targetIndex?: number, 
+    selfInstanceId?: string
+  ): EffectResult;
 }

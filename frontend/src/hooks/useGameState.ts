@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import type { Card, Leader, EfectValues } from '../../../shared/types';
 import type { TurnActionLog } from '../../../shared/types';
 import type { GameInitResponse } from '../../../shared/types';
-import { applyCardEffect as executeGameEffect } from '../effects';
+import {  executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 
