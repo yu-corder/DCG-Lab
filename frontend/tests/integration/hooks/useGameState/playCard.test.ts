@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_1 } from "../../deck";
+import { testDeck_1, testDeck_20 } from "../../deck";
 
 globalThis.fetch = mock(() =>
   Promise.resolve({
@@ -53,5 +53,48 @@ describe("useGameState", () => {
       const fieldedCard = result.current.field.find(c => c.instanceId === targetCardId);
       expect(fieldedCard?.playedThisTurn).toBe(true);
     }
+  });
+
+  it("should play a spell card, consuming PP and reducing hand without moving it to the field", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_20,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    const playableSpell = result.current.hand.find(c => c.type === 'Spell' && c.cost <= result.current.pp);
+    
+    if (!playableSpell) {
+      throw new Error("テスト用のプレイ可能なスペルカード（コスト1以下）が手札にありません。");
+    }
+
+    const targetCardId = playableSpell.instanceId;
+    const initialPP = result.current.pp;
+    const initialHandLength = result.current.hand.length;
+
+    act(() => {
+      result.current.playCard(playableSpell);
+    });
+
+    expect(result.current.pp).toBe(initialPP - playableSpell.cost);
+    expect(result.current.hand.some(c => c.instanceId === targetCardId)).toBe(false);
+    expect(result.current.field.length).toBe(0);
+    expect(result.current.field.some(c => c.instanceId === targetCardId)).toBe(false);
   });
 });

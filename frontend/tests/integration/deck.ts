@@ -556,3 +556,24 @@ export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_20: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1800 + index,
+  name: 'テスト用スペルカード',
+  cost: 1,
+  type: 'Spell',
+  attack: 0,
+  defense: 0,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'GetToken',
+      values: { value1: 2, value2: 1 },
+      description: 'フェアリー2枚を自分の手札に加える。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
