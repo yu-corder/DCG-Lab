@@ -522,8 +522,8 @@ export const albert: Card[] = [
       abilities: [
         { 
           trigger: 'Fanfare',
-          effectType: 'ComboMyStatsBuf',
-          values: {},
+          effectType: 'StatsBuf',
+          values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
           abilityType: 'SHISSOU'
         }
@@ -543,8 +543,8 @@ export const albert: Card[] = [
       abilities: [
         { 
           trigger: 'Fanfare',
-          effectType: 'ComboMyStatsBuf',
-          values: {},
+          effectType: 'StatsBuf',
+          values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
           abilityType: 'SHISSOU'
         }
@@ -564,8 +564,8 @@ export const albert: Card[] = [
       abilities: [
         { 
           trigger: 'Fanfare',
-          effectType: 'ComboMyStatsBuf',
-          values: {},
+          effectType: 'StatsBuf',
+          values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
           abilityType: 'SHISSOU'
         }

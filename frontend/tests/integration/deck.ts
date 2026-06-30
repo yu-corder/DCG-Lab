@@ -545,8 +545,8 @@ export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
   abilities: [
     { 
       trigger: 'Fanfare',
-      effectType: 'ComboMyStatsBuf',
-      values: {},
+      effectType: 'StatsBuf',
+      values: { attackSource: 'CurrentCombo' },
       description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
       abilityType: 'SHISSOU'
     }

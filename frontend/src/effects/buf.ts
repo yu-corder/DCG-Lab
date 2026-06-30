@@ -1,6 +1,26 @@
 import type { EffectContext, EffectResult, CardEffect } from './types';
 import type { EfectValues } from "../../../shared/types";
 
+const resolveDynamicValue = (sourceType: string | undefined, context: EffectContext, values?: EfectValues): number => {
+  if (!sourceType) return 0;
+
+  switch (sourceType) {
+    case 'CurrentCombo':
+      return context.turnLog.oneTurnPlayCount;
+      
+    case 'HandCardCountWithId':
+      const targetId = values?.targetCardId ?? 1;
+      return context.hand.filter(card => card.id === targetId).length;
+      
+    case 'HandLength':
+      return context.hand.length;
+
+    default:
+      console.warn(`Unknown dynamic value source: ${sourceType}`);
+      return 0;
+  }
+};
+
 export const myFieldAllBufEffect: CardEffect = {
   execute(context: EffectContext, values: EfectValues): EffectResult {
     const bufAttack = values.attack ?? 0;
@@ -20,24 +40,29 @@ export const myFieldAllBufEffect: CardEffect = {
   }
 };
 
-export const comboMyStatsBufEffect: CardEffect = {
-  execute(context: EffectContext, values?:EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult {
-    const bufAttack = context.turnLog.oneTurnPlayCount ?? 0;
-    const bufDefense = 0;
+export const statsBufEffect: CardEffect = {
+  execute(context: EffectContext, values?: EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult {
+    const attackBuf = values?.attackSource 
+      ? resolveDynamicValue(values.attackSource, context, values)
+      : (values?.value1 ?? 0);
 
-    const updatedMyField = context.field.map(follower => {
-      if (follower.instanceId === selfInstanceId) {
+    const defenseBuf = values?.defenseSource
+      ? resolveDynamicValue(values.defenseSource, context, values)
+      : (values?.value2 ?? 0);
+
+    const updatedField = context.field.map(card => {
+      if (card.instanceId === selfInstanceId) {
         return {
-          ...follower,
-          attack: follower.attack + bufAttack,
-          defense: follower.defense + bufDefense
+          ...card,
+          attack: (card.attack ?? 0) + attackBuf,
+          defense: (card.defense ?? 0) + defenseBuf
         };
       }
-      return follower;
+      return card;
     });
-    
+
     return {
-      myField: updatedMyField
+      myField: updatedField
     };
   }
 };

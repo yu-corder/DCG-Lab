@@ -15,13 +15,16 @@ export interface EfectValues {
   defense?: number;
   value1?: number;
   value2?: number;
+  attackSource?: 'CurrentCombo' | 'HandCardCountWithId' | 'HandLength';
+  defenseSource?: 'CurrentCombo' | 'HandCardCountWithId' | 'HandLength';
+  targetCardId?: number;
 }
 
 export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'ComboMyStatsBuf',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'ComboMyStatsBuf' | 'StatsBuf',
   values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;
