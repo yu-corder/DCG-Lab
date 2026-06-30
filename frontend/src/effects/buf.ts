@@ -8,9 +8,9 @@ const resolveDynamicValue = (sourceType: string | undefined, context: EffectCont
     case 'CurrentCombo':
       return context.turnLog.oneTurnPlayCount;
       
-    case 'HandCardCountWithId':
-      const targetId = values?.targetCardId ?? 1;
-      return context.hand.filter(card => card.id === targetId).length;
+    case 'HandCardCountWithSubtype':
+      const targetSubtype = values?.targetSubtype ?? 'Fairy';
+      return context.hand.filter(card => card.subtypes?.includes(targetSubtype)).length;
       
     case 'HandLength':
       return context.hand.length;

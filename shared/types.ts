@@ -15,9 +15,10 @@ export interface EfectValues {
   defense?: number;
   value1?: number;
   value2?: number;
-  attackSource?: 'CurrentCombo' | 'HandCardCountWithId' | 'HandLength';
-  defenseSource?: 'CurrentCombo' | 'HandCardCountWithId' | 'HandLength';
+  attackSource?: 'CurrentCombo' | 'HandCardCountWithSubtype' | 'HandLength';
+  defenseSource?: 'CurrentCombo' | 'HandCardCountWithSubtype' | 'HandLength';
   targetCardId?: number;
+  targetSubtype?: CardSubtype;
 }
 
 export interface Ability {
@@ -32,11 +33,14 @@ export interface Ability {
   conditionValue?: number;
 }
 
+export type CardSubtype = 'Fairy' | 'Commander' | 'Officer' | 'Mechanical' | 'Nature';
+
 export interface Card {
   id: number;
   name: string;
   cost: number;
   type: CardType;
+  subtypes?: CardSubtype[];
   attack?: number;
   defense?: number;
   abilities: Ability[];

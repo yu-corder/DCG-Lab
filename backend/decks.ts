@@ -587,7 +587,12 @@ export const albert: Card[] = [
       attack: 2,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ これは+X/+Xする。Xは自分の手札の妖精・フォロワーの枚数である。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'StatsBuf',
+          values: { attackSource: 'HandCardCountWithSubtype', defenseSource: 'HandCardCountWithSubtype', targetSubtype: 'Fairy'},
+          description: 'ファンファーレ これは+X/+Xする。Xは自分の手札の妖精・フォロワーの枚数である。',
+        }
       ],
       hasAttacked: true,
       isEvolved: false,

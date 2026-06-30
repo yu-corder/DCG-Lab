@@ -6,6 +6,7 @@ export const token: Card[] = [
       name: 'フェアリー',
       cost: 1,
       type: 'Follower',
+      subtypes: ['Fairy'],
       attack: 1,
       defense: 1,
       abilities: [
