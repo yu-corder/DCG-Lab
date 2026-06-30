@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7, testDeck_19 } from "../../deck";
 import { token } from '../../../../../backend/token.ts';
 
 describe("Fanfare Effect", () => {
@@ -278,6 +278,58 @@ describe("Fanfare Effect", () => {
 
     expect(lastTwoCards[0].instanceId).not.toBe(lastTwoCards[1].instanceId);
 
+    expect(result.current.targetingContext).toBeNull();
+  });
+
+  it("should apply buff to self based on the current combo count when combo stats buff follower is played", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_19,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    act(() => {
+      result.current.endTurn();
+    });
+
+    const firstComboCard = result.current.hand[0];
+    const initialAttack = firstComboCard.attack ? firstComboCard.attack : 0;
+
+    act(() => {
+      result.current.playCard(firstComboCard);
+    });
+
+    const deployedCard1 = result.current.field.find(c => c.instanceId === firstComboCard.instanceId);
+    expect(deployedCard1).toBeDefined();
+    expect(deployedCard1!.attack).toBe(initialAttack + 1);
+
+    const secondComboCard = result.current.hand[0];
+
+    act(() => {
+      result.current.playCard(secondComboCard);
+    });
+
+    const deployedCard2 = result.current.field.find(c => c.instanceId === secondComboCard.instanceId);
+    expect(deployedCard2).toBeDefined();
+    expect(deployedCard2!.attack).toBe(initialAttack + 2);
+
+    expect(result.current.field.length).toBe(2);
     expect(result.current.targetingContext).toBeNull();
   });
 });

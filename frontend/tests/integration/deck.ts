@@ -534,3 +534,25 @@ export const testDeck_18: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1700 + index,
+  name: ' コンボ数自己バフフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 0,
+  defense: 1,
+  abilities: [
+    { 
+      trigger: 'Fanfare',
+      effectType: 'ComboMyStatsBuf',
+      values: {},
+      description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
+      abilityType: 'SHISSOU'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
