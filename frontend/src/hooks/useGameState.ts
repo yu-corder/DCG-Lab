@@ -117,7 +117,6 @@ export function useGameState() {
     setTurnLog(currentLog);
     setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false, playedThisTurn: false })));
     setHasEvolvedThisTurn(false);
-    console.log(`Turn ${turn + 1} stared. MaxPP is ${nextMaxPP}`);
 
     startTurn(hand, deck);
   };
@@ -148,7 +147,6 @@ export function useGameState() {
       card.instanceId === targetInstanceId ? { ...card, hasAttacked: true } : card
     ));
     setSelectedMyCardId(null);
-    console.log(`${targetCard.name}の攻撃!`);
   };
   
   const applyEvolution = (targetInstanceId: string) => {
@@ -287,7 +285,6 @@ export function useGameState() {
   };
 
   const enemyPlayCard = () => {
-    console.log("EnemyPlay!");
     let enemyCard: Card | null = null;
     for (let i = 0; i < deck.length; i++) {
       if (deck[i].type === 'Follower') {
@@ -304,8 +301,6 @@ export function useGameState() {
     if (!effectType) return;
 
     const result = executeGameEffect(effectType, values, { field, enemyField, hand, deck, myHealth, enemyHealth, token, turnLog}, targetIndex, selfInstanceId);
-
-    console.log(result.hand);
     
     if (result.enemyField) setEnemyField(result.enemyField);
     if (result.myField) setField(result.myField);
