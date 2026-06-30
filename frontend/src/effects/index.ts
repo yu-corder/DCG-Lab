@@ -1,10 +1,10 @@
-import type { Card, EfectValues } from '../../../shared/types';
+import type { Card, EfectValues, TurnActionLog } from '../../../shared/types';
 import { aoeDamageEffect, selectDamageEffect } from './damage/damage';
 import { selectDestroyEffect } from './destory/destroy';
 import { DrawEffect } from './draw/draw';
 import { MyHealthHealEffect } from './heal/heal';
 import { getTokenEffect } from './token/token';
-import { myFieldAllBufEffect } from './buf/buf';
+import { myFieldAllBufEffect, comboMyStatsBufEffect } from './buf/buf';
 
 export interface EffectContext {
   field: Card[];
@@ -14,6 +14,7 @@ export interface EffectContext {
   myHealth: number;
   enemyHealth: number;
   token: Card[];
+  turnLog: TurnActionLog;
 }
 
 export interface EffectResult {
@@ -29,7 +30,8 @@ export const applyCardEffect = (
   effectType: string,
   values: EfectValues,
   context: EffectContext,
-  targetIndex?: number
+  targetIndex?: number,
+  selfInstanceId?: string
 ): EffectResult => {
   switch (effectType) {
     case 'SelectDamage':
@@ -55,6 +57,9 @@ export const applyCardEffect = (
 
     case 'MyFieldAllBuf':
       return myFieldAllBufEffect.execute(context, values);
+
+    case 'ComboMyStatsBuf':
+      return comboMyStatsBufEffect.execute(context, values, null,selfInstanceId);
 
     default:
       return {};

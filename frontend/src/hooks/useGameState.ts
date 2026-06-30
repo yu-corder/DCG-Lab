@@ -300,10 +300,12 @@ export function useGameState() {
     setEnemyField(prev => [...prev, enemyCardWithId]);
   };
 
-  const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number) => {
+  const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number, selfInstanceId?: string) => {
     if (!effectType) return;
 
-    const result = executeGameEffect(effectType, values, { field, enemyField, hand, deck, myHealth, enemyHealth, token }, targetIndex);
+    const result = executeGameEffect(effectType, values, { field, enemyField, hand, deck, myHealth, enemyHealth, token, turnLog}, targetIndex, selfInstanceId);
+
+    console.log(result.hand);
     
     if (result.enemyField) setEnemyField(result.enemyField);
     if (result.myField) setField(result.myField);
@@ -313,7 +315,7 @@ export function useGameState() {
     if (result.enemyHealth) setEnemyHealth(result.enemyHealth);
   };
 
-  const executeCardPlay = (targetCard: Card) => {
+ const executeCardPlay = (targetCard: Card) => {
     setPP(prev => prev - targetCard.cost);
     const currentLog = turnLog;
     if (targetCard.type === 'Follower') {
@@ -327,6 +329,23 @@ export function useGameState() {
     setTurnLog(currentLog);
     
     targetCard.playedThisTurn = true;
+
+    let currentHand = hand.filter(c => c.instanceId !== targetCard.instanceId);
+    let currentField = [...field];
+    let currentEnemyField = [...enemyField];
+    let currentDeck = [...deck];
+    let currentMyHealth = myHealth;
+    let currentEnemyHealth = enemyHealth;
+
+    if (targetCard.type === 'Follower') {
+      const hasShissou = targetCard.abilities.some(ability => ability.abilityType === 'SHISSOU');
+      const playedFollower = {
+        ...targetCard,
+        hasAttacked: hasShissou ? false : targetCard.hasAttacked
+      };
+      currentField.push(playedFollower);
+    }
+
     targetCard.abilities.forEach(ability => {
       let conditionObj: any = null;
       let conditionType = ability.conditionType;
@@ -341,16 +360,29 @@ export function useGameState() {
       }
 
       if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
-        applyCardEffect(ability.effectType, ability.values ?? {});
-      }
-      if (ability.abilityType === 'SHISSOU') {
-        targetCard.hasAttacked = false;
+        const result = executeGameEffect(
+          ability.effectType ?? '', 
+          ability.values ?? {}, 
+          { field: currentField, enemyField: currentEnemyField, hand: currentHand, deck: currentDeck, myHealth: currentMyHealth, enemyHealth: currentEnemyHealth, token, turnLog }, 
+          null, 
+          targetCard.instanceId
+        );
+
+        if (result.myField) currentField = result.myField;
+        if (result.enemyField) currentEnemyField = result.enemyField;
+        if (result.hand) currentHand = result.hand;
+        if (result.deck) currentDeck = result.deck;
+        if (result.myHealth) currentMyHealth = result.myHealth;
+        if (result.enemyHealth) currentEnemyHealth = result.enemyHealth;
       }
     });
-    setHand(prev => prev.filter(c => c.instanceId !== targetCard.instanceId));
-    if (targetCard.type === 'Follower') {
-      setField(prev => [...prev, targetCard]);
-    }
+
+    setHand(currentHand);
+    setField(currentField);
+    setEnemyField(currentEnemyField);
+    setDeck(currentDeck);
+    setMyHealth(currentMyHealth);
+    setEnemyHealth(currentEnemyHealth);
   };
 
   const selectTargetFollower = (targetIndex: number) => {

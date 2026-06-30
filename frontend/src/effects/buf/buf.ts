@@ -19,3 +19,25 @@ export const myFieldAllBufEffect: CardEffect = {
     };
   }
 };
+
+export const comboMyStatsBufEffect: CardEffect = {
+  execute(context: EffectContext, values?:EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult {
+    const bufAttack = context.turnLog.oneTurnPlayCount ?? 0;
+    const bufDefense = 0;
+
+    const updatedMyField = context.field.map(follower => {
+      if (follower.instanceId === selfInstanceId) {
+        return {
+          ...follower,
+          attack: follower.attack + bufAttack,
+          defense: follower.defense + bufDefense
+        };
+      }
+      return follower;
+    });
+    
+    return {
+      myField: updatedMyField
+    };
+  }
+};

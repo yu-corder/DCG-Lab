@@ -21,7 +21,7 @@ export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'ComboMyStatsBuf',
   values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;

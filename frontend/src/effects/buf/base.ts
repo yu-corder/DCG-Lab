@@ -1,4 +1,4 @@
-import type { Card, EfectValues } from '../../../../shared/types';
+import type { Card, EfectValues, TurnActionLog } from '../../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
@@ -6,6 +6,7 @@ export interface EffectContext {
   hand: Card[];
   deck: Card[];
   token: Card[];
+  turnLog: TurnActionLog;
 }
 
 export interface EffectResult {
@@ -16,5 +17,5 @@ export interface EffectResult {
 }
 
 export interface CardEffect {
-  execute(context: EffectContext, values: EfectValues, targetIndex?: number): EffectResult;
+  execute(context: EffectContext, values?: EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult;
 }

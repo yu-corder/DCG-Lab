@@ -520,7 +520,13 @@ export const albert: Card[] = [
       attack: 0,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。', abilityType: 'SHISSOU' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'ComboMyStatsBuf',
+          values: {},
+          description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
+          abilityType: 'SHISSOU'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -535,7 +541,13 @@ export const albert: Card[] = [
       attack: 0,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。', abilityType: 'SHISSOU' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'ComboMyStatsBuf',
+          values: {},
+          description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
+          abilityType: 'SHISSOU'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -550,7 +562,13 @@ export const albert: Card[] = [
       attack: 0,
       defense: 2,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。', abilityType: 'SHISSOU' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'ComboMyStatsBuf',
+          values: {},
+          description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
+          abilityType: 'SHISSOU'
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
