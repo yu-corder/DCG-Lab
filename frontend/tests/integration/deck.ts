@@ -603,3 +603,27 @@ export const testDeck_21: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_22: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 1900 + index,
+  name: 'コンボ条件・選択効果発動フォロワー',
+  cost: 1,
+  type: 'Follower',
+  subtypes: ['Fairy'],
+  attack: 0,
+  defense: 0,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      conditionType: 'PlayCondition',
+      triggerConditions: 'HAS_MATCHING_CONBO',
+      conditionValue: 2,
+      effectType: 'SelectDestroy',
+      description: 'ファンファーレ コンボ_3 相手の場のフォロワー1体を選ぶ。それを破壊。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
