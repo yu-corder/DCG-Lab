@@ -405,18 +405,38 @@ export function useGameState() {
     }
     if (field.length >= 5 && targetCard.type === 'Follower') return;
 
-    const hasSelectFanfare = targetCard.abilities.some(
-      ability => ability.trigger === 'Fanfare' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')
+    const fanfareAbility = targetCard.abilities.find(
+      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy')
     );
 
-    if (hasSelectFanfare && enemyField.length >= 1) {
-      const fanfareAbility = targetCard.abilities.find(a => a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy');
-      setTargetingContext({
-        card: targetCard,
-        effectType: fanfareAbility.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
-        values: fanfareAbility.values ?? {}
-      });
-      return;
+    if (fanfareAbility) {
+      let isConditionMet = true;
+      let conditionObj: any = null;
+      let conditionType = fanfareAbility.conditionType;
+      let triggerConditions = fanfareAbility.triggerConditions;
+      let conditionValue = fanfareAbility.conditionValue ? fanfareAbility.conditionValue : null;
+      if (fanfareAbility.conditionType && fanfareAbility.triggerConditions) {
+        conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
+
+        const virtualTurnLog = {
+          ...turnLog,
+          oneTurnPlayCount: turnLog.oneTurnPlayCount + 1
+        };
+        const resultObj = conditionCheck(
+          { field, enemyField, hand, deck, turnLog: virtualTurnLog }, 
+          conditionObj
+        );
+        isConditionMet = resultObj.condition;
+      }
+
+      if (isConditionMet && enemyField.length >= 1) {
+        setTargetingContext({
+          card: targetCard,
+          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy',
+          values: fanfareAbility.values ?? {}
+        });
+        return;
+      }
     }
 
     executeCardPlay(targetCard);
