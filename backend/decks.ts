@@ -439,9 +439,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'Draw',
+          effectType: 'SelectBounce',
           values: {},
-          description: 'ファンファーレ 自分のデッキから1枚を引く。'
+          description: 'ファンファーレ 自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
         }
       ],
       hasAttacked: true,
@@ -459,9 +459,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'Draw',
+          effectType: 'SelectBounce',
           values: {},
-          description: 'ファンファーレ 自分のデッキから1枚を引く。'
+          description: 'ファンファーレ 自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
         }
       ],
       hasAttacked: true,
@@ -479,9 +479,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'Draw',
+          effectType: 'SelectBounce',
           values: {},
-          description: 'ファンファーレ 自分のデッキから1枚を引く。'
+          description: 'ファンファーレ 自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
         }
       ],
       hasAttacked: true,

@@ -34,6 +34,8 @@ function App() {
 
   const isTargetMode = targetingContext !== null;
   const isCardSelected = selectedMyCardId !== null;
+  const isMyTargetMode = isTargetMode && targetingContext.targetTeam === 'my';
+  const isEnemyTargetMode = isTargetMode && targetingContext.targetTeam === 'enemy';
 
   const handleDragStart = (e: React.DragEvent, evolveType: 'normal' | 'ex') => {
     e.dataTransfer.setData('evolveType', evolveType);
@@ -78,7 +80,7 @@ function App() {
               alignItems: 'center',
               gap: '15px'
             }}>
-              ⚠️ 効果の対象となる敵フォロワーを選択してください
+              ⚠️ 効果の対象となる{targetingContext.targetTeam === 'my' ? '味方' : '敵'}フォロワーを選択してください
             </div>
           )}
 
@@ -128,12 +130,13 @@ function App() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '140px',
-                background: isTargetMode ? 'rgba(255,0,0,0.05)' : 'rgba(0,0,0,0.2)',
+                background: isEnemyTargetMode ? 'rgba(255,0,0,0.05)' : 'rgba(0,0,0,0.2)',
                 borderRadius: '16px',
-                border: isTargetMode ? '1px solid rgba(255,77,77,0.3)' : '1px solid rgba(255,255,255,0.05)',
+                border: isEnemyTargetMode ? '1px solid rgba(255,77,77,0.3)' : '1px solid rgba(255,255,255,0.05)',
                 padding: '10px',
                 transition: 'all 0.3s',
-                cursor: isTargetMode ? 'pointer' : 'default'
+                cursor: isTargetMode ? 'pointer' : 'default',
+                opacity: isMyTargetMode ? 0.4 : 1
               }}
               onClick={() => {
                 if (isTargetMode) {
@@ -146,28 +149,29 @@ function App() {
                     key={card.instanceId || `${card.id}-${index}`}
                     style={{
                       position: 'relative',
-                      border: isTargetMode 
+                      border: isEnemyTargetMode 
                         ? '2px solid #ff4d4d' 
-                        : isCardSelected 
+                        : isCardSelected && !isTargetMode
                           ? '2px solid #ff9900' 
                           : '2px solid #555',
                       borderRadius: '10px',
                       width: '90px',
                       height: '120px',
                       backgroundColor: '#1c1f26',
-                      boxShadow: isTargetMode 
+                      boxShadow: isEnemyTargetMode 
                         ? '0 0 15px rgba(255,77,77,0.8)' 
                         : '0 4px 10px rgba(0,0,0,0.5)',
-                      cursor: (isTargetMode || isCardSelected) ? 'pointer' : 'default',
-                      transform: isTargetMode ? 'scale(1.03)' : 'scale(1)',
-                      transition: 'all 0.2s'
+                      cursor: (isEnemyTargetMode || (isCardSelected && !isTargetMode)) ? 'pointer' : 'default',
+                      transform: isEnemyTargetMode ? 'scale(1.03)' : 'scale(1)',
+                      transition: 'all 0.2s',
+                      pointerEvents: isMyTargetMode ? 'none' : 'auto'
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
 
-                      if (isTargetMode) {
+                      if (isEnemyTargetMode) {
                         selectTargetFollower(index);
-                      } else if (isCardSelected) {
+                      } else if (isCardSelected && !isTargetMode) {
                         attackToFollower(selectedMyCardId!, card.instanceId!);
                       }
                     }}
@@ -181,19 +185,28 @@ function App() {
               </div>
 
               {/* 自分フィールドエリア */}
-              <div style={{
-                display: 'flex',
-                gap: '15px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '140px',
-                background: 'rgba(255,255,255,0.02)',
-                borderRadius: '16px',
-                border: '1px dashed rgba(255,255,255,0.1)',
-                padding: '10px',
-                opacity: isTargetMode ? 0.4 : 1,
-                pointerEvents: isTargetMode ? 'none' : 'auto'
-              }}>
+              <div 
+                style={{
+                  display: 'flex',
+                  gap: '15px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: '140px',
+                  background: isMyTargetMode ? 'rgba(0,255,204,0.05)' : 'rgba(255,255,255,0.02)',
+                  borderRadius: '16px',
+                  border: isMyTargetMode ? '1px solid rgba(0,255,204,0.3)' : '1px dashed rgba(255,255,255,0.1)',
+                  padding: '10px',
+                  opacity: isEnemyTargetMode ? 0.4 : 1,
+                  pointerEvents: isEnemyTargetMode ? 'none' : 'auto',
+                  cursor: isMyTargetMode ? 'pointer' : 'default',
+                  transition: 'all 0.3s'
+                }}
+                onClick={() => {
+                  if (isTargetMode) {
+                    cancelTargeting();
+                  }
+                }}
+              >
                 {field.map((card, index) => {
                   const isSelected = selectedMyCardId === card.instanceId;
                   return (
@@ -209,34 +222,57 @@ function App() {
                           exEvolveFollower(card.instanceId!);
                         }
                       }}
-                      onClick={() => {
+                      onClick={(e) => {
+                        if (isMyTargetMode) {
+                          e.stopPropagation();
+                          selectTargetFollower(index);
+                          return;
+                        }
+
                         if (card.hasAttacked) return;
                         setSelectedMyCardId(isSelected ? null : card.instanceId!);
                       }}
                       style={{
                         position: 'relative',
-                        border: isSelected ? '2px solid #ffcc00' : card.isExEvolved ? '2px solid #b300ff' : card.isEvolved ? '2px solid #00ffcc' : '2px solid #888',
+                        border: isMyTargetMode
+                          ? '2px solid #00ffcc'
+                          : isSelected 
+                            ? '2px solid #ffcc00' 
+                            : card.isExEvolved 
+                              ? '2px solid #b300ff' 
+                              : card.isEvolved 
+                                ? '2px solid #00ffcc' 
+                                : '2px solid #888',
                         borderRadius: '10px',
                         width: '90px',
                         height: '120px',
-                        backgroundColor: isSelected ? '#2d2a1e' : '#1c1f26',
-                        boxShadow: isSelected ? '0 0 15px #ffcc00' : '0 4px 10px rgba(0,0,0,0.5)',
+                        backgroundColor: isMyTargetMode 
+                          ? '#1c2624' 
+                          : isSelected 
+                            ? '#2d2a1e' 
+                            : '#1c1f26',
+                        boxShadow: isMyTargetMode
+                          ? '0 0 15px rgba(0,255,204,0.6)'
+                          : isSelected 
+                            ? '0 0 15px #ffcc00' 
+                            : '0 4px 10px rgba(0,0,0,0.5)',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         padding: '4px',
                         boxSizing: 'border-box',
-                        cursor: card.hasAttacked ? 'not-allowed' : 'pointer',
-                        opacity: card.hasAttacked ? 0.6 : 1,
+                        cursor: isMyTargetMode ? 'pointer' : card.hasAttacked ? 'not-allowed' : 'pointer',
+                        opacity: !isMyTargetMode && card.hasAttacked ? 0.6 : 1,
+                        transform: isMyTargetMode ? 'scale(1.03)' : 'scale(1)',
                         transition: 'all 0.2s'
                       }}
                     >
-                      <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#e0a3ff' : card.isEvolved ? '#a3ffee' : '#fff' }}>
+                      <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#b300ff' : card.isEvolved ? '#00ffcc' : '#fff' }}>
                         {card.name}
                       </div>
                       
-                      <div style={{ textAlign: 'center', fontSize: '0.65rem', color: isSelected ? '#ffcc00' : '#888', zIndex: 2, pointerEvents: 'none' }}>
-                        {card.hasAttacked ? '【待機中】' : isSelected ? '【攻撃選択中】' : '選択可'}
+                      <div style={{ textAlign: 'center', fontSize: '0.65rem', color: isMyTargetMode ? '#00ffcc' : isSelected ? '#ffcc00' : '#888', zIndex: 2, pointerEvents: 'none' }}>
+                        {isMyTargetMode ? '【対象に選択】' : card.hasAttacked ? '【待機中】' : isSelected ? '【攻撃選択中】' : '選択可'}
                       </div>
 
                       <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: card.isEvolved ? '#00cc88' : '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.attack}</div>

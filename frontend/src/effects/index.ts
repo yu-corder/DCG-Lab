@@ -7,6 +7,7 @@ import { selectDestroyEffect } from './destroy';
 import { DrawEffect } from './draw';
 import { MyHealthHealEffect } from './heal';
 import { getTokenEffect } from './token';
+import { selectBounceEffect } from './bounce';
 
 const effectRegistry: Record<string, CardEffect> = {
   SelectDamage: selectDamageEffect,
@@ -18,6 +19,7 @@ const effectRegistry: Record<string, CardEffect> = {
   MyFieldAllBuf: myFieldAllBufEffect,
   StatsBuf: statsBufEffect,
   SelectStatsFix: statsFixEffect,
+  SelectBounce: selectBounceEffect,
 };
 
 export const executeGameEffect = (

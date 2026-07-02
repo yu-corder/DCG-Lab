@@ -198,15 +198,19 @@ export function useGameState() {
         condition = resultObj.condition;
       }
 
-      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix') {
+      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix' && ability.effectType !== 'SelectBounce') {
         applyCardEffect(ability.effectType, ability.values ?? {});
-      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix')) {
+      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix' || ability.effectType === 'SelectBounce')) {
 
-        if (enemyField.length >= 1) {
+        const isBounce = ability.effectType === 'SelectBounce';
+        const hasValidTarget = isBounce ? field.length >= 1 : enemyField.length >= 1;
+
+        if (hasValidTarget) {
           setTargetingContext({
             card: targetCard,
             effectType: ability.effectType,
-            values: ability.values ?? {}
+            values: ability.values ?? {},
+            targetTeam: isBounce ? 'my' : 'enemy'
           });
           setEvoledSelectTargetId(targetInstanceId);
           applyChk = true;
@@ -310,7 +314,7 @@ export function useGameState() {
     if (result.enemyHealth) setEnemyHealth(result.enemyHealth);
   };
 
- const executeCardPlay = (targetCard: Card) => {
+ const executeCardPlay = (targetCard: Card, targetIndex: number | null = null) => {
     setPP(prev => prev - targetCard.cost);
     const currentLog = turnLog;
     if (targetCard.type === 'Follower') {
@@ -354,12 +358,19 @@ export function useGameState() {
         condition = resultObj.condition;
       }
 
-      if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix') {
+      let selectable = true;
+      if (ability.effectType === 'SelectBounce') {
+        selectable = field.length >= 1 ? true : false;
+      } else if (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix') {
+        selectable = enemyField.length >= 1 ? true : false;
+      }
+
+      if (condition && ability.trigger === 'Fanfare' && selectable) {
         const result = executeGameEffect(
           ability.effectType ?? '', 
           ability.values ?? {}, 
           { field: currentField, enemyField: currentEnemyField, hand: currentHand, deck: currentDeck, myHealth: currentMyHealth, enemyHealth: currentEnemyHealth, token, turnLog }, 
-          null, 
+          targetIndex, 
           targetCard.instanceId
         );
 
@@ -383,9 +394,11 @@ export function useGameState() {
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
     if (evoledSelectTargetId === null) {
-      executeCardPlay(targetingContext.card);
+      executeCardPlay(targetingContext.card, targetIndex);
+    } else {
+      applyCardEffect(targetingContext.effectType, targetingContext.values, targetIndex);
     }
-    applyCardEffect(targetingContext.effectType, targetingContext.values, targetIndex);
+    
     if (evoledSelectTargetId !== null) {
       applyEvolution(evoledSelectTargetId);
       setEvoledSelectTargetId(null);
@@ -406,7 +419,7 @@ export function useGameState() {
     if (field.length >= 5 && targetCard.type === 'Follower') return;
 
     const fanfareAbility = targetCard.abilities.find(
-      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy' || a.effectType === 'SelectStatsFix')
+      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy' || a.effectType === 'SelectStatsFix' || a.effectType === 'SelectBounce')
     );
 
     if (fanfareAbility) {
@@ -429,11 +442,14 @@ export function useGameState() {
         isConditionMet = resultObj.condition;
       }
 
-      if (isConditionMet && enemyField.length >= 1) {
+      const isBounce = fanfareAbility.effectType === 'SelectBounce';
+      const hasValidTarget = isBounce ? field.length >= 1 : enemyField.length >= 1;
+      if (isConditionMet && hasValidTarget) {
         setTargetingContext({
           card: targetCard,
-          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy' | 'SelectStatsFix',
-          values: fanfareAbility.values ?? {}
+          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy' | 'SelectStatsFix' | 'SelectBounce',
+          values: fanfareAbility.values ?? {},
+          targetTeam: isBounce ? 'my' : 'enemy'
         });
         return;
       }
