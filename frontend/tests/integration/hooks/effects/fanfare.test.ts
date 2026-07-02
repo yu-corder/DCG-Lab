@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7, testDeck_19, testDeck_21, testDeck_23 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7, testDeck_19, testDeck_21, testDeck_23, testDeck_24 } from "../../deck";
 import { token } from '../../../../../backend/token.ts';
 
 describe("Fanfare Effect", () => {
@@ -428,6 +428,64 @@ describe("Fanfare Effect", () => {
     const updatedEnemyCard = result.current.enemyField[0];
     expect(updatedEnemyCard.defense).toBe(1);
     expect(updatedEnemyCard.baseDefense).toBe(targetEnemyCard.baseDefense);
+    expect(result.current.targetingContext).toBeNull();
+  });
+
+  it("should bounce the selected friendly follower back to hand on play while keeping the source follower on the field", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_24,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    const targetFriendlyCard = result.current.hand[0];
+    act(() => {
+      result.current.playCard(targetFriendlyCard);
+    });
+    expect(result.current.targetingContext).toBeNull();
+    expect(result.current.field.length).toBe(1);
+    expect(result.current.field[0].instanceId).toBe(targetFriendlyCard.instanceId);
+
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.endTurn(); });
+
+    const bounceFollowerCard = result.current.hand[0];
+    act(() => {
+      result.current.playCard(bounceFollowerCard);
+    });
+
+    expect(result.current.targetingContext).not.toBeNull();
+    expect(result.current.targetingContext?.effectType).toBe('SelectBounce');
+    expect(result.current.targetingContext?.targetTeam).toBe('my');
+
+    const handLengthBeforeBounce = result.current.hand.length;
+
+    act(() => {
+      result.current.selectTargetFollower(0);
+    });
+
+    expect(result.current.field.some(c => c.instanceId === targetFriendlyCard.instanceId)).toBe(false);
+    
+    expect(result.current.hand.length).toBe(handLengthBeforeBounce);
+    expect(result.current.hand[result.current.hand.length - 1].instanceId).toBe(targetFriendlyCard.instanceId);
+
+    expect(result.current.field.some(c => c.instanceId === bounceFollowerCard.instanceId)).toBe(true);
     expect(result.current.targetingContext).toBeNull();
   });
 });

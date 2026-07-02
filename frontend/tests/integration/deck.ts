@@ -653,3 +653,26 @@ export const testDeck_23: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_24: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2400 + index,
+  name: 'バウンスフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 3,
+  defense: 3,
+  baseAttack: 3,
+  baseDefense: 3,
+  abilities: [
+    {
+      trigger: 'Fanfare',
+      effectType: 'SelectBounce',
+      values: {},
+      description: 'ファンファーレ 自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
