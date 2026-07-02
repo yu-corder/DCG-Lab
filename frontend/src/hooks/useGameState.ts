@@ -198,14 +198,14 @@ export function useGameState() {
         condition = resultObj.condition;
       }
 
-      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
+      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix') {
         applyCardEffect(ability.effectType, ability.values ?? {});
-      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy')) {
+      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix')) {
 
         if (enemyField.length >= 1) {
           setTargetingContext({
             card: targetCard,
-            effectType: ability.effectType === 'SelectDamage' ? 'SelectDamage' : 'SelectDestroy',
+            effectType: ability.effectType,
             values: ability.values ?? {}
           });
           setEvoledSelectTargetId(targetInstanceId);
@@ -354,7 +354,7 @@ export function useGameState() {
         condition = resultObj.condition;
       }
 
-      if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy') {
+      if (condition && ability.trigger === 'Fanfare' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix') {
         const result = executeGameEffect(
           ability.effectType ?? '', 
           ability.values ?? {}, 
@@ -406,7 +406,7 @@ export function useGameState() {
     if (field.length >= 5 && targetCard.type === 'Follower') return;
 
     const fanfareAbility = targetCard.abilities.find(
-      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy')
+      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy' || a.effectType === 'SelectStatsFix')
     );
 
     if (fanfareAbility) {
@@ -432,7 +432,7 @@ export function useGameState() {
       if (isConditionMet && enemyField.length >= 1) {
         setTargetingContext({
           card: targetCard,
-          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy',
+          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy' | 'SelectStatsFix',
           values: fanfareAbility.values ?? {}
         });
         return;

@@ -66,3 +66,25 @@ export const statsBufEffect: CardEffect = {
     };
   }
 };
+
+export const statsFixEffect: CardEffect = {
+  execute(context: EffectContext, values?: EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult {
+    const attackFix = values?.fixedAttack !== undefined ? values.fixedAttack : null;
+    const defenseFix = values?.fixedDefense !== undefined ? values.fixedDefense : null;
+
+    const updatedField = context.enemyField.map((card, index) => {
+      if (index === targetIndex) {
+        return {
+          ...card,
+          attack: attackFix === null ? card.attack : attackFix,
+          defense: defenseFix === null ? card.defense : defenseFix,
+        };
+      }
+      return card;
+    });
+
+    return {
+      enemyField: updatedField
+    };
+  }
+};

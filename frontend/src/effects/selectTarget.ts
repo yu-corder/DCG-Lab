@@ -2,6 +2,6 @@ import type { Card, EfectValues } from '../../../shared/types';
 
 export interface TargetingContext {
   card: Card;
-  effectType: 'SelectDamage' | 'SelectBuff' | 'SelectDestroy';
+  effectType: 'SelectDamage' | 'SelectStatsFix' | 'SelectDestroy';
   values: EfectValues;
 }

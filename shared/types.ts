@@ -19,13 +19,15 @@ export interface EfectValues {
   defenseSource?: 'CurrentCombo' | 'HandCardCountWithSubtype' | 'HandLength';
   targetCardId?: number;
   targetSubtype?: CardSubtype;
+  fixedAttack?: number;
+  fixedDefense?: number;
 }
 
 export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'ComboMyStatsBuf' | 'StatsBuf',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf',
   values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;
@@ -41,6 +43,8 @@ export interface Card {
   cost: number;
   type: CardType;
   subtypes?: CardSubtype[];
+  baseAttack?: number;
+  baseDefense?: number;
   attack?: number;
   defense?: number;
   abilities: Ability[];

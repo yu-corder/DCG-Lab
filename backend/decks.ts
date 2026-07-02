@@ -501,7 +501,15 @@ export const albert: Card[] = [
       attack: 1,
       defense: 3,
       abilities: [
-        { trigger: 'Fanfare', description: 'ファンファーレ コンボ_3 相手の場のフォロワー1枚を選ぶ。それは体力1になる。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'SelectStatsFix',
+          values: {fixedDefense: 1},
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: 'ファンファーレ コンボ_3 相手の場のフォロワー1枚を選ぶ。それは体力1になる。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,

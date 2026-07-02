@@ -1,7 +1,7 @@
 import type { EfectValues } from '../../../shared/types';
 import type { EffectContext, EffectResult, CardEffect } from './types';
 
-import { myFieldAllBufEffect, statsBufEffect } from './buf';
+import { myFieldAllBufEffect, statsBufEffect, statsFixEffect } from './buf';
 import { aoeDamageEffect, selectDamageEffect } from './damage';
 import { selectDestroyEffect } from './destroy';
 import { DrawEffect } from './draw';
@@ -17,6 +17,7 @@ const effectRegistry: Record<string, CardEffect> = {
   GetToken: getTokenEffect,
   MyFieldAllBuf: myFieldAllBufEffect,
   StatsBuf: statsBufEffect,
+  SelectStatsFix: statsFixEffect,
 };
 
 export const executeGameEffect = (
