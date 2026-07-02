@@ -627,3 +627,29 @@ export const testDeck_22: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_23: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2300 + index,
+  name: 'コンボ条件付き体力固定化フォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 3,
+  defense: 3,
+  baseAttack: 3,
+  baseDefense: 3,
+  abilities: [
+    { 
+      trigger: 'Fanfare',
+      effectType: 'SelectStatsFix',
+      values: { fixedDefense: 1 },
+      conditionType: 'PlayCondition',
+      triggerConditions: 'HAS_MATCHING_CONBO',
+      conditionValue: 3,
+      description: 'ファンファーレ コンボ_3 相手の場のフォロワー1体を選ぶ。それは体力1になる。',
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));

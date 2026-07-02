@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7, testDeck_19, testDeck_21 } from "../../deck";
+import { testDeck_2, testDeck_3, testDeck_4, testDeck_5, testDeck_6, testDeck_7, testDeck_19, testDeck_21, testDeck_23 } from "../../deck";
 import { token } from '../../../../../backend/token.ts';
 
 describe("Fanfare Effect", () => {
@@ -368,5 +368,66 @@ describe("Fanfare Effect", () => {
     expect(deployedCard).toBeDefined();
     expect(deployedCard!.attack).toBe(expectedBuffAmount);
     expect(deployedCard!.defense).toBe(expectedBuffAmount);
+  });
+
+  it("should fix enemy follower's defense to 1 when combo 3 condition is satisfied", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_23,
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.endTurn(); });
+
+    act(() => { result.current.enemyPlayCard(); }); 
+    
+    expect(result.current.enemyField.length).toBeGreaterThan(0);
+    const targetEnemyCard = result.current.enemyField[0];
+    expect(targetEnemyCard.defense).toBeGreaterThan(1);
+
+    const card1 = result.current.hand[0];
+    act(() => { result.current.playCard(card1); });
+
+    expect(result.current.targetingContext).toBeNull();
+
+    const card2 = result.current.hand.find(c => c.instanceId !== card1.instanceId);
+    act(() => { result.current.playCard(card2!); });
+
+    const amatsuAlbert = result.current.hand.find(c => c.instanceId !== card1.instanceId && c.instanceId !== card2!.instanceId);
+    expect(amatsuAlbert).toBeDefined();
+
+    act(() => {
+      result.current.playCard(amatsuAlbert!);
+    });
+
+    expect(result.current.targetingContext).not.toBeNull();
+    expect(result.current.targetingContext?.effectType).toBe('SelectStatsFix');
+
+    act(() => {
+      result.current.selectTargetFollower(0);
+    });
+
+    const updatedEnemyCard = result.current.enemyField[0];
+    expect(updatedEnemyCard.defense).toBe(1);
+    expect(updatedEnemyCard.baseDefense).toBe(targetEnemyCard.baseDefense);
+    expect(result.current.targetingContext).toBeNull();
   });
 });
