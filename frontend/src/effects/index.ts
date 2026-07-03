@@ -2,7 +2,7 @@ import type { EfectValues } from '../../../shared/types';
 import type { EffectContext, EffectResult, CardEffect } from './types';
 
 import { myFieldAllBufEffect, statsBufEffect, statsFixEffect } from './buf';
-import { aoeDamageEffect, selectDamageEffect, splitDamageEffect } from './damage';
+import { aoeDamageEffect, selectDamageEffect, splitDamageEffect, randomDamageEffect } from './damage';
 import { selectDestroyEffect } from './destroy';
 import { DrawEffect } from './draw';
 import { MyHealthHealEffect } from './heal';
@@ -21,6 +21,7 @@ const effectRegistry: Record<string, CardEffect> = {
   SelectStatsFix: statsFixEffect,
   SelectBounce: selectBounceEffect,
   SplitDamage: splitDamageEffect,
+  RandomDamage: randomDamageEffect,
 };
 
 export const executeGameEffect = (

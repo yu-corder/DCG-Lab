@@ -600,7 +600,13 @@ export const albert: Card[] = [
           effectType: 'StatsBuf',
           values: { attackSource: 'HandCardCountWithSubtype', defenseSource: 'HandCardCountWithSubtype', targetSubtype: 'Fairy'},
           description: 'ファンファーレ これは+X/+Xする。Xは自分の手札の妖精・フォロワーの枚数である。',
-        }
+        },
+        {
+          trigger: 'Evolve',
+          effectType: 'RandomDamage',
+          values: {value1: 1, damageCount: 'HandCardCountWithSubtype', targetSubtype: 'Fairy'},
+          description: '進化時 相手の場のフォロワーからランダム1枚に1ダメージ。をX回行う。Xは自分の手札の妖精・フォロワーの枚数である。'
+        },
       ],
       hasAttacked: true,
       isEvolved: false,
