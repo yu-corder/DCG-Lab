@@ -665,9 +665,15 @@ export const albert: Card[] = [
         {
           trigger: 'Fanfare',
           effectType: 'Draw',
-          values: {},
+          values: { value1: 2 },
           description: 'ファンファーレ 自分のデッキから2枚を引く。'
-        }
+        },
+        {
+          trigger: 'Evolve',
+          effectType: 'SplitDamage',
+          values: {damageSourse: 'HandLength'},
+          description: '進化時 相手の場のフォロワーはすべてにXダメージを割り振る。Xは自分の手札の枚数である。'
+        },
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -685,9 +691,15 @@ export const albert: Card[] = [
         {
           trigger: 'Fanfare',
           effectType: 'Draw',
-          values: {},
+          values: { value1: 2 },
           description: 'ファンファーレ 自分のデッキから2枚を引く。'
-        }
+        },
+        {
+          trigger: 'Evolve',
+          effectType: 'SplitDamage',
+          values: {damageSourse: 'HandLength'},
+          description: '進化時 相手の場のフォロワーはすべてにXダメージを割り振る。Xは自分の手札の枚数である。'
+        },
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -705,9 +717,15 @@ export const albert: Card[] = [
         {
           trigger: 'Fanfare',
           effectType: 'Draw',
-          values: {},
+          values: { value1: 2 },
           description: 'ファンファーレ 自分のデッキから2枚を引く。'
-        }
+        },
+        {
+          trigger: 'Evolve',
+          effectType: 'SplitDamage',
+          values: {damageSourse: 'HandLength'},
+          description: '進化時 相手の場のフォロワーはすべてにXダメージを割り振る。Xは自分の手札の枚数である。'
+        },
       ],
       hasAttacked: true,
       isEvolved: false,
