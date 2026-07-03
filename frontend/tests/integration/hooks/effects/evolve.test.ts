@@ -1,7 +1,7 @@
 import { describe, it, expect, mock, beforeEach } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_10, testDeck_11, testDeck_12, testDeck_13, testDeck_14, testDeck_15 } from "../../deck";
+import { testDeck_10, testDeck_11, testDeck_12, testDeck_13, testDeck_14, testDeck_15, testDeck_25 } from "../../deck";
 import { token } from '../../../../../backend/token.ts';
 
 describe("Evolve Effect", () => {
@@ -186,5 +186,45 @@ describe("Evolve Effect", () => {
       expect(card.instanceId).toBeDefined();
     });
     expect(lastTwoCards[0].instanceId).not.toBe(lastTwoCards[1].instanceId);
+  });
+
+  it("should allocate split damage to all enemy followers based on the hand length upon evolution", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ cards: testDeck_25, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+    await waitFor(() => { expect(result.current.hand.length).toBe(4); });
+    act(() => { result.current.handleMulliganConfirm([]); });
+
+    const playableCard = result.current.hand[0];
+    act(() => { result.current.playCard(playableCard); });
+    const followerId = result.current.field[0].instanceId!;
+
+    act(() => { result.current.enemyPlayCard(); });
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.enemyPlayCard(); });
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.enemyPlayCard(); });
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.enemyPlayCard(); });
+
+    expect(result.current.enemyField.length).toBe(4);
+    expect(result.current.enemyField[0].defense).toBe(2);
+    expect(result.current.enemyField[1].defense).toBe(2);
+    expect(result.current.enemyField[2].defense).toBe(2);
+    expect(result.current.enemyField[3].defense).toBe(2);
+
+
+    const expectedDamage = result.current.hand.length; 
+    expect(expectedDamage).toBeGreaterThanOrEqual(3);
+
+    act(() => { result.current.evolveFollower(followerId); });
+
+    expect(result.current.enemyField.length).toBe(1);
+    expect(result.current.enemyField[0].defense).toBe(2 - (expectedDamage - 6));
+    expect(result.current.targetingContext).toBeNull();
   });
 });

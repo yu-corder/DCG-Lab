@@ -676,3 +676,26 @@ export const testDeck_24: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_25: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2500 + index,
+  name: '割り振りダメージフォロワー',
+  cost: 1,
+  type: 'Follower',
+  attack: 3,
+  defense: 2,
+  baseAttack: 3,
+  baseDefense: 2,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'SplitDamage',
+      values: {damageSourse: 'HandLength'},
+      description: '進化時 相手の場のフォロワーはすべてにXダメージを割り振る。Xは自分の手札の枚数である。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
