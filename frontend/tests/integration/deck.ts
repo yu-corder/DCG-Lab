@@ -699,3 +699,27 @@ export const testDeck_25: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_26: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2600 + index,
+  name: 'ランダムダメージフォロワー',
+  cost: 1,
+  type: 'Follower',
+  subtypes: ['Fairy'],
+  attack: 3,
+  defense: 4,
+  baseAttack: 3,
+  baseDefense: 4,
+  abilities: [
+    {
+      trigger: 'Evolve',
+      effectType: 'RandomDamage',
+      values: {value1: 1, damageCount: 'HandCardCountWithSubtype', targetSubtype: 'Fairy'},
+      description: '進化時 相手の場のフォロワーからランダム1枚に1ダメージ。をX回行う。Xは自分の手札の妖精・フォロワーの枚数である。'
+    },
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));

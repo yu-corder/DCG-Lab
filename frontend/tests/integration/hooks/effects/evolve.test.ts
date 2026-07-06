@@ -1,7 +1,7 @@
 import { describe, it, expect, mock, beforeEach } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_10, testDeck_11, testDeck_12, testDeck_13, testDeck_14, testDeck_15, testDeck_25 } from "../../deck";
+import { testDeck_10, testDeck_11, testDeck_12, testDeck_13, testDeck_14, testDeck_15, testDeck_25, testDeck_26 } from "../../deck";
 import { token } from '../../../../../backend/token.ts';
 
 describe("Evolve Effect", () => {
@@ -225,6 +225,47 @@ describe("Evolve Effect", () => {
 
     expect(result.current.enemyField.length).toBe(1);
     expect(result.current.enemyField[0].defense).toBe(2 - (expectedDamage - 6));
+    expect(result.current.targetingContext).toBeNull();
+  });
+
+  it("should deal 1 damage to a random enemy follower X times based on hand subtype count upon evolution", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({ cards: testDeck_26, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+    await waitFor(() => { expect(result.current.hand.length).toBe(4); });
+    act(() => { result.current.handleMulliganConfirm([]); });
+
+    const playableCard = result.current.hand[0];
+    act(() => { result.current.playCard(playableCard); });
+    const followerId = result.current.field[0].instanceId!;
+
+    act(() => { result.current.enemyPlayCard(); });
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.enemyPlayCard(); });
+    expect(result.current.enemyField.length).toBe(2);
+    
+    const initialEnemyTotalDefense = 
+    (result.current.enemyField[0]?.defense ?? 0) + 
+    (result.current.enemyField[1]?.defense ?? 0);
+    
+    act(() => { result.current.endTurn(); });
+    act(() => { result.current.endTurn(); });
+
+    const targetSubtype = 'Fairy';
+    const expectedDamageCount = result.current.hand.filter(card => card.subtypes?.includes(targetSubtype)).length;
+
+    act(() => { result.current.evolveFollower(followerId); });
+
+    const postEnemyTotalDefense = result.current.enemyField.reduce(
+      (sum, f) => sum + (f?.defense ?? 0), 
+      0
+    );
+  
+    expect(initialEnemyTotalDefense - postEnemyTotalDefense).toBe(expectedDamageCount * 1);
     expect(result.current.targetingContext).toBeNull();
   });
 });
