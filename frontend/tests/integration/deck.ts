@@ -723,3 +723,35 @@ export const testDeck_26: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_27: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2700 + index,
+  name: '手札で働く効果のフォロワー',
+  cost: 4,
+  type: 'Follower',
+  subtypes: ['Fairy'],
+  attack: 3,
+  defense: 3,
+  baseAttack: 3,
+  baseDefense: 3,
+  abilities: [
+    {
+      trigger: 'Hand',
+      conditionType: 'FieldCondition',
+      triggerConditions: 'HAS_MY_LEAVE_FOLLOWER',
+      effectType: 'ReduceCost',
+      values: { value1: 1 },
+      description: '手札で働く 自分の場のフォロワーが離れたときに-1コストする。'
+    },
+    {
+      trigger: 'Fanfare',
+      effectType: 'SelectBounce',
+      values: {},
+      description: 'ファンファーレ 自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
