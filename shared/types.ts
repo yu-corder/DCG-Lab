@@ -1,8 +1,8 @@
 export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
-export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve';
+export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve' | 'Hand';
 
-export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO';
+export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO' | 'HAS_MY_LEAVE_FOLLOWER';
 
 export type ConditionType = 'FieldCondition' | 'PlayCondition';
 
@@ -29,7 +29,7 @@ export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost',
   values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;

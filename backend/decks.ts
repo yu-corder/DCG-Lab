@@ -815,84 +815,20 @@ export const albert: Card[] = [
       defense: 4,
       abilities: [
         {
-          trigger: 'Fanfare',
+          trigger: 'Hand',
           conditionType: 'FieldCondition',
-          triggerConditions: 'HAS_EVOLED_FOLLOWER',
-          effectType: 'AoeDamage',
-          values: { value1: 4 },
-          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
-        }
-      ],
-      hasAttacked: true,
-      isEvolved: false,
-      playedThisTurn: false,
-      isExEvolved: false,
-    },
-
-    // ==========================================
-    // 新規追加：進化時効果持ちフォロワー (計5枚)
-    // ==========================================
-    {
-      id: 44,
-      name: 'インセクトブレイサー',
-      cost: 3,
-      type: 'Follower',
-      attack: 3,
-      defense: 3,
-      abilities: [
-        {
-          trigger: 'Fanfare',
-          conditionType: 'FieldCondition',
-          triggerConditions: 'HAS_EVOLED_FOLLOWER',
-          effectType: 'AoeDamage',
-          values: { value1: 4 },
+          triggerConditions: 'HAS_MY_LEAVE_FOLLOWER',
+          effectType: 'ReduceCost',
+          values: { value1: 1 },
           description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
         },
         {
-          trigger: 'Evolve',
+          trigger: 'Fanfare',
+          conditionType: 'FieldCondition',
+          triggerConditions: 'HAS_EVOLED_FOLLOWER',
           effectType: 'AoeDamage',
-          values: { value1: 2 },
-          description: '進化時 相手の場のフォロワーすべてに2ダメージ。'
-        }
-      ],
-      hasAttacked: true,
-      isEvolved: false,
-      playedThisTurn: false,
-      isExEvolved: false,
-    },
-    {
-      id: 45,
-      name: '世界樹の導き手',
-      cost: 4,
-      type: 'Follower',
-      attack: 3,
-      defense: 4,
-      abilities: [
-        {
-          trigger: 'Evolve',
-          effectType: 'MyHealthHeal',
-          values: { value1: 3 },
-          description: '進化時 自分のリーダーの体力を3回復する。'
-        }
-      ],
-      hasAttacked: true,
-      isEvolved: false,
-      playedThisTurn: false,
-      isExEvolved: false,
-    },
-    {
-      id: 46,
-      name: 'エルフアサシン',
-      cost: 4,
-      type: 'Follower',
-      attack: 4,
-      defense: 3,
-      abilities: [
-        {
-          trigger: 'Evolve',
-          effectType: 'SelectDamage',
           values: { value1: 4 },
-          description: '進化時 相手の場のフォロワー1体を選ぶ。それに4ダメージ。'
+          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
         }
       ],
       hasAttacked: true,
@@ -901,18 +837,28 @@ export const albert: Card[] = [
       isExEvolved: false,
     },
     {
-      id: 47,
-      name: 'フェアリーナイト',
-      cost: 4,
+      id: 42,
+      name: '煌撃の戦士・ベイル',
+      cost: 8,
       type: 'Follower',
       attack: 4,
       defense: 4,
       abilities: [
         {
-          trigger: 'Evolve',
-          effectType: 'SelectDestroy',
-          values: {},
-          description: '進化時 相手の場のフォロワー1枚を選ぶ。それを破壊する。'
+          trigger: 'Hand',
+          conditionType: 'FieldCondition',
+          triggerConditions: 'HAS_MY_LEAVE_FOLLOWER',
+          effectType: 'ReduceCost',
+          values: { value1: 1 },
+          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
+        },
+        {
+          trigger: 'Fanfare',
+          conditionType: 'FieldCondition',
+          triggerConditions: 'HAS_EVOLED_FOLLOWER',
+          effectType: 'AoeDamage',
+          values: { value1: 4 },
+          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
         }
       ],
       hasAttacked: true,
@@ -921,23 +867,33 @@ export const albert: Card[] = [
       isExEvolved: false,
     },
     {
-      id: 48,
-      name: '深緑の賢者',
-      cost: 5,
+      id: 43,
+      name: '煌撃の戦士・ベイル',
+      cost: 8,
       type: 'Follower',
       attack: 4,
-      defense: 5,
+      defense: 4,
       abilities: [
         {
-          trigger: 'Evolve',
-          effectType: 'Draw',
-          values: {},
-          description: '進化時 自分のデッキから1枚を引く。'
+          trigger: 'Hand',
+          conditionType: 'FieldCondition',
+          triggerConditions: 'HAS_MY_LEAVE_FOLLOWER',
+          effectType: 'ReduceCost',
+          values: { value1: 1 },
+          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
+        },
+        {
+          trigger: 'Fanfare',
+          conditionType: 'FieldCondition',
+          triggerConditions: 'HAS_EVOLED_FOLLOWER',
+          effectType: 'AoeDamage',
+          values: { value1: 4 },
+          description: 'ファンファーレ 相手の場のフォロワーすべてに4ダメージ。'
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
-    }
+    },
 ];

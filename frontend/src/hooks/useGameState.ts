@@ -6,6 +6,7 @@ import type { GameInitResponse } from '../../../shared/types';
 import {  executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
+import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler'
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -268,13 +269,22 @@ export function useGameState() {
     const currentDefense = isExEvoled ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
 
+    let nextField: Card[] = [];
     if (currentDefense <= 0) {
-      setField(prev => prev.filter(f => f.instanceId !== myInstanceId));
+      nextField = field.filter(f => f.instanceId !== myInstanceId);
     } else {
-      setField(prev => prev.map(c =>
+      nextField = field.map(c =>
         c.instanceId === myInstanceId ? { ...c, hasAttacked: true, defense: currentDefense } : c
-      ));
+      );
     }
+
+    const updatedHand = checkAndApplyZoneEffects(hand, {
+      oldField: field,
+      newField: nextField
+    });
+
+    setField(nextField);
+    setHand(updatedHand);
 
     if (currentEnemyDefense <= 0) {
       setEnemyField(prev => prev.filter(f => f.instanceId !== enemyInstanceId));
@@ -366,6 +376,9 @@ export function useGameState() {
       }
 
       if (condition && ability.trigger === 'Fanfare' && selectable) {
+        const oldMyField = [...currentField];
+        const oldEnemyField = [...currentEnemyField];
+
         const result = executeGameEffect(
           ability.effectType ?? '', 
           ability.values ?? {}, 
@@ -380,6 +393,11 @@ export function useGameState() {
         if (result.deck) currentDeck = result.deck;
         if (result.myHealth) currentMyHealth = result.myHealth;
         if (result.enemyHealth) currentEnemyHealth = result.enemyHealth;
+
+        currentHand = checkAndApplyZoneEffects(currentHand, {
+          oldField: oldMyField,
+          newField: currentField
+        });
       }
     });
 
