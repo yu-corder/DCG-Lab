@@ -6,7 +6,8 @@ import type { GameInitResponse } from '../../../shared/types';
 import {  executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
-import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler'
+import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler';
+import { checkAndApplyLastWords } from './utils/lastWordHandler';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -269,6 +270,8 @@ export function useGameState() {
     const currentDefense = isExEvoled ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
 
+    const destroyedMyCards = currentDefense <= 0 ? [targetCard] : [];
+
     let nextField: Card[] = [];
     if (currentDefense <= 0) {
       nextField = field.filter(f => f.instanceId !== myInstanceId);
@@ -278,23 +281,48 @@ export function useGameState() {
       );
     }
 
+    let nextEnemyField: Card[] = [];
+    let nextEnemyHealth = enemyHealth;
+    if (currentEnemyDefense <= 0) {
+      nextEnemyField = enemyField.filter(f => f.instanceId !== enemyInstanceId);
+      const damage = isExEvoled ? 1 : 0;
+      nextEnemyHealth = enemyHealth - damage;
+    } else {
+      nextEnemyField = enemyField.map(c =>
+        c.instanceId === enemyInstanceId ? { ...c, defense: currentEnemyDefense } : c
+      );
+    }
+
     const updatedHand = checkAndApplyZoneEffects(hand, {
       oldField: field,
       newField: nextField
     });
 
-    setField(nextField);
-    setHand(updatedHand);
+    let currentContext = {
+      field: nextField,
+      enemyField: nextEnemyField,
+      hand: updatedHand,
+      deck: deck,
+      myHealth: myHealth,
+      enemyHealth: nextEnemyHealth,
+    };
 
-    if (currentEnemyDefense <= 0) {
-      setEnemyField(prev => prev.filter(f => f.instanceId !== enemyInstanceId));
-      const damage = isExEvoled ? 1 : 0;
-      setEnemyHealth(prev => prev - damage);
-    } else {
-      setEnemyField(prev => prev.map(c =>
-        c.instanceId === enemyInstanceId ? { ...c, defense: currentEnemyDefense } : c
-      ));
-    }
+    if (destroyedMyCards.length > 0) {
+      const lwResult = checkAndApplyLastWords(destroyedMyCards, {
+        ...currentContext,
+        token,
+        turnLog
+      });
+      currentContext = { ...currentContext, ...lwResult };
+    }    
+
+    setField(currentContext.field);
+    setEnemyField(currentContext.enemyField);
+    setHand(currentContext.hand);
+    setDeck(currentContext.deck);
+    setMyHealth(currentContext.myHealth);
+    setEnemyHealth(currentContext.enemyHealth);
+
     setSelectedMyCardId(null);
   };
 

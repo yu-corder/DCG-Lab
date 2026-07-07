@@ -85,7 +85,12 @@ export const albert: Card[] = [
       attack: 1,
       defense: 1,
       abilities: [
-        { trigger: 'LastWord', description: 'ラストワード フェアリー1枚を自分の手札に加える。' }
+        { 
+          trigger: 'LastWord', 
+          effectType: 'GetToken',
+          values: {value1: 1, value2: 1},
+          description: 'ラストワード フェアリー1枚を自分の手札に加える。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -100,7 +105,12 @@ export const albert: Card[] = [
       attack: 1,
       defense: 1,
       abilities: [
-        { trigger: 'LastWord', description: 'ラストワード フェアリー1枚を自分の手札に加える。' }
+        { 
+          trigger: 'LastWord', 
+          effectType: 'GetToken',
+          values: {value1: 1, value2: 1},
+          description: 'ラストワード フェアリー1枚を自分の手札に加える。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -115,7 +125,12 @@ export const albert: Card[] = [
       attack: 1,
       defense: 1,
       abilities: [
-        { trigger: 'LastWord', description: 'ラストワード フェアリー1枚を自分の手札に加える。' }
+        { 
+          trigger: 'LastWord', 
+          effectType: 'GetToken',
+          values: {value1: 1, value2: 1},
+          description: 'ラストワード フェアリー1枚を自分の手札に加える。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
