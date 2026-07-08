@@ -4,6 +4,7 @@ export const dummySpell: Card = {
     id: 9999,
     instanceId: "insect-notice-instance-id",
     name: '虫の知らせ',
+    baseCost: 0,
     cost: 0,
     type: 'Spell',
     subtypes: [],

@@ -42,6 +42,7 @@ export type CardSubtype = 'Fairy' | 'Commander' | 'Officer' | 'Mechanical' | 'Na
 export interface Card {
   id: number;
   name: string;
+  baseCost: number;
   cost: number;
   type: CardType;
   subtypes?: CardSubtype[];

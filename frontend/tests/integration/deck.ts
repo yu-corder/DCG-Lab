@@ -3,6 +3,7 @@ export const testDeck_1: Card[] = [
     {
       id: 1,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -26,6 +27,7 @@ export const testDeck_1: Card[] = [
     {
       id: 2,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -49,6 +51,7 @@ export const testDeck_1: Card[] = [
     {
       id: 3,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -73,6 +76,7 @@ export const testDeck_1: Card[] = [
     {
       id: 4,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -88,6 +92,7 @@ export const testDeck_1: Card[] = [
     {
       id: 5,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -103,6 +108,7 @@ export const testDeck_1: Card[] = [
     {
       id: 6,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -118,6 +124,7 @@ export const testDeck_1: Card[] = [
     {
       id: 13,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 2,
@@ -138,6 +145,7 @@ export const testDeck_1: Card[] = [
     {
       id: 14,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 2,
@@ -158,6 +166,7 @@ export const testDeck_1: Card[] = [
     {
       id: 15,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 2,
@@ -180,6 +189,7 @@ export const testDeck_1: Card[] = [
 export const testDeck_2: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 100 + index,
   name: '全体火力のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 2,
@@ -201,6 +211,7 @@ export const testDeck_2: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_3: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 200 + index,
   name: '選択火力のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 2,
@@ -222,6 +233,7 @@ export const testDeck_3: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_4: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 300 + index,
   name: '確定除去のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 2,
@@ -242,6 +254,7 @@ export const testDeck_4: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_5: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 400 + index,
   name: '知恵のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -263,6 +276,7 @@ export const testDeck_5: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_6: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 500 + index,
   name: '癒やしのテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -284,6 +298,7 @@ export const testDeck_6: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_7: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 600 + index,
   name: 'フェアリーテイマー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 2,
@@ -305,6 +320,7 @@ export const testDeck_7: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_8: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 700 + index,
   name: '進化のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -326,6 +342,7 @@ export const testDeck_8: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_9: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 800 + index,
   name: '戦闘のテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -340,6 +357,7 @@ export const testDeck_9: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_10: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 900 + index,
   name: '進化時ドローテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -361,6 +379,7 @@ export const testDeck_10: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_11: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1000 + index,
   name: '進化AoEテスト',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -382,6 +401,7 @@ export const testDeck_11: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_12: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1100 + index,
   name: '進化単体除去テスト',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -403,6 +423,7 @@ export const testDeck_12: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_13: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1200 + index,
   name: '進化確定破壊テスト',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -424,6 +445,7 @@ export const testDeck_13: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_14: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1300 + index,
   name: '進化回復テスト',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -445,6 +467,7 @@ export const testDeck_14: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_15: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1400 + index,
   name: '進化トークンテスト',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -466,6 +489,7 @@ export const testDeck_15: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_16: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1500 + index,
   name: 'コンボドローテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -490,6 +514,7 @@ export const testDeck_16: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_17: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1600 + index,
   name: '進化参照AoEテストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -514,6 +539,7 @@ export const testDeck_17: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_18: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1700 + index,
   name: 'コスト参照回復テストフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 1,
@@ -538,6 +564,7 @@ export const testDeck_18: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1700 + index,
   name: ' コンボ数自己バフフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 0,
@@ -560,6 +587,7 @@ export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_20: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1800 + index,
   name: 'テスト用スペルカード',
+  baseCost: 1,
   cost: 1,
   type: 'Spell',
   attack: 0,
@@ -581,6 +609,7 @@ export const testDeck_20: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_21: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1900 + index,
   name: 'アマツ風・フェアリー自己バフフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   subtypes: ['Fairy'],
@@ -607,6 +636,7 @@ export const testDeck_21: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_22: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 1900 + index,
   name: 'コンボ条件・選択効果発動フォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   subtypes: ['Fairy'],
@@ -631,6 +661,7 @@ export const testDeck_22: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_23: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2300 + index,
   name: 'コンボ条件付き体力固定化フォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 3,
@@ -657,6 +688,7 @@ export const testDeck_23: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_24: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2400 + index,
   name: 'バウンスフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 3,
@@ -680,6 +712,7 @@ export const testDeck_24: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_25: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2500 + index,
   name: '割り振りダメージフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   attack: 3,
@@ -703,6 +736,7 @@ export const testDeck_25: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_26: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2600 + index,
   name: 'ランダムダメージフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   subtypes: ['Fairy'],
@@ -727,6 +761,7 @@ export const testDeck_26: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_27: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2700 + index,
   name: '手札で働く効果のフォロワー',
+  baseCost: 1,
   cost: 4,
   type: 'Follower',
   subtypes: ['Fairy'],
@@ -759,6 +794,7 @@ export const testDeck_27: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_28: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2800 + index,
   name: 'ラストワード持ちフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   subtypes: ['Fairy'],
@@ -783,6 +819,7 @@ export const testDeck_28: Card[] = Array(40).fill(null).map((_, index) => ({
 export const testDeck_29: Card[] = Array(40).fill(null).map((_, index) => ({
   id: 2900 + index,
   name: 'テスト用バニラフォロワー',
+  baseCost: 1,
   cost: 1,
   type: 'Follower',
   subtypes: [],

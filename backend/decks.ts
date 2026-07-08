@@ -7,6 +7,7 @@ export const albert: Card[] = [
     {
       id: 1,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -30,6 +31,7 @@ export const albert: Card[] = [
     {
       id: 2,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -53,6 +55,7 @@ export const albert: Card[] = [
     {
       id: 3,
       name: 'アドベンチャーエルフ・メイ',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -80,6 +83,7 @@ export const albert: Card[] = [
     {
       id: 4,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -100,6 +104,7 @@ export const albert: Card[] = [
     {
       id: 5,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -120,6 +125,7 @@ export const albert: Card[] = [
     {
       id: 6,
       name: '純粋なるウォーターフェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       attack: 1,
@@ -144,6 +150,7 @@ export const albert: Card[] = [
     {
       id: 7,
       name: '虫の知らせ',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -168,6 +175,7 @@ export const albert: Card[] = [
     {
       id: 8,
       name: '虫の知らせ',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -192,6 +200,7 @@ export const albert: Card[] = [
     {
       id: 9,
       name: '虫の知らせ',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -220,6 +229,7 @@ export const albert: Card[] = [
     {
       id: 10,
       name: '妖精の召集',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -238,6 +248,7 @@ export const albert: Card[] = [
     {
       id: 11,
       name: '妖精の召集',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -256,6 +267,7 @@ export const albert: Card[] = [
     {
       id: 12,
       name: '妖精の召集',
+      baseCost: 1,
       cost: 1,
       type: 'Spell',
       abilities: [
@@ -278,6 +290,7 @@ export const albert: Card[] = [
     {
       id: 13,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -298,6 +311,7 @@ export const albert: Card[] = [
     {
       id: 14,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -318,6 +332,7 @@ export const albert: Card[] = [
     {
       id: 15,
       name: '楽朗の天宮・フィルドア',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -342,6 +357,7 @@ export const albert: Card[] = [
     {
       id: 16,
       name: 'フェアリーテイマー',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -362,6 +378,7 @@ export const albert: Card[] = [
     {
       id: 17,
       name: 'フェアリーテイマー',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -382,6 +399,7 @@ export const albert: Card[] = [
     {
       id: 18,
       name: 'フェアリーテイマー',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -406,6 +424,7 @@ export const albert: Card[] = [
     {
       id: 19,
       name: '舞い踊る妖精',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -429,6 +448,7 @@ export const albert: Card[] = [
     {
       id: 20,
       name: '舞い踊る妖精',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -453,6 +473,7 @@ export const albert: Card[] = [
     {
       id: 21,
       name: '舞い踊る妖精',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -480,6 +501,7 @@ export const albert: Card[] = [
     {
       id: 22,
       name: 'ベビーカーバンクル',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -500,6 +522,7 @@ export const albert: Card[] = [
     {
       id: 23,
       name: 'ベビーカーバンクル',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -520,6 +543,7 @@ export const albert: Card[] = [
     {
       id: 24,
       name: 'ベビーカーバンクル',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 2,
@@ -544,6 +568,7 @@ export const albert: Card[] = [
     {
       id: 25,
       name: 'ピュアクリスタリア・リリィ',
+      baseCost: 2,
       cost: 2,
       type: 'Follower',
       attack: 1,
@@ -571,6 +596,7 @@ export const albert: Card[] = [
     {
       id: 27,
       name: '殺戮のリノセウス',
+      baseCost: 3,
       cost: 3,
       type: 'Follower',
       attack: 0,
@@ -592,6 +618,7 @@ export const albert: Card[] = [
     {
       id: 28,
       name: '殺戮のリノセウス',
+      baseCost: 3,
       cost: 3,
       type: 'Follower',
       attack: 0,
@@ -613,6 +640,7 @@ export const albert: Card[] = [
     {
       id: 29,
       name: '殺戮のリノセウス',
+      baseCost: 3,
       cost: 3,
       type: 'Follower',
       attack: 0,
@@ -638,6 +666,7 @@ export const albert: Card[] = [
     {
       id: 30,
       name: 'ビギンズブレイダー・アマツ',
+      baseCost: 3,
       cost: 3,
       type: 'Follower',
       attack: 2,
@@ -668,6 +697,7 @@ export const albert: Card[] = [
     {
       id: 32,
       name: '聖樹の杖',
+      baseCost: 3,
       cost: 3,
       type: 'Amulet',
       abilities: [
@@ -681,6 +711,7 @@ export const albert: Card[] = [
     {
       id: 33,
       name: '聖樹の杖',
+      baseCost: 3,
       cost: 3,
       type: 'Amulet',
       abilities: [
@@ -694,6 +725,7 @@ export const albert: Card[] = [
     {
       id: 34,
       name: '聖樹の杖',
+      baseCost: 3,
       cost: 3,
       type: 'Amulet',
       abilities: [
@@ -711,6 +743,7 @@ export const albert: Card[] = [
     {
       id: 35,
       name: '薫交の天宮・バックウッド',
+      baseCost: 5,
       cost: 5,
       type: 'Follower',
       attack: 3,
@@ -737,6 +770,7 @@ export const albert: Card[] = [
     {
       id: 36,
       name: '薫交の天宮・バックウッド',
+      baseCost: 5,
       cost: 5,
       type: 'Follower',
       attack: 3,
@@ -763,6 +797,7 @@ export const albert: Card[] = [
     {
       id: 37,
       name: '薫交の天宮・バックウッド',
+      baseCost: 5,
       cost: 5,
       type: 'Follower',
       attack: 3,
@@ -793,6 +828,7 @@ export const albert: Card[] = [
     {
       id: 38,
       name: '自然の妖精姫・アリア',
+      baseCost: 6,
       cost: 6,
       type: 'Follower',
       attack: 4,
@@ -813,6 +849,7 @@ export const albert: Card[] = [
     {
       id: 39,
       name: '自然の妖精姫・アリア',
+      baseCost: 6,
       cost: 6,
       type: 'Follower',
       attack: 4,
@@ -833,6 +870,7 @@ export const albert: Card[] = [
     {
       id: 40,
       name: '自然の妖精姫・アリア',
+      baseCost: 6,
       cost: 6,
       type: 'Follower',
       attack: 4,
@@ -857,6 +895,7 @@ export const albert: Card[] = [
     {
       id: 41,
       name: '煌撃の戦士・ベイル',
+      baseCost: 8,
       cost: 8,
       type: 'Follower',
       attack: 4,
@@ -887,6 +926,7 @@ export const albert: Card[] = [
     {
       id: 42,
       name: '煌撃の戦士・ベイル',
+      baseCost: 8,
       cost: 8,
       type: 'Follower',
       attack: 4,
@@ -917,6 +957,7 @@ export const albert: Card[] = [
     {
       id: 43,
       name: '煌撃の戦士・ベイル',
+      baseCost: 8,
       cost: 8,
       type: 'Follower',
       attack: 4,

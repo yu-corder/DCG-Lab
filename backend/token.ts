@@ -4,6 +4,7 @@ export const token: Card[] = [
     {
       id: 1,
       name: 'フェアリー',
+      baseCost: 1,
       cost: 1,
       type: 'Follower',
       subtypes: ['Fairy'],
