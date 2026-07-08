@@ -755,3 +755,27 @@ export const testDeck_27: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_28: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 2800 + index,
+  name: 'ラストワード持ちフォロワー',
+  cost: 1,
+  type: 'Follower',
+  subtypes: ['Fairy'],
+  attack: 1,
+  defense: 1,
+  baseAttack: 1,
+  baseDefense: 1,
+  abilities: [
+    { 
+      trigger: 'LastWord', 
+      effectType: 'GetToken', 
+      values: { value1: 1, value2: 1 }, 
+      description: 'ラストワード フェアリー1枚を自分の手札に加える。' 
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));
