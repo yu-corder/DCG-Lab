@@ -147,7 +147,18 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' }
+        { 
+          trigger: 'Fanfare',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        },
+        { 
+          trigger: 'Fanfare',
+          effectType: 'RandomDamage',
+          values: {value1: 2, value2: 1,},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -160,7 +171,18 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' }
+         { 
+          trigger: 'Fanfare',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        },
+        { 
+          trigger: 'Fanfare',
+          effectType: 'RandomDamage',
+          values: {value1: 2, value2: 1,},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -173,7 +195,18 @@ export const albert: Card[] = [
       cost: 1,
       type: 'Spell',
       abilities: [
-        { trigger: 'Fanfare', description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' }
+         { 
+          trigger: 'Fanfare',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        },
+        { 
+          trigger: 'Fanfare',
+          effectType: 'RandomDamage',
+          values: {value1: 2, value2: 1,},
+          description: '自分の場のカード1枚を選ぶ。それを手札に戻す。相手の場のフォロワーからランダム1枚に2ダメージ。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,

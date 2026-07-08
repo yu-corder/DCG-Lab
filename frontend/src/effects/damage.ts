@@ -77,6 +77,8 @@ export const randomDamageEffect: CardEffect = {
     const damageCount = values.damageCount ? resolveDynamicValue(values.damageCount, context, values) : values.value2;
     const damage = values.value1;
     const updatedEnemyField = [...context.enemyField];
+
+    console.log("aiueo");
     
     for (let i:number = 0; i < damageCount; i++) {
       if (updatedEnemyField.length === 0) break;

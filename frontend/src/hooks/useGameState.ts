@@ -490,6 +490,9 @@ export function useGameState() {
 
       const isBounce = fanfareAbility.effectType === 'SelectBounce';
       const hasValidTarget = isBounce ? field.length >= 1 : enemyField.length >= 1;
+      if (!hasValidTarget && targetCard.type === 'Spell') {
+        return;
+      }
       if (isConditionMet && hasValidTarget) {
         setTargetingContext({
           card: targetCard,
