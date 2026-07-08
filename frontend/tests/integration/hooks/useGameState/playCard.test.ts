@@ -2,7 +2,9 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_1, testDeck_20 } from "../../deck";
+import { testDeck_1, testDeck_20, testDeck_29 } from "../../deck";
+import { dummySpell } from "../../testCard";
+
 
 globalThis.fetch = mock(() =>
   Promise.resolve({
@@ -96,5 +98,63 @@ describe("useGameState", () => {
     expect(result.current.hand.some(c => c.instanceId === targetCardId)).toBe(false);
     expect(result.current.field.length).toBe(0);
     expect(result.current.field.some(c => c.instanceId === targetCardId)).toBe(false);
+  });
+
+  it("should block playing a spell if it has a SelectBounce fanfare and my field is empty", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_29,
+            myLeader: 'Elf',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    expect(result.current.field.length).toBe(0);
+
+    act(() => {
+      result.current.enemyPlayCard();
+    });
+
+    act(() => {
+      result.current.playCard(dummySpell);
+    });
+
+    expect(result.current.targetingContext).toBeNull();
+
+    const followerInHand = result.current.hand[0];
+    act(() => {
+      result.current.playCard(followerInHand);
+    });
+    expect(result.current.field.length).toBe(1);
+
+    act(() => {
+      result.current.playCard(dummySpell);
+    });
+
+    expect(result.current.targetingContext).not.toBeNull();
+    expect(result.current.targetingContext?.effectType).toBe("SelectBounce");
+    expect(result.current.targetingContext?.targetTeam).toBe("my");
+
+    act(() => {
+      result.current.selectTargetFollower(0);
+    });
+
+    expect(result.current.targetingContext).toBeNull();
+    expect(result.current.enemyField.length).toBe(0);
+
   });
 });
