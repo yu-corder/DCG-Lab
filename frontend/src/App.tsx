@@ -80,7 +80,7 @@ function App() {
               alignItems: 'center',
               gap: '15px'
             }}>
-              ⚠️ 効果の対象となる{targetingContext.targetTeam === 'my' ? '味方' : '敵'}フォロワーを選択してください
+              ⚠️ 効果の対象となる{targetingContext.targetTeam === 'my' ? '味方' : '敵'}カードを選択してください
             </div>
           )}
 
@@ -151,17 +151,17 @@ function App() {
                       position: 'relative',
                       border: isEnemyTargetMode 
                         ? '2px solid #ff4d4d' 
-                        : isCardSelected && !isTargetMode
+                        : isCardSelected && !isTargetMode && card.type === 'Follower'
                           ? '2px solid #ff9900' 
                           : '2px solid #555',
                       borderRadius: '10px',
                       width: '90px',
                       height: '120px',
-                      backgroundColor: '#1c1f26',
+                      backgroundColor: card.type === 'Amulet' ? '#1a2233' : '#1c1f26',
                       boxShadow: isEnemyTargetMode 
                         ? '0 0 15px rgba(255,77,77,0.8)' 
                         : '0 4px 10px rgba(0,0,0,0.5)',
-                      cursor: (isEnemyTargetMode || (isCardSelected && !isTargetMode)) ? 'pointer' : 'default',
+                      cursor: (isEnemyTargetMode || (isCardSelected && !isTargetMode && card.type === 'Follower')) ? 'pointer' : 'default',
                       transform: isEnemyTargetMode ? 'scale(1.03)' : 'scale(1)',
                       transition: 'all 0.2s',
                       pointerEvents: isMyTargetMode ? 'none' : 'auto'
@@ -171,15 +171,25 @@ function App() {
 
                       if (isEnemyTargetMode) {
                         selectTargetFollower(index);
-                      } else if (isCardSelected && !isTargetMode) {
+                      } else if (isCardSelected && !isTargetMode && card.type === 'Follower') {
                         attackToFollower(selectedMyCardId!, card.instanceId!);
                       }
                     }}
                   >
-                    <div style={{ fontSize: '0.75rem', padding: '5px', textAlign: 'center', borderBottom: '1px solid #333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{card.name}</div>
+                    <div style={{ fontSize: '0.75rem', padding: '5px', textAlign: 'center', borderBottom: '1px solid #333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {card.name}
+                    </div>
                     
-                    <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.attack}</div>
-                    <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.defense}</div>
+                    {/* 💡 敵フォロワーの時だけスタッツを表示 */}
+                    {card.type === 'Follower' && (
+                      <>
+                        <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.attack}</div>
+                        <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.defense}</div>
+                      </>
+                    )}
+                    {card.type === 'Amulet' && (
+                      <div style={{ fontSize: '0.6rem', color: '#888', textAlign: 'center', marginTop: '20px' }}>AMULET</div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -209,12 +219,15 @@ function App() {
               >
                 {field.map((card, index) => {
                   const isSelected = selectedMyCardId === card.instanceId;
+                  const canSelectAsAttacker = card.type === 'Follower' && !card.hasAttacked;
+                  
                   return (
                     <div 
                       key={card.instanceId || `${card.id}-${index}`}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => {
                         e.preventDefault();
+                        if (card.type !== 'Follower') return;
                         const evolveType = e.dataTransfer.getData('evolveType');
                         if (evolveType === 'normal') {
                           evolveFollower(card.instanceId!);
@@ -229,7 +242,7 @@ function App() {
                           return;
                         }
 
-                        if (card.hasAttacked) return;
+                        if (!canSelectAsAttacker) return;
                         setSelectedMyCardId(isSelected ? null : card.instanceId!);
                       }}
                       style={{
@@ -238,11 +251,13 @@ function App() {
                           ? '2px solid #00ffcc'
                           : isSelected 
                             ? '2px solid #ffcc00' 
-                            : card.isExEvolved 
-                              ? '2px solid #b300ff' 
-                              : card.isEvolved 
-                                ? '2px solid #00ffcc' 
-                                : '2px solid #888',
+                            : card.type === 'Amulet'
+                              ? '2px solid #55aaff'
+                              : card.isExEvolved 
+                                ? '2px solid #b300ff' 
+                                : card.isEvolved 
+                                  ? '2px solid #00ffcc' 
+                                  : '2px solid #888',
                         borderRadius: '10px',
                         width: '90px',
                         height: '120px',
@@ -250,7 +265,9 @@ function App() {
                           ? '#1c2624' 
                           : isSelected 
                             ? '#2d2a1e' 
-                            : '#1c1f26',
+                            : card.type === 'Amulet'
+                              ? '#141d2d'
+                              : '#1c1f26',
                         boxShadow: isMyTargetMode
                           ? '0 0 15px rgba(0,255,204,0.6)'
                           : isSelected 
@@ -261,8 +278,8 @@ function App() {
                         justifyContent: 'space-between',
                         padding: '4px',
                         boxSizing: 'border-box',
-                        cursor: isMyTargetMode ? 'pointer' : card.hasAttacked ? 'not-allowed' : 'pointer',
-                        opacity: !isMyTargetMode && card.hasAttacked ? 0.6 : 1,
+                        cursor: isMyTargetMode ? 'pointer' : !canSelectAsAttacker && card.type === 'Follower' ? 'not-allowed' : 'pointer',
+                        opacity: !isMyTargetMode && card.type === 'Follower' && card.hasAttacked ? 0.6 : 1,
                         transform: isMyTargetMode ? 'scale(1.03)' : 'scale(1)',
                         transition: 'all 0.2s'
                       }}
@@ -272,11 +289,24 @@ function App() {
                       </div>
                       
                       <div style={{ textAlign: 'center', fontSize: '0.65rem', color: isMyTargetMode ? '#00ffcc' : isSelected ? '#ffcc00' : '#888', zIndex: 2, pointerEvents: 'none' }}>
-                        {isMyTargetMode ? '【対象に選択】' : card.hasAttacked ? '【待機中】' : isSelected ? '【攻撃選択中】' : '選択可'}
+                        {isMyTargetMode 
+                          ? '【対象に選択】' 
+                          : card.type === 'Amulet'
+                            ? '【設置中】'
+                            : card.hasAttacked 
+                              ? '【待機中】' 
+                              : isSelected 
+                                ? '【攻撃選択中】' 
+                                : '選択可'}
                       </div>
 
-                      <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: card.isEvolved ? '#00cc88' : '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.attack}</div>
-                      <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.defense}</div>
+                      {/* 💡 自分フォロワーの時だけスタッツを表示 */}
+                      {card.type === 'Follower' && (
+                        <>
+                          <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: card.isEvolved ? '#00cc88' : '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.attack}</div>
+                          <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.defense}</div>
+                        </>
+                      )}
                     </div>
                   );
                 })}

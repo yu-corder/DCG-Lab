@@ -1,6 +1,6 @@
 export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
-export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve' | 'Hand';
+export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve' | 'Hand' | 'TurnEnd';
 
 export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO' | 'HAS_MY_LEAVE_FOLLOWER';
 
@@ -77,5 +77,6 @@ export interface TurnActionLog {
   cardPlayed: Card[];
   followersSummoned: number;
   spellsCast: number;
+  amuletsPlaced: number;
   oneTurnPlayCount: number;
 }

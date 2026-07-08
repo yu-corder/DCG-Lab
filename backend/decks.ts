@@ -701,7 +701,15 @@ export const albert: Card[] = [
       cost: 3,
       type: 'Amulet',
       abilities: [
-        { trigger: 'Fanfare', description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' }
+        { 
+          trigger: 'TurnEnd',
+          effectType: 'Draw',
+          values: { value1: 1 },
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -715,7 +723,15 @@ export const albert: Card[] = [
       cost: 3,
       type: 'Amulet',
       abilities: [
-        { trigger: 'Fanfare', description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' }
+        { 
+          trigger: 'TurnEnd',
+          effectType: 'Draw',
+          values: { value1: 1 },
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,
@@ -729,7 +745,15 @@ export const albert: Card[] = [
       cost: 3,
       type: 'Amulet',
       abilities: [
-        { trigger: 'Fanfare', description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' }
+        { 
+          trigger: 'TurnEnd',
+          effectType: 'Draw',
+          values: { value1: 1 },
+          conditionType: 'PlayCondition',
+          triggerConditions: 'HAS_MATCHING_CONBO',
+          conditionValue: 3,
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        }
       ],
       hasAttacked: true,
       isEvolved: false,

@@ -35,6 +35,7 @@ export function useGameState() {
     cardPlayed: [],
     followersSummoned: 0,
     spellsCast: 0,
+    amuletsPlaced: 0,
     oneTurnPlayCount: 0,
   });
 
@@ -359,6 +360,8 @@ export function useGameState() {
       currentLog.followersSummoned++;
     } else if (targetCard.type === 'Spell') {
       currentLog.spellsCast++;
+    } else if (targetCard.type === 'Amulet') {
+      currentLog.amuletsPlaced++;
     }
     currentLog.oneTurnPlayCount++;
     const finalPlayed = [...currentLog.cardPlayed, targetCard];
@@ -374,13 +377,14 @@ export function useGameState() {
     let currentMyHealth = myHealth;
     let currentEnemyHealth = enemyHealth;
 
-    if (targetCard.type === 'Follower') {
-      const hasShissou = targetCard.abilities.some(ability => ability.abilityType === 'SHISSOU');
-      const playedFollower = {
+    if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
+      const isFollower = targetCard.type === 'Follower';
+      const hasShissou = targetCard.abilities?.some(a => a.abilityType === 'SHISSOU') ?? false;
+      const played = {
         ...targetCard,
-        hasAttacked: hasShissou ? false : targetCard.hasAttacked
+        hasAttacked: isFollower && hasShissou ? false : true
       };
-      currentField.push(playedFollower);
+      currentField.push(played);
     }
 
     targetCard.abilities.forEach(ability => {
@@ -462,7 +466,7 @@ export function useGameState() {
       alert("ppが足りません。");
       return;
     }
-    if (field.length >= 5 && targetCard.type === 'Follower') return;
+    if (field.length >= 5 && (targetCard.type === 'Follower' || targetCard.type === 'Amulet')) return;
 
     const fanfareAbility = targetCard.abilities.find(
       a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy' || a.effectType === 'SelectStatsFix' || a.effectType === 'SelectBounce')
