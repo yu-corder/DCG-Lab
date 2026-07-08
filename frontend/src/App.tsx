@@ -1,5 +1,6 @@
 import './App.css';
 import MulliganView from './components/MulliganView';
+import FieldView from './components/FieldView';
 import { useGameState } from './hooks/useGameState';
 
 function App() {
@@ -93,6 +94,7 @@ function App() {
               justifyContent: 'space-between', 
               paddingRight: '20px' 
             }}>
+              {/* 敵リーダーエリア */}
               <div 
                 style={{
                   display: 'flex',
@@ -124,194 +126,51 @@ function App() {
               </div>
 
               {/* 敵フィールドエリア */}
-              <div style={{
-                display: 'flex',
-                gap: '15px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '140px',
-                background: isEnemyTargetMode ? 'rgba(255,0,0,0.05)' : 'rgba(0,0,0,0.2)',
-                borderRadius: '16px',
-                border: isEnemyTargetMode ? '1px solid rgba(255,77,77,0.3)' : '1px solid rgba(255,255,255,0.05)',
-                padding: '10px',
-                transition: 'all 0.3s',
-                cursor: isTargetMode ? 'pointer' : 'default',
-                opacity: isMyTargetMode ? 0.4 : 1
-              }}
-              onClick={() => {
-                if (isTargetMode) {
-                  cancelTargeting();
-                }
-              }}
-              >
-                {enemyField.map((card, index) => (
-                  <div 
-                    key={card.instanceId || `${card.id}-${index}`}
-                    style={{
-                      position: 'relative',
-                      border: isEnemyTargetMode 
-                        ? '2px solid #ff4d4d' 
-                        : isCardSelected && !isTargetMode && card.type === 'Follower'
-                          ? '2px solid #ff9900' 
-                          : '2px solid #555',
-                      borderRadius: '10px',
-                      width: '90px',
-                      height: '120px',
-                      backgroundColor: card.type === 'Amulet' ? '#1a2233' : '#1c1f26',
-                      boxShadow: isEnemyTargetMode 
-                        ? '0 0 15px rgba(255,77,77,0.8)' 
-                        : '0 4px 10px rgba(0,0,0,0.5)',
-                      cursor: (isEnemyTargetMode || (isCardSelected && !isTargetMode && card.type === 'Follower')) ? 'pointer' : 'default',
-                      transform: isEnemyTargetMode ? 'scale(1.03)' : 'scale(1)',
-                      transition: 'all 0.2s',
-                      pointerEvents: isMyTargetMode ? 'none' : 'auto'
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-
-                      if (isEnemyTargetMode) {
-                        selectTargetFollower(index);
-                      } else if (isCardSelected && !isTargetMode && card.type === 'Follower') {
-                        attackToFollower(selectedMyCardId!, card.instanceId!);
-                      }
-                    }}
-                  >
-                    <div style={{ fontSize: '0.75rem', padding: '5px', textAlign: 'center', borderBottom: '1px solid #333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {card.name}
-                    </div>
-                    
-                    {/* 💡 敵フォロワーの時だけスタッツを表示 */}
-                    {card.type === 'Follower' && (
-                      <>
-                        <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.attack}</div>
-                        <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem' }}>{card.defense}</div>
-                      </>
-                    )}
-                    {card.type === 'Amulet' && (
-                      <div style={{ fontSize: '0.6rem', color: '#888', textAlign: 'center', marginTop: '20px' }}>AMULET</div>
-                    )}
-                  </div>
-                ))}
+              <div onClick={() => isTargetMode && cancelTargeting()}>
+                <FieldView 
+                  cards={enemyField}
+                  isTargetMode={isTargetMode}
+                  isMyTargetMode={isMyTargetMode}
+                  isEnemyTargetMode={isEnemyTargetMode}
+                  isCardSelected={isCardSelected}
+                  selectedMyCardId={selectedMyCardId}
+                  isEnemy={true}
+                  onCardClick={(card, index) => {
+                    if (isEnemyTargetMode) {
+                      selectTargetFollower(index);
+                    } else if (isCardSelected && !isTargetMode && card.type === 'Follower') {
+                      attackToFollower(selectedMyCardId!, card.instanceId!);
+                    }
+                  }}
+                />
               </div>
 
               {/* 自分フィールドエリア */}
-              <div 
-                style={{
-                  display: 'flex',
-                  gap: '15px',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  minHeight: '140px',
-                  background: isMyTargetMode ? 'rgba(0,255,204,0.05)' : 'rgba(255,255,255,0.02)',
-                  borderRadius: '16px',
-                  border: isMyTargetMode ? '1px solid rgba(0,255,204,0.3)' : '1px dashed rgba(255,255,255,0.1)',
-                  padding: '10px',
-                  opacity: isEnemyTargetMode ? 0.4 : 1,
-                  pointerEvents: isEnemyTargetMode ? 'none' : 'auto',
-                  cursor: isMyTargetMode ? 'pointer' : 'default',
-                  transition: 'all 0.3s'
-                }}
-                onClick={() => {
-                  if (isTargetMode) {
-                    cancelTargeting();
-                  }
-                }}
-              >
-                {field.map((card, index) => {
-                  const isSelected = selectedMyCardId === card.instanceId;
-                  const canSelectAsAttacker = card.type === 'Follower' && !card.hasAttacked;
-                  
-                  return (
-                    <div 
-                      key={card.instanceId || `${card.id}-${index}`}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        if (card.type !== 'Follower') return;
-                        const evolveType = e.dataTransfer.getData('evolveType');
-                        if (evolveType === 'normal') {
-                          evolveFollower(card.instanceId!);
-                        } else if (evolveType === 'ex') {
-                          exEvolveFollower(card.instanceId!);
-                        }
-                      }}
-                      onClick={(e) => {
-                        if (isMyTargetMode) {
-                          e.stopPropagation();
-                          selectTargetFollower(index);
-                          return;
-                        }
-
-                        if (!canSelectAsAttacker) return;
-                        setSelectedMyCardId(isSelected ? null : card.instanceId!);
-                      }}
-                      style={{
-                        position: 'relative',
-                        border: isMyTargetMode
-                          ? '2px solid #00ffcc'
-                          : isSelected 
-                            ? '2px solid #ffcc00' 
-                            : card.type === 'Amulet'
-                              ? '2px solid #55aaff'
-                              : card.isExEvolved 
-                                ? '2px solid #b300ff' 
-                                : card.isEvolved 
-                                  ? '2px solid #00ffcc' 
-                                  : '2px solid #888',
-                        borderRadius: '10px',
-                        width: '90px',
-                        height: '120px',
-                        backgroundColor: isMyTargetMode 
-                          ? '#1c2624' 
-                          : isSelected 
-                            ? '#2d2a1e' 
-                            : card.type === 'Amulet'
-                              ? '#141d2d'
-                              : '#1c1f26',
-                        boxShadow: isMyTargetMode
-                          ? '0 0 15px rgba(0,255,204,0.6)'
-                          : isSelected 
-                            ? '0 0 15px #ffcc00' 
-                            : '0 4px 10px rgba(0,0,0,0.5)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        padding: '4px',
-                        boxSizing: 'border-box',
-                        cursor: isMyTargetMode ? 'pointer' : !canSelectAsAttacker && card.type === 'Follower' ? 'not-allowed' : 'pointer',
-                        opacity: !isMyTargetMode && card.type === 'Follower' && card.hasAttacked ? 0.6 : 1,
-                        transform: isMyTargetMode ? 'scale(1.03)' : 'scale(1)',
-                        transition: 'all 0.2s'
-                      }}
-                    >
-                      <div style={{ fontSize: '0.75rem', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: card.isExEvolved ? '#b300ff' : card.isEvolved ? '#00ffcc' : '#fff' }}>
-                        {card.name}
-                      </div>
-                      
-                      <div style={{ textAlign: 'center', fontSize: '0.65rem', color: isMyTargetMode ? '#00ffcc' : isSelected ? '#ffcc00' : '#888', zIndex: 2, pointerEvents: 'none' }}>
-                        {isMyTargetMode 
-                          ? '【対象に選択】' 
-                          : card.type === 'Amulet'
-                            ? '【設置中】'
-                            : card.hasAttacked 
-                              ? '【待機中】' 
-                              : isSelected 
-                                ? '【攻撃選択中】' 
-                                : '選択可'}
-                      </div>
-
-                      {/* 💡 自分フォロワーの時だけスタッツを表示 */}
-                      {card.type === 'Follower' && (
-                        <>
-                          <div style={{ position: 'absolute', bottom: '5px', left: '5px', backgroundColor: card.isEvolved ? '#00cc88' : '#0055ff', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.attack}</div>
-                          <div style={{ position: 'absolute', bottom: '5px', right: '5px', backgroundColor: '#ff1a1a', color: 'white', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.85rem', zIndex: 1 }}>{card.defense}</div>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
+              <div onClick={() => isTargetMode && cancelTargeting()}>
+                <FieldView 
+                  cards={field}
+                  isTargetMode={isTargetMode}
+                  isMyTargetMode={isMyTargetMode}
+                  isEnemyTargetMode={isEnemyTargetMode}
+                  isCardSelected={isCardSelected}
+                  selectedMyCardId={selectedMyCardId}
+                  onDropEvolve={(cardId, evolveType) => {
+                    if (evolveType === 'normal') evolveFollower(cardId);
+                    if (evolveType === 'ex') exEvolveFollower(cardId);
+                  }}
+                  onCardClick={(card, index) => {
+                    if (isMyTargetMode) {
+                      selectTargetFollower(index);
+                      return;
+                    }
+                    const canSelectAsAttacker = card.type === 'Follower' && !card.hasAttacked;
+                    if (!canSelectAsAttacker) return;
+                    setSelectedMyCardId(selectedMyCardId === card.instanceId ? null : card.instanceId!);
+                  }}
+                />
               </div>
 
+              {/* 手札エリア */}
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -352,9 +211,9 @@ function App() {
                   ))}
                 </div>
               </div>
-
             </div>
 
+            {/* コントロール・ステータスパネル（右サイドバー） */}
             <div style={{
               width: '200px',
               flexShrink: 0,
@@ -383,6 +242,7 @@ function App() {
                   </div>
                 </div>
               </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.8rem', color: '#aaa' }}>自分のHP:</span>
@@ -450,6 +310,7 @@ function App() {
                   <span style={{ fontWeight: 'bold', color: '#b300ff' }}>{myExEp}</span>
                 </div>
               </div>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{ fontSize: '0.75rem', color: '#888', textAlign: 'center' }}>山札の残り: {deck.length} 枚</div>
                 <button 
@@ -475,7 +336,6 @@ function App() {
               </div>
             </div>
           </div>
-
         </div>
       )}
     </div>
