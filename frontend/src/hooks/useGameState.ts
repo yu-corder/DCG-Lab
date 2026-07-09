@@ -7,7 +7,7 @@ import {  executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler';
-import { checkAndApplyLastWords } from './utils/lastWordHandler';
+import { resolveTriggerEffects } from './utils/triggerEffects';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -111,6 +111,35 @@ export function useGameState() {
   }, []);
 
   const endTurn = () => {
+
+    let nextEnemyField = enemyField;
+    let nextEnemyHealth = enemyHealth;
+    let nextField = field;
+    let updatedHand = hand;
+
+    let currentContext = {
+      field: nextField,
+      enemyField: nextEnemyField,
+      hand: updatedHand,
+      deck: deck,
+      myHealth: myHealth,
+      enemyHealth: nextEnemyHealth,
+    };
+
+    const turnEndResult = resolveTriggerEffects(currentContext.field, {
+      ...currentContext,
+      field: currentContext.field.map(card => ({
+        ...card,
+        hasAttacked: false,
+        playedThisTurn: false
+      })),
+      token,
+      turnLog
+    }, 'TurnEnd');
+    currentContext = { ...currentContext, ...turnEndResult };
+    setEnemyField(currentContext.enemyField);
+    
+
     setTurn(prev => prev + 1);
     const nextMaxPP = Math.min(maxPP + 1, 10);
     const currentLog = turnLog;
@@ -118,10 +147,12 @@ export function useGameState() {
     setMaxPP(nextMaxPP);
     setPP(nextMaxPP);
     setTurnLog(currentLog);
-    setField(prevField => prevField.map(card => ({ ...card, hasAttacked: false, playedThisTurn: false })));
+    setField(currentContext.field);
     setHasEvolvedThisTurn(false);
+    setMyHealth(currentContext.myHealth);
+    setEnemyHealth(currentContext.enemyHealth);
 
-    startTurn(hand, deck);
+    startTurn(currentContext.hand, currentContext.deck);
   };
 
   const attackToLeader = (targetInstanceId: string) => {
@@ -309,13 +340,13 @@ export function useGameState() {
     };
 
     if (destroyedMyCards.length > 0) {
-      const lwResult = checkAndApplyLastWords(destroyedMyCards, {
+      const lwResult = resolveTriggerEffects(destroyedMyCards, {
         ...currentContext,
         token,
         turnLog
-      });
+      }, 'LastWord');
       currentContext = { ...currentContext, ...lwResult };
-    }    
+    }   
 
     setField(currentContext.field);
     setEnemyField(currentContext.enemyField);

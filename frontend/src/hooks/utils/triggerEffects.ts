@@ -1,4 +1,4 @@
-import type { Card, EfectValues } from '../../../../shared/types';
+import type { Card } from '../../../../shared/types';
 import { executeGameEffect } from '../../effects';
 
 interface GameContext {
@@ -12,9 +12,10 @@ interface GameContext {
   turnLog: any;
 }
 
-export const checkAndApplyLastWords = (
-  destroyedCards: Card[],
-  context: GameContext
+export const resolveTriggerEffects = (
+  cards: Card[],
+  context: GameContext,
+  triggerType: 'LastWord' | 'TurnEnd'
 ): Omit<GameContext, 'token' | 'turnLog'> => {
   let currentField = [...context.field];
   let currentEnemyField = [...context.enemyField];
@@ -23,9 +24,9 @@ export const checkAndApplyLastWords = (
   let currentMyHealth = context.myHealth;
   let currentEnemyHealth = context.enemyHealth;
 
-  destroyedCards.forEach(card => {
+  cards.forEach(card => {
     card.abilities.forEach(ability => {
-      if (ability.trigger === 'LastWord' && ability.effectType) {
+      if (ability.trigger === triggerType && ability.effectType) {
         const result = executeGameEffect(
           ability.effectType,
           ability.values ?? {},
