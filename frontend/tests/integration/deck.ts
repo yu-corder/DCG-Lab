@@ -833,3 +833,17 @@ export const testDeck_29: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_30: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 3000 + index,
+  name: 'テスト用アミュレット',
+  baseCost: 1,
+  cost: 1,
+  type: 'Amulet',
+  subtypes: [],
+  abilities: [],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+}));

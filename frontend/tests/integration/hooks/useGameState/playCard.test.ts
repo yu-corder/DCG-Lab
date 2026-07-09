@@ -2,7 +2,7 @@
 import { describe, it, expect, mock } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useGameState } from "../../../../src/hooks/useGameState";
-import { testDeck_1, testDeck_20, testDeck_29 } from "../../deck";
+import { testDeck_1, testDeck_20, testDeck_29, testDeck_30 } from "../../deck";
 import { dummySpell } from "../../testCard";
 
 
@@ -156,5 +156,45 @@ describe("useGameState", () => {
     expect(result.current.targetingContext).toBeNull();
     expect(result.current.enemyField.length).toBe(0);
 
+  });
+
+  it("should play an amulet card, consuming PP and moving it to the field", async () => {
+    globalThis.fetch = mock(() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            cards: testDeck_30, 
+            myLeader: 'Royal',
+            enemyLeader: 'Royal',
+            token: [],
+          }),
+      } as Response)
+    ) as any;
+
+    const { result } = renderHook(() => useGameState());
+
+    await waitFor(() => {
+      expect(result.current.hand.length).toBe(4);
+    });
+
+    act(() => {
+      result.current.handleMulliganConfirm([]);
+    });
+
+    const playableCard = result.current.hand.find(c => c.cost <= result.current.pp);
+    const initialPP = result.current.pp;
+    const initialHandLength = result.current.hand.length;
+
+    if (!playableCard) {
+      throw new Error("テスト用のプレイ可能なカード（コスト1以下）が手札にありません。デッキ構成を確認してください。");
+    }
+
+    act(() => {
+      result.current.playCard(playableCard);
+    });
+
+    expect(result.current.pp).toBe(initialPP - playableCard.cost);
+    expect(result.current.hand.length).toBe(initialHandLength - 1);
+    expect(result.current.field.some(c => c.instanceId === playableCard.instanceId)).toBe(true);
   });
 });
