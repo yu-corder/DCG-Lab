@@ -1,5 +1,6 @@
 import type { Card } from '../../../../shared/types';
 import { executeGameEffect } from '../../effects';
+import { conditionCheck } from '../../conditions';
 
 interface GameContext {
   field: Card[];
@@ -27,6 +28,21 @@ export const resolveTriggerEffects = (
   cards.forEach(card => {
     card.abilities.forEach(ability => {
       if (ability.trigger === triggerType && ability.effectType) {
+
+        let conditionObj: any = null;
+        let conditionType = ability.conditionType;
+        let triggerConditions = ability.triggerConditions;
+        let conditionValue = ability.conditionValue ? ability.conditionValue : null;
+
+        conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
+        let condition = true;
+        if (conditionType && triggerConditions) {
+          let resultObj = conditionCheck({ field:currentField, enemyField: currentEnemyField, hand: currentHand, deck: currentDeck, turnLog: context.turnLog}, conditionObj);
+          condition = resultObj.condition;
+        }
+
+        if (!condition) return;
+
         const result = executeGameEffect(
           ability.effectType,
           ability.values ?? {},
