@@ -10,6 +10,8 @@ import { resolveTriggerEffects } from './utils/triggerEffects';
 import type { CardCondition } from '../conditions';
 import { cloneCards } from '../game/utils/cardUtils';
 
+import { executeEndTurn } from '../game/actions/endTurn';
+
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
   const [field, setField] = useState<Card[]>([]);
@@ -150,21 +152,7 @@ export function useGameState() {
 
   const endTurn = () => {
     executeAction(ctx => {
-      const resetField = ctx.field.map(card => ({
-        ...card,
-        hasAttacked: false,
-        playedThisTurn: false
-      }));
-      ctx.field = resetField;
-
-      const turnEndResult = resolveTriggerEffects(resetField, ctx, 'TurnEnd');
-      mergeGameEffectResult(ctx, turnEndResult);
-      ctx.turn += 1;
-      ctx.maxPP = Math.min(ctx.maxPP + 1, 10);
-      ctx.pp = ctx.maxPP;
-      ctx.turnLog.oneTurnPlayCount = 0;
-      ctx.hasEvolvedThisTurn = false;
-      drawCardCtx(ctx);
+      executeEndTurn(ctx, drawCardCtx, mergeGameEffectResult);
     });
   };
 
