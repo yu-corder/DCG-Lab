@@ -8,6 +8,7 @@ import type { TargetingContext } from '../effects/selectTarget';
 import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler';
 import { resolveTriggerEffects } from './utils/triggerEffects';
 import type { CardCondition } from '../conditions';
+import { cloneCards } from '../game/utils/cardUtils';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -43,8 +44,6 @@ export function useGameState() {
     amuletsPlaced: 0,
     oneTurnPlayCount: 0,
   });
-
-  const cloneCards = (cards: Card[]): Card[] => cards.map(card => ({ ...card }));
 
   const createCurrentContext = (): GameContext => ({
     field: cloneCards(field),
