@@ -1,36 +1,41 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
-import type { Card, Leader, EfectValues } from '../../../shared/types';
-import type { TurnActionLog } from '../../../shared/types';
-import type { GameInitResponse } from '../../../shared/types';
-import {  executeGameEffect } from '../effects';
+import type { Card, Leader, EfectValues, TurnActionLog, GameInitResponse } from '../../../shared/types';
+import type { GameContext } from '../../../shared/game';
+import { executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler';
 import { resolveTriggerEffects } from './utils/triggerEffects';
+import type { CardCondition } from '../conditions';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
   const [field, setField] = useState<Card[]>([]);
+  const [enemyField, setEnemyField] = useState<Card[]>([]);
+  const [deck, setDeck] = useState<Card[]>([]);
+  const [token, setToken] = useState<Card[]>([]);
+  
   const [pp, setPP] = useState(1);
-  const [enemyHealth, setEnemyHealth] = useState(20);
-  const [myHealth, setMyHealth] = useState(20);
   const [maxPP, setMaxPP] = useState(1);
+  const [myHealth, setMyHealth] = useState(20);
+  const [enemyHealth, setEnemyHealth] = useState(20);
   const [turn, setTurn] = useState(1);
+  
   const [myEp, setMyEP] = useState(2);
   const [enemyEp, setEnemyEP] = useState(2);
   const [myExEp, setMyExEp] = useState(2);
   const [enemyExEp, setEnemyExEP] = useState(2);
   const [hasEvolvedThisTurn, setHasEvolvedThisTurn] = useState(false);
-  const [deck, setDeck] = useState<Card[]>([]);
-  const [token, setToken] = useState<Card[]>([]);
+  
   const [myLeader, setMyLeader] = useState<Leader>();
   const [enemyLeader, setEnemyLeader] = useState<Leader>();
   const [isMulligan, setIsMulligan] = useState(true);
-  const [enemyField, setEnemyField] = useState<Card[]>([]);
+  
   const [selectedMyCardId, setSelectedMyCardId] = useState<string | null>(null);
   const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
   const [evoledSelectTargetId, setEvoledSelectTargetId] = useState<string | null>(null);
+  
   const [turnLog, setTurnLog] = useState<TurnActionLog>({
     cardPlayed: [],
     followersSummoned: 0,
@@ -38,6 +43,36 @@ export function useGameState() {
     amuletsPlaced: 0,
     oneTurnPlayCount: 0,
   });
+
+  const createCurrentContext = (): GameContext => ({
+    field: [...field],
+    enemyField: [...enemyField],
+    hand: [...hand],
+    deck: [...deck],
+    token: [...token],
+    myHealth,
+    enemyHealth,
+    maxPP,
+    pp,
+    hasEvolvedThisTurn,
+    turn,
+    turnLog: JSON.parse(JSON.stringify(turnLog)), 
+  });
+
+  const reflectContext = (ctx: GameContext) => {
+    setField(ctx.field);
+    setEnemyField(ctx.enemyField);
+    setHand(ctx.hand);
+    setDeck(ctx.deck);
+    setToken(ctx.token);
+    setMyHealth(ctx.myHealth);
+    setEnemyHealth(ctx.enemyHealth);
+    setMaxPP(ctx.maxPP);
+    setPP(ctx.pp);
+    setHasEvolvedThisTurn(ctx.hasEvolvedThisTurn);
+    setTurn(ctx.turn);
+    setTurnLog(ctx.turnLog);
+  };
 
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
@@ -50,42 +85,6 @@ export function useGameState() {
     return out;
   }
 
-  const handleMulliganConfirm = (selectCards: Card[]) => {
-    const count = selectCards.length;
-    const newDrawnCards = deck.slice(0, count);
-    const remainigDeck = deck.slice(count);
-
-    const finalHand = hand
-      .filter(h => !selectCards.some(s => s.instanceId === h.instanceId))
-      .concat(newDrawnCards);
-
-    const finalDeck = shuffle([...remainigDeck, ...selectCards]);
-
-    setHand(finalHand);
-    setDeck(finalDeck);
-    setIsMulligan(false);
-
-    startTurn(finalHand, finalDeck);
-  };
-
-  const drawCard = (array: Card[], array2: Card[]) => {
-    if (array2.length === 0) {
-      alert("バトルに敗北しました。");
-      return 0;
-    }
-    const [firstCard, ...rest] = array2;
-    if (array.length + 1 >= 10) {
-      setHand(array);
-    } else {
-      setHand([...array, firstCard]);
-    }
-    setDeck(rest);
-  };
-
-  const startTurn = (array: Card[], array2: Card[]) => {
-    drawCard(array, array2);
-  };
-
   const assignInstanceIds = (cards: Card[]): Card[] => {
     return cards.map(card => ({
       ...card,
@@ -93,74 +92,68 @@ export function useGameState() {
     }));
   };
 
-  useEffect(() => {
-    fetch('http://localhost:3000/api/game-start')
-      .then(res => res.json())
-      .then((data: GameInitResponse) => {
-        const cardsWithId = assignInstanceIds(data.cards);
-        const shuffled = shuffle(cardsWithId);
-        const initialHand = shuffled.slice(0, 4);
-        const remainigDeck = shuffled.slice(4);
+  const drawCardCtx = (ctx: GameContext) => {
+    if (ctx.deck.length === 0) {
+      alert("バトルに敗北しました。");
+      return;
+    }
+    const [firstCard, ...rest] = ctx.deck;
+    if (ctx.hand.length < 10) {
+      ctx.hand = [...ctx.hand, firstCard];
+    }
+    ctx.deck = rest;
+  };
 
-        setHand(initialHand);
-        setDeck(remainigDeck);
-        setMyLeader(data.myLeader);
-        setEnemyLeader(data.enemyLeader);
-        setToken(data.token);
-      });
-  }, []);
+  const handleMulliganConfirm = (selectCards: Card[]) => {
+    const ctx = createCurrentContext();
+    const count = selectCards.length;
+    const newDrawnCards = ctx.deck.slice(0, count);
+    const remainingDeck = ctx.deck.slice(count);
+
+    ctx.hand = ctx.hand
+      .filter(h => !selectCards.some(s => s.instanceId === h.instanceId))
+      .concat(newDrawnCards);
+
+    ctx.deck = shuffle([...remainingDeck, ...selectCards]);
+    setIsMulligan(false);
+
+    drawCardCtx(ctx);
+    reflectContext(ctx);
+  };
 
   const endTurn = () => {
+    let ctx = createCurrentContext();
 
-    let nextEnemyField = enemyField;
-    let nextEnemyHealth = enemyHealth;
-    let nextField = field;
-    let updatedHand = hand;
+    const resetField = ctx.field.map(card => ({
+      ...card,
+      hasAttacked: false,
+      playedThisTurn: false
+    }));
 
-    let currentContext = {
-      field: nextField,
-      enemyField: nextEnemyField,
-      hand: updatedHand,
-      deck: deck,
-      myHealth: myHealth,
-      enemyHealth: nextEnemyHealth,
-    };
-
-    const turnEndResult = resolveTriggerEffects(currentContext.field, {
-      ...currentContext,
-      field: currentContext.field.map(card => ({
-        ...card,
-        hasAttacked: false,
-        playedThisTurn: false
-      })),
-      token,
-      turnLog
+    const turnEndResult = resolveTriggerEffects(resetField, {
+      ...ctx,
+      field: resetField
     }, 'TurnEnd');
-    currentContext = { ...currentContext, ...turnEndResult };
-    setEnemyField(currentContext.enemyField);
     
+    ctx = { ...ctx, ...turnEndResult };
 
-    setTurn(prev => prev + 1);
-    const nextMaxPP = Math.min(maxPP + 1, 10);
-    const currentLog = turnLog;
-    currentLog.oneTurnPlayCount = 0;
-    setMaxPP(nextMaxPP);
-    setPP(nextMaxPP);
-    setTurnLog(currentLog);
-    setField(currentContext.field);
-    setHasEvolvedThisTurn(false);
-    setMyHealth(currentContext.myHealth);
-    setEnemyHealth(currentContext.enemyHealth);
+    ctx.turn += 1;
+    ctx.maxPP = Math.min(ctx.maxPP + 1, 10);
+    ctx.pp = ctx.maxPP;
+    ctx.turnLog.oneTurnPlayCount = 0;
+    ctx.hasEvolvedThisTurn = false;
 
-    startTurn(currentContext.hand, currentContext.deck);
+    drawCardCtx(ctx);
+    reflectContext(ctx);
   };
 
   const attackToLeader = (targetInstanceId: string) => {
-    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    let ctx = createCurrentContext();
+    const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
 
-    const hasStrom = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
-    if (targetCard.playedThisTurn && !hasStrom) {
+    const hasStorm = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
+    if (targetCard.playedThisTurn && !hasStorm) {
       alert("このフォロワーは、場に出たターンにはリーダーを攻撃できません。");
       return;
     }
@@ -170,24 +163,28 @@ export function useGameState() {
       return;
     }
 
-    if (enemyHealth - targetCard.attack <= 0) {
-      setEnemyHealth(prev => prev - (targetCard.attack || 0));
+    if (ctx.enemyHealth - targetCard.attack <= 0) {
+      ctx.enemyHealth -= (targetCard.attack || 0);
+      reflectContext(ctx);
       alert("バトルに勝利しました。");
-      return 0;
+      return;
     }
 
-    setEnemyHealth(prev => prev - (targetCard.attack || 0));
-    setField(prevField => prevField.map(card => 
+    ctx.enemyHealth -= (targetCard.attack || 0);
+    ctx.field = ctx.field.map(card => 
       card.instanceId === targetInstanceId ? { ...card, hasAttacked: true } : card
-    ));
+    );
+
     setSelectedMyCardId(null);
+    reflectContext(ctx);
   };
   
   const applyEvolution = (targetInstanceId: string) => {
+    let ctx = createCurrentContext();
     setMyEP(prev => prev - 1);
-    setHasEvolvedThisTurn(true);
+    ctx.hasEvolvedThisTurn = true;
 
-    setField(prevField => prevField.map(card => 
+    ctx.field = ctx.field.map(card => 
       card.instanceId === targetInstanceId ? {
         ...card,
         attack: card.attack + 2,
@@ -195,14 +192,16 @@ export function useGameState() {
         isEvolved: true,
         hasAttacked: false,
       } : card
-    ));
-  }
+    );
+    reflectContext(ctx);
+  };
 
   const evolveFollower = (targetInstanceId: string) => {
-    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    const ctx = createCurrentContext();
+    const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
 
-    if (turn < 4) {
+    if (ctx.turn < 4) {
       alert("進化可能ターンではありません。");
       return;
     }
@@ -210,7 +209,7 @@ export function useGameState() {
       alert("EPが足りません。");
       return;
     }
-    if (hasEvolvedThisTurn) {
+    if (ctx.hasEvolvedThisTurn) {
       alert("1ターンに進化できるのは1度だけです。");
       return;
     }
@@ -218,31 +217,39 @@ export function useGameState() {
       alert("すでに進化済みのフォロワーです。");
       return;
     }
-    let applyChk = false;
-    targetCard.abilities.forEach(ability => {
-      let conditionObj: any = null;
-      let conditionType = ability.conditionType;
-      let triggerConditions = ability.triggerConditions;
-      let conditionValue = ability.conditionValue ? ability.conditionValue : null;
 
-      conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
-      let condition = true;
-      if (conditionType && triggerConditions) {
-        let resultObj = conditionCheck({ field, enemyField, hand, deck, turnLog}, conditionObj);
-        condition = resultObj.condition;
+    let applyChk = false;
+    
+    targetCard.abilities.forEach(ability => {
+      if (ability.trigger !== 'Evolve') return;
+      const conditionObj = {
+        type: ability.conditionType, 
+        subType: ability.triggerConditions, 
+        value: ability.conditionValue ?? null
+      } as CardCondition;
+      
+      let isConditionMet = true;
+      if (ability.conditionType && ability.triggerConditions) {
+        const resultObj = conditionCheck(ctx, conditionObj);
+        isConditionMet = resultObj.condition;
       }
 
-      if (condition && ability.trigger === 'Evolve' && ability.effectType !== 'SelectDamage' && ability.effectType !== 'SelectDestroy' && ability.effectType !== 'SelectStatsFix' && ability.effectType !== 'SelectBounce') {
-        applyCardEffect(ability.effectType, ability.values ?? {});
-      } else if (condition && ability.trigger === 'Evolve' && (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix' || ability.effectType === 'SelectBounce')) {
+      if (!isConditionMet) return;
 
+      const selectEffects = ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'];
+      const isSelectEffect = selectEffects.includes(ability.effectType ?? '');
+
+      if (!isSelectEffect) {
+        const result = executeGameEffect(ability.effectType ?? '', ability.values ?? {}, ctx);
+        Object.assign(ctx, result);
+      } else {
         const isBounce = ability.effectType === 'SelectBounce';
-        const hasValidTarget = isBounce ? field.length >= 1 : enemyField.length >= 1;
+        const hasValidTarget = isBounce ? ctx.field.length >= 1 : ctx.enemyField.length >= 1;
 
         if (hasValidTarget) {
           setTargetingContext({
             card: targetCard,
-            effectType: ability.effectType,
+            effectType: ability.effectType as any,
             values: ability.values ?? {},
             targetTeam: isBounce ? 'my' : 'enemy'
           });
@@ -253,15 +260,28 @@ export function useGameState() {
     });
 
     if (!applyChk) {
-      applyEvolution(targetInstanceId);
+      setMyEP(prev => prev - 1);
+      ctx.hasEvolvedThisTurn = true;
+      ctx.field = ctx.field.map(card => 
+        card.instanceId === targetInstanceId ? {
+          ...card,
+          attack: card.attack + 2,
+          defense: card.defense + 2,
+          isEvolved: true,
+          hasAttacked: false,
+        } : card
+      );
     }
+    
+    reflectContext(ctx);
   };
 
   const exEvolveFollower = (targetInstanceId: string) => {
-    const targetCard = field.find(f => f.instanceId === targetInstanceId);
+    let ctx = createCurrentContext();
+    const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
 
-    if (turn < 6) {
+    if (ctx.turn < 6) {
       alert("超進化可能ターンではありません。");
       return;
     }
@@ -269,7 +289,7 @@ export function useGameState() {
       alert("EXEPが足りません。");
       return;
     }
-    if (hasEvolvedThisTurn) {
+    if (ctx.hasEvolvedThisTurn) {
       alert("1ターンに進化できるのは1度だけです。");
       return;
     }
@@ -279,9 +299,9 @@ export function useGameState() {
     }
 
     setMyExEp(prev => prev - 1);
-    setHasEvolvedThisTurn(true);
+    ctx.hasEvolvedThisTurn = true;
 
-    setField(prevField => prevField.map(card => 
+    ctx.field = ctx.field.map(card => 
       card.instanceId === targetInstanceId ? {
         ...card,
         attack: card.attack + 3,
@@ -290,123 +310,99 @@ export function useGameState() {
         hasAttacked: false,
         isExEvolved: true,
       } : card
-    ));
+    );
+    
+    reflectContext(ctx);
   };
 
   const attackToFollower = (myInstanceId: string, enemyInstanceId: string) => {
-    const targetCard = field.find(f => f.instanceId === myInstanceId);
-    const targetEnemyCard = enemyField.find(f => f.instanceId === enemyInstanceId);
+    let ctx = createCurrentContext();
+    const targetCard = ctx.field.find(f => f.instanceId === myInstanceId);
+    const targetEnemyCard = ctx.enemyField.find(f => f.instanceId === enemyInstanceId);
     if (!targetCard || !targetEnemyCard) return;
 
-    const isExEvoled = targetCard.isExEvolved;
-    const currentDefense = isExEvoled ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
+    const isExEvolved = targetCard.isExEvolved;
+    const currentDefense = isExEvolved ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
 
     const destroyedMyCards = currentDefense <= 0 ? [targetCard] : [];
 
-    let nextField: Card[] = [];
     if (currentDefense <= 0) {
-      nextField = field.filter(f => f.instanceId !== myInstanceId);
+      ctx.field = ctx.field.filter(f => f.instanceId !== myInstanceId);
     } else {
-      nextField = field.map(c =>
+      ctx.field = ctx.field.map(c =>
         c.instanceId === myInstanceId ? { ...c, hasAttacked: true, defense: currentDefense } : c
       );
     }
 
-    let nextEnemyField: Card[] = [];
-    let nextEnemyHealth = enemyHealth;
     if (currentEnemyDefense <= 0) {
-      nextEnemyField = enemyField.filter(f => f.instanceId !== enemyInstanceId);
-      const damage = isExEvoled ? 1 : 0;
-      nextEnemyHealth = enemyHealth - damage;
+      ctx.enemyField = ctx.enemyField.filter(f => f.instanceId !== enemyInstanceId);
+      const damage = isExEvolved ? 1 : 0;
+      ctx.enemyHealth -= damage;
     } else {
-      nextEnemyField = enemyField.map(c =>
+      ctx.enemyField = ctx.enemyField.map(c =>
         c.instanceId === enemyInstanceId ? { ...c, defense: currentEnemyDefense } : c
       );
     }
 
-    const updatedHand = checkAndApplyZoneEffects(hand, {
+    ctx.hand = checkAndApplyZoneEffects(ctx.hand, {
       oldField: field,
-      newField: nextField
+      newField: ctx.field
     });
 
-    let currentContext = {
-      field: nextField,
-      enemyField: nextEnemyField,
-      hand: updatedHand,
-      deck: deck,
-      myHealth: myHealth,
-      enemyHealth: nextEnemyHealth,
-    };
-
     if (destroyedMyCards.length > 0) {
-      const lwResult = resolveTriggerEffects(destroyedMyCards, {
-        ...currentContext,
-        token,
-        turnLog
-      }, 'LastWord');
-      currentContext = { ...currentContext, ...lwResult };
+      const lwResult = resolveTriggerEffects(destroyedMyCards, ctx, 'LastWord');
+      ctx = { ...ctx, ...lwResult };
     }   
 
-    setField(currentContext.field);
-    setEnemyField(currentContext.enemyField);
-    setHand(currentContext.hand);
-    setDeck(currentContext.deck);
-    setMyHealth(currentContext.myHealth);
-    setEnemyHealth(currentContext.enemyHealth);
-
     setSelectedMyCardId(null);
+    reflectContext(ctx);
   };
 
   const enemyPlayCard = () => {
+    let ctx = createCurrentContext();
     let enemyCard: Card | null = null;
-    for (let i = 0; i < deck.length; i++) {
-      if (deck[i].type === 'Follower') {
-        enemyCard = deck[i];
+    for (let i = 0; i < ctx.deck.length; i++) {
+      if (ctx.deck[i].type === 'Follower') {
+        enemyCard = ctx.deck[i];
         break;
       }
     }
-    if (!enemyCard || enemyField.length >= 5) return;
+    if (!enemyCard || ctx.enemyField.length >= 5) return;
     const enemyCardWithId = enemyCard.instanceId ? enemyCard : { ...enemyCard, instanceId: crypto.randomUUID() };
-    setEnemyField(prev => [...prev, enemyCardWithId]);
+    
+    ctx.enemyField = [...ctx.enemyField, enemyCardWithId];
+    reflectContext(ctx);
   };
 
   const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number, selfInstanceId?: string) => {
     if (!effectType) return;
-
-    const result = executeGameEffect(effectType, values, { field, enemyField, hand, deck, myHealth, enemyHealth, token, turnLog}, targetIndex, selfInstanceId);
-    
-    if (result.enemyField) setEnemyField(result.enemyField);
-    if (result.myField) setField(result.myField);
-    if (result.hand) setHand(result.hand);
-    if (result.deck) setDeck(result.deck);
-    if (result.myHealth) setMyHealth(result.myHealth);
-    if (result.enemyHealth) setEnemyHealth(result.enemyHealth);
+    let ctx = createCurrentContext();
+    const result = executeGameEffect(effectType, values, ctx, targetIndex, selfInstanceId);
+    ctx = { ...ctx, ...result };
+    reflectContext(ctx);
   };
 
- const executeCardPlay = (targetCard: Card, targetIndex: number | null = null) => {
-    setPP(prev => prev - targetCard.cost);
-    const currentLog = turnLog;
+  const executeCardPlay = (targetCard: Card, targetIndex: number | null = null) => {
+    let ctx = createCurrentContext();
+    
+    ctx.pp -= targetCard.cost;
+    
     if (targetCard.type === 'Follower') {
-      currentLog.followersSummoned++;
+      ctx.turnLog.followersSummoned++;
     } else if (targetCard.type === 'Spell') {
-      currentLog.spellsCast++;
+      ctx.turnLog.spellsCast++;
     } else if (targetCard.type === 'Amulet') {
-      currentLog.amuletsPlaced++;
+      ctx.turnLog.amuletsPlaced++;
     }
-    currentLog.oneTurnPlayCount++;
-    const finalPlayed = [...currentLog.cardPlayed, targetCard];
-    currentLog.cardPlayed = finalPlayed;
-    setTurnLog(currentLog);
+    ctx.turnLog.oneTurnPlayCount++;
+    ctx.turnLog.cardPlayed = [...ctx.turnLog.cardPlayed, targetCard];
     
     targetCard.playedThisTurn = true;
 
-    let currentHand = hand.filter(c => c.instanceId !== targetCard.instanceId);
-    let currentField = [...field];
-    let currentEnemyField = [...enemyField];
-    let currentDeck = [...deck];
-    let currentMyHealth = myHealth;
-    let currentEnemyHealth = enemyHealth;
+    const fieldBeforePlay = [...ctx.field];
+
+    ctx.hand = ctx.hand.filter(c => c && c.instanceId !== targetCard.instanceId);
 
     if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
       const isFollower = targetCard.type === 'Follower';
@@ -415,75 +411,88 @@ export function useGameState() {
         ...targetCard,
         hasAttacked: isFollower && hasShissou ? false : true
       };
-      currentField.push(played);
+      ctx.field.push(played);
     }
 
+    const oldMyField = [...ctx.field];
+
     targetCard.abilities.forEach(ability => {
-      let conditionObj: any = null;
-      let conditionType = ability.conditionType;
-      let triggerConditions = ability.triggerConditions;
-      let conditionValue = ability.conditionValue ? ability.conditionValue : null;
+      if (ability.trigger !== 'Fanfare') return;
 
-      conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
-      let condition = true;
-      if (conditionType && triggerConditions) {
-        let resultObj = conditionCheck({ field, enemyField, hand, deck, turnLog}, conditionObj);
-        condition = resultObj.condition;
+      const conditionObj = {
+        type: ability.conditionType, 
+        subType: ability.triggerConditions, 
+        value: ability.conditionValue ?? null
+      } as CardCondition;
+      
+      let isConditionMet = true;
+      if (ability.conditionType && ability.triggerConditions) {
+        const resultObj = conditionCheck(
+          { ...ctx, field: fieldBeforePlay }, 
+          conditionObj
+        );
+        isConditionMet = resultObj.condition;
       }
 
-      let selectable = true;
+      let isSelectable = true;
       if (ability.effectType === 'SelectBounce') {
-        selectable = field.length >= 1 ? true : false;
-      } else if (ability.effectType === 'SelectDamage' || ability.effectType === 'SelectDestroy' || ability.effectType === 'SelectStatsFix') {
-        selectable = enemyField.length >= 1 ? true : false;
+        isSelectable = ctx.field.length >= 1;
+      } else if (['SelectDamage', 'SelectDestroy', 'SelectStatsFix'].includes(ability.effectType ?? '')) {
+        isSelectable = ctx.enemyField.length >= 1;
       }
 
-      if (condition && ability.trigger === 'Fanfare' && selectable) {
-        const oldMyField = [...currentField];
-        const oldEnemyField = [...currentEnemyField];
-
+      if (isConditionMet && isSelectable) {
         const result = executeGameEffect(
           ability.effectType ?? '', 
           ability.values ?? {}, 
-          { field: currentField, enemyField: currentEnemyField, hand: currentHand, deck: currentDeck, myHealth: currentMyHealth, enemyHealth: currentEnemyHealth, token, turnLog }, 
+          ctx, 
           targetIndex, 
           targetCard.instanceId
         );
 
-        if (result.myField) currentField = result.myField;
-        if (result.enemyField) currentEnemyField = result.enemyField;
-        if (result.hand) currentHand = result.hand;
-        if (result.deck) currentDeck = result.deck;
-        if (result.myHealth) currentMyHealth = result.myHealth;
-        if (result.enemyHealth) currentEnemyHealth = result.enemyHealth;
+        if (result.myField) ctx.field = result.myField;
+        if (result.enemyField) ctx.enemyField = result.enemyField;
+        if (result.hand) ctx.hand = result.hand.filter(Boolean);
+        if (result.deck) ctx.deck = result.deck;
+        if (result.myHealth !== undefined) ctx.myHealth = result.myHealth;
+        if (result.enemyHealth !== undefined) ctx.enemyHealth = result.enemyHealth;
 
-        currentHand = checkAndApplyZoneEffects(currentHand, {
+        ctx.hand = checkAndApplyZoneEffects(ctx.hand, {
           oldField: oldMyField,
-          newField: currentField
+          newField: ctx.field
         });
       }
     });
 
-    setHand(currentHand);
-    setField(currentField);
-    setEnemyField(currentEnemyField);
-    setDeck(currentDeck);
-    setMyHealth(currentMyHealth);
-    setEnemyHealth(currentEnemyHealth);
+    reflectContext(ctx);
   };
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
+    
     if (evoledSelectTargetId === null) {
       executeCardPlay(targetingContext.card, targetIndex);
     } else {
-      applyCardEffect(targetingContext.effectType, targetingContext.values, targetIndex);
+      let ctx = createCurrentContext();
+      const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
+      ctx = { ...ctx, ...result };
+      
+      setMyEP(prev => prev - 1);
+      ctx.hasEvolvedThisTurn = true;
+      ctx.field = ctx.field.map(card => 
+        card.instanceId === evoledSelectTargetId ? {
+          ...card,
+          attack: card.attack + 2,
+          defense: card.defense + 2,
+          isEvolved: true,
+          hasAttacked: false,
+        } : card
+      );
+      
+      setEvoledSelectTargetId(null);
+      reflectContext(ctx);
     }
     
-    if (evoledSelectTargetId !== null) {
-      applyEvolution(evoledSelectTargetId);
-      setEvoledSelectTargetId(null);
-    }
     setTargetingContext(null);
   };
 
@@ -493,45 +502,58 @@ export function useGameState() {
   };
 
   const playCard = (targetCard: Card) => {
-    if (pp < targetCard.cost) {
+    const ctx = createCurrentContext();
+
+    if (ctx.pp < targetCard.cost) {
       alert("ppが足りません。");
       return;
     }
-    if (field.length >= 5 && (targetCard.type === 'Follower' || targetCard.type === 'Amulet')) return;
+    if (ctx.field.length >= 5 && (targetCard.type === 'Follower' || targetCard.type === 'Amulet')) return;
 
     const fanfareAbility = targetCard.abilities.find(
-      a => a.trigger === 'Fanfare' && (a.effectType === 'SelectDamage' || a.effectType === 'SelectDestroy' || a.effectType === 'SelectStatsFix' || a.effectType === 'SelectBounce')
+      a => a.trigger === 'Fanfare' && ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'].includes(a.effectType ?? '')
     );
 
     if (fanfareAbility) {
       let isConditionMet = true;
-      let conditionObj: any = null;
-      let conditionType = fanfareAbility.conditionType;
-      let triggerConditions = fanfareAbility.triggerConditions;
-      let conditionValue = fanfareAbility.conditionValue ? fanfareAbility.conditionValue : null;
       if (fanfareAbility.conditionType && fanfareAbility.triggerConditions) {
-        conditionObj = {type: conditionType, subType: triggerConditions, value: conditionValue};
+        const conditionObj = {
+          type: fanfareAbility.conditionType,
+          subType: fanfareAbility.triggerConditions,
+          value: fanfareAbility.conditionValue ?? null
+        } as CardCondition;
 
         const virtualTurnLog = {
-          ...turnLog,
-          oneTurnPlayCount: turnLog.oneTurnPlayCount + 1
+          ...ctx.turnLog,
+          oneTurnPlayCount: ctx.turnLog.oneTurnPlayCount + 1
         };
+
+        let virtualField = [...ctx.field];
+        if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
+          virtualField.push({
+            ...targetCard,
+            playedThisTurn: true
+          });
+        }
+
         const resultObj = conditionCheck(
-          { field, enemyField, hand, deck, turnLog: virtualTurnLog }, 
+          { ...ctx, field: virtualField, turnLog: virtualTurnLog }, 
           conditionObj
         );
         isConditionMet = resultObj.condition;
       }
 
       const isBounce = fanfareAbility.effectType === 'SelectBounce';
-      const hasValidTarget = isBounce ? field.length >= 1 : enemyField.length >= 1;
+      const hasValidTarget = isBounce ? ctx.field.length >= 1 : ctx.enemyField.length >= 1;
+      
       if (!hasValidTarget && targetCard.type === 'Spell') {
         return;
       }
+      
       if (isConditionMet && hasValidTarget) {
         setTargetingContext({
           card: targetCard,
-          effectType: fanfareAbility.effectType as 'SelectDamage' | 'SelectDestroy' | 'SelectStatsFix' | 'SelectBounce',
+          effectType: fanfareAbility.effectType as any,
           values: fanfareAbility.values ?? {},
           targetTeam: isBounce ? 'my' : 'enemy'
         });
@@ -545,6 +567,23 @@ export function useGameState() {
   const damageMyLeader = (amount: number) => {
     setMyHealth(prev => Math.max(0, prev - amount));
   };
+  
+  useEffect(() => {
+    fetch('http://localhost:3000/api/game-start')
+      .then(res => res.json())
+      .then((data: GameInitResponse) => {
+        const cardsWithId = assignInstanceIds(data.cards);
+        const shuffled = shuffle(cardsWithId);
+        const initialHand = shuffled.slice(0, 4);
+        const remainingDeck = shuffled.slice(4);
+
+        setHand(initialHand);
+        setDeck(remainingDeck);
+        setMyLeader(data.myLeader);
+        setEnemyLeader(data.enemyLeader);
+        setToken(data.token);
+      });
+  }, []);
 
   return {
     deck,
