@@ -95,6 +95,12 @@ export function useGameState() {
     if (result.pp !== undefined) ctx.pp = result.pp;
   };
 
+  const executeAction = (action: (ctx: GameContext) => void) => {
+    const ctx = createCurrentContext();
+    action(ctx);
+    reflectContext(ctx);
+  };
+
   function shuffle<T>(array: T[]) {
     const out = Array.from(array);
     for (let i = out.length - 1; i > 0; i--) {
@@ -270,11 +276,9 @@ export function useGameState() {
   };
 
   const evolveFollower = (targetId: string) => {
-    const ctx = createCurrentContext();
-    
-    executeEvolveFollower(ctx, targetId);
-    
-    reflectContext(ctx);
+    executeAction(ctx => {
+      executeEvolveFollower(ctx, targetId);
+    });
   };
 
   const executeExEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
@@ -314,9 +318,9 @@ export function useGameState() {
   };
 
   const exEvolveFollower = (targetInstanceId: string) => {
-    const ctx = createCurrentContext();
-    executeExEvolveFollower(ctx, targetInstanceId);
-    reflectContext(ctx);
+    executeAction(ctx => {
+      executeExEvolveFollower(ctx, targetInstanceId);
+    });
   };
 
   const executeAttackToFollower = (ctx: GameContext, myInstanceId: string, enemyInstanceId: string) => {
@@ -357,14 +361,14 @@ export function useGameState() {
       const lwResult = resolveTriggerEffects(destroyedMyCards, ctx, 'LastWord');
       mergeGameEffectResult(ctx, lwResult);
     }   
-
-    setSelectedMyCardId(null);
   };
 
   const attackToFollower = (myInstanceId: string, enemyInstanceId: string) => {
-    const ctx = createCurrentContext();
-    executeAttackToFollower(ctx, myInstanceId, enemyInstanceId);
-    reflectContext(ctx);
+    executeAction(ctx => {
+      executeAttackToFollower(ctx, myInstanceId, enemyInstanceId);
+    });
+
+    setSelectedMyCardId(null);
   };
 
   const enemyPlayCard = () => {
