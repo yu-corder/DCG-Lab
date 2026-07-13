@@ -1,18 +1,17 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
-import type { Card, Leader, EfectValues, TurnActionLog, GameInitResponse } from '../../../shared/types';
+import type { Card, Leader, TurnActionLog, GameInitResponse } from '../../../shared/types';
 import type { GameContext } from '../../../shared/game';
 import { executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
-import { checkAndApplyZoneEffects } from './utils/zoneAbilityHandler';
-import { resolveTriggerEffects } from './utils/triggerEffects';
 import type { CardCondition } from '../conditions';
 import { cloneCards } from '../game/utils/cardUtils';
 
 import { executeEndTurn } from '../game/actions/endTurn';
 import { executeAttackToFollower } from '../game/actions/attackToFollower';
 import { executeCardPlay } from '../game/actions/playCard';
+import { mergeGameEffectResult } from '../game/utils/gameUtils';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -85,18 +84,6 @@ export function useGameState() {
     setHasEvolvedThisTurn(ctx.hasEvolvedThisTurn);
     setTurn(ctx.turn);
     setTurnLog(ctx.turnLog);
-  };
-
-  const mergeGameEffectResult = (ctx: GameContext, result: any) => {
-    if (!result) return;
-    if (result.myField) ctx.field = cloneCards(result.myField);
-    if (result.enemyField) ctx.enemyField = cloneCards(result.enemyField);
-    if (result.hand) ctx.hand = cloneCards(result.hand.filter(Boolean));
-    if (result.deck) ctx.deck = cloneCards(result.deck);
-    if (result.token) ctx.token = cloneCards(result.token);
-    if (result.myHealth !== undefined) ctx.myHealth = result.myHealth;
-    if (result.enemyHealth !== undefined) ctx.enemyHealth = result.enemyHealth;
-    if (result.pp !== undefined) ctx.pp = result.pp;
   };
 
   const executeAction = (action: (ctx: GameContext) => void) => {
