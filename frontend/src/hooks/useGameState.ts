@@ -448,31 +448,31 @@ export function useGameState() {
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
-    const ctx = createCurrentContext();
     
-    if (evoledSelectTargetId === null) {
-      executeCardPlay(ctx, targetingContext.card, targetIndex);
-    } else {
-      const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
-      mergeGameEffectResult(ctx, result);
-      
-      ctx.myEp -= 1;
-      ctx.hasEvolvedThisTurn = true;
-      ctx.field = ctx.field.map(card => 
-        card.instanceId === evoledSelectTargetId ? {
-          ...card,
-          attack: card.attack + 2,
-          defense: card.defense + 2,
-          isEvolved: true,
-          hasAttacked: false,
-        } : card
-      );
-      
-      setEvoledSelectTargetId(null);
-    }
+    executeAction(ctx => {
+      if (evoledSelectTargetId === null) {
+        executeCardPlay(ctx, targetingContext.card, targetIndex);
+      } else {
+        const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
+        mergeGameEffectResult(ctx, result);
+        
+        ctx.myEp -= 1;
+        ctx.hasEvolvedThisTurn = true;
+        ctx.field = ctx.field.map(card => 
+          card.instanceId === evoledSelectTargetId ? {
+            ...card,
+            attack: card.attack + 2,
+            defense: card.defense + 2,
+            isEvolved: true,
+            hasAttacked: false,
+          } : card
+        );
+        
+        setEvoledSelectTargetId(null);
+      }
+    });
     
     setTargetingContext(null);
-    reflectContext(ctx);
   };
 
   const cancelTargeting = () => {
@@ -481,13 +481,13 @@ export function useGameState() {
   };
 
   const playCard = (targetCard: Card) => {
-    const ctx = createCurrentContext();
+    const tempCtx = createCurrentContext();
 
-    if (ctx.pp < targetCard.cost) {
+    if (tempCtx.pp < targetCard.cost) {
       alert("ppが足りません。");
       return;
     }
-    if (ctx.field.length >= 5 && (targetCard.type === 'Follower' || targetCard.type === 'Amulet')) return;
+    if (tempCtx.field.length >= 5 && (targetCard.type === 'Follower' || targetCard.type === 'Amulet')) return;
 
     const fanfareAbility = targetCard.abilities.find(
       a => a.trigger === 'Fanfare' && ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'].includes(a.effectType ?? '')
@@ -503,11 +503,11 @@ export function useGameState() {
         } as CardCondition;
 
         const virtualTurnLog = {
-          ...ctx.turnLog,
-          oneTurnPlayCount: ctx.turnLog.oneTurnPlayCount + 1
+          ...tempCtx.turnLog,
+          oneTurnPlayCount: tempCtx.turnLog.oneTurnPlayCount + 1
         };
 
-        let virtualField = cloneCards(ctx.field);
+        let virtualField = cloneCards(tempCtx.field);
         if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
           virtualField.push({
             ...targetCard,
@@ -516,14 +516,14 @@ export function useGameState() {
         }
 
         const resultObj = conditionCheck(
-          { ...ctx, field: virtualField, turnLog: virtualTurnLog }, 
+          { ...tempCtx, field: virtualField, turnLog: virtualTurnLog }, 
           conditionObj
         );
         isConditionMet = resultObj.condition;
       }
 
       const isBounce = fanfareAbility.effectType === 'SelectBounce';
-      const hasValidTarget = isBounce ? ctx.field.length >= 1 : ctx.enemyField.length >= 1;
+      const hasValidTarget = isBounce ? tempCtx.field.length >= 1 : tempCtx.enemyField.length >= 1;
       
       if (!hasValidTarget && targetCard.type === 'Spell') {
         return;
@@ -540,8 +540,9 @@ export function useGameState() {
       }
     }
 
-    executeCardPlay(ctx, targetCard);
-    reflectContext(ctx);
+    executeAction(ctx => {
+      executeCardPlay(ctx, targetCard);
+    });
   };
 
   const damageMyLeader = (amount: number) => {
