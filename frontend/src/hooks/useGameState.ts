@@ -12,6 +12,7 @@ import { executeEndTurn } from '../game/actions/endTurn';
 import { executeAttackToFollower } from '../game/actions/attackToFollower';
 import { executeCardPlay } from '../game/actions/playCard';
 import { mergeGameEffectResult } from '../game/utils/gameUtils';
+import { executeDrawCard } from '../game/actions/drawCard';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -111,15 +112,7 @@ export function useGameState() {
   };
 
   const drawCardCtx = (ctx: GameContext) => {
-    if (ctx.deck.length === 0) {
-      alert("バトルに敗北しました。");
-      return;
-    }
-    const [firstCard, ...rest] = ctx.deck;
-    if (ctx.hand.length < 10) {
-      ctx.hand = [...ctx.hand, firstCard];
-    }
-    ctx.deck = rest;
+    executeDrawCard(ctx, () => alert("バトルに敗北しました。"));
   };
 
   const handleMulliganConfirm = (selectCards: Card[]) => {
