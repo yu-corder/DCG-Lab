@@ -13,6 +13,7 @@ import { executeAttackToFollower } from '../game/actions/attackToFollower';
 import { executeCardPlay } from '../game/actions/playCard';
 import { mergeGameEffectResult } from '../game/utils/gameUtils';
 import { executeDrawCard } from '../game/actions/drawCard';
+import { executeApplyEvolution } from '../game/actions/applyEvolution';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -170,20 +171,6 @@ export function useGameState() {
     reflectContext(ctx);
   };
 
-  const applyEvolution = (ctx: GameContext, targetInstanceId: string) => {
-    ctx.myEp -= 1;
-    ctx.hasEvolvedThisTurn = true;
-    ctx.field = ctx.field.map(card => 
-      card.instanceId === targetInstanceId ? {
-        ...card,
-        attack: card.attack + 2,
-        defense: card.defense + 2,
-        isEvolved: true,
-        hasAttacked: false,
-      } : card
-    );
-  };
-
   const executeEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
     const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
@@ -235,7 +222,7 @@ export function useGameState() {
     });
 
     if (!applyChk) {
-      applyEvolution(ctx, targetInstanceId);
+      executeApplyEvolution(ctx, targetInstanceId);
     }
   };
 
@@ -325,17 +312,7 @@ export function useGameState() {
         const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
         mergeGameEffectResult(ctx, result);
         
-        ctx.myEp -= 1;
-        ctx.hasEvolvedThisTurn = true;
-        ctx.field = ctx.field.map(card => 
-          card.instanceId === evoledSelectTargetId ? {
-            ...card,
-            attack: card.attack + 2,
-            defense: card.defense + 2,
-            isEvolved: true,
-            hasAttacked: false,
-          } : card
-        );
+        executeApplyEvolution(ctx, evoledSelectTargetId);
         
         setEvoledSelectTargetId(null);
       }
