@@ -44,16 +44,22 @@ export function useGameState() {
     oneTurnPlayCount: 0,
   });
 
+  const cloneCards = (cards: Card[]): Card[] => cards.map(card => ({ ...card }));
+
   const createCurrentContext = (): GameContext => ({
-    field: [...field],
-    enemyField: [...enemyField],
-    hand: [...hand],
-    deck: [...deck],
-    token: [...token],
+    field: cloneCards(field),
+    enemyField: cloneCards(enemyField),
+    hand: cloneCards(hand),
+    deck: cloneCards(deck),
+    token: cloneCards(token),
     myHealth,
     enemyHealth,
     maxPP,
     pp,
+    myEp,
+    enemyEp,
+    myExEp,
+    enemyExEp,
     hasEvolvedThisTurn,
     turn,
     turnLog: JSON.parse(JSON.stringify(turnLog)), 
@@ -69,9 +75,25 @@ export function useGameState() {
     setEnemyHealth(ctx.enemyHealth);
     setMaxPP(ctx.maxPP);
     setPP(ctx.pp);
+    setMyEP(ctx.myEp);
+    setEnemyEP(ctx.enemyEp);
+    setMyExEp(ctx.myExEp);
+    setEnemyExEP(ctx.enemyExEp);
     setHasEvolvedThisTurn(ctx.hasEvolvedThisTurn);
     setTurn(ctx.turn);
     setTurnLog(ctx.turnLog);
+  };
+
+  const mergeGameEffectResult = (ctx: GameContext, result: any) => {
+    if (!result) return;
+    if (result.myField) ctx.field = cloneCards(result.myField);
+    if (result.enemyField) ctx.enemyField = cloneCards(result.enemyField);
+    if (result.hand) ctx.hand = cloneCards(result.hand.filter(Boolean));
+    if (result.deck) ctx.deck = cloneCards(result.deck);
+    if (result.token) ctx.token = cloneCards(result.token);
+    if (result.myHealth !== undefined) ctx.myHealth = result.myHealth;
+    if (result.enemyHealth !== undefined) ctx.enemyHealth = result.enemyHealth;
+    if (result.pp !== undefined) ctx.pp = result.pp;
   };
 
   function shuffle<T>(array: T[]) {
@@ -178,12 +200,10 @@ export function useGameState() {
     setSelectedMyCardId(null);
     reflectContext(ctx);
   };
-  
-  const applyEvolution = (targetInstanceId: string) => {
-    let ctx = createCurrentContext();
-    setMyEP(prev => prev - 1);
-    ctx.hasEvolvedThisTurn = true;
 
+  const applyEvolution = (ctx: GameContext, targetInstanceId: string) => {
+    ctx.myEp -= 1;
+    ctx.hasEvolvedThisTurn = true;
     ctx.field = ctx.field.map(card => 
       card.instanceId === targetInstanceId ? {
         ...card,
@@ -193,35 +213,22 @@ export function useGameState() {
         hasAttacked: false,
       } : card
     );
-    reflectContext(ctx);
   };
 
-  const evolveFollower = (targetInstanceId: string) => {
-    const ctx = createCurrentContext();
+  const executeEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
     const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
 
-    if (ctx.turn < 4) {
-      alert("進化可能ターンではありません。");
-      return;
-    }
-    if (myEp <= 0) {
-      alert("EPが足りません。");
-      return;
-    }
-    if (ctx.hasEvolvedThisTurn) {
-      alert("1ターンに進化できるのは1度だけです。");
-      return;
-    }
-    if (targetCard.isEvolved) {
-      alert("すでに進化済みのフォロワーです。");
-      return;
-    }
+    if (ctx.turn < 4) return alert("進化可能ターンではありません。");
+    if (ctx.myEp <= 0) return alert("EPが足りません。");
+    if (ctx.hasEvolvedThisTurn) return alert("1ターンに進化できるのは1度だけです。");
+    if (targetCard.isEvolved) return alert("すでに進化済みのフォロワーです。");
 
     let applyChk = false;
     
     targetCard.abilities.forEach(ability => {
       if (ability.trigger !== 'Evolve') return;
+      
       const conditionObj = {
         type: ability.conditionType, 
         subType: ability.triggerConditions, 
@@ -236,12 +243,11 @@ export function useGameState() {
 
       if (!isConditionMet) return;
 
-      const selectEffects = ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'];
-      const isSelectEffect = selectEffects.includes(ability.effectType ?? '');
+      const isSelectEffect = ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'].includes(ability.effectType ?? '');
 
       if (!isSelectEffect) {
         const result = executeGameEffect(ability.effectType ?? '', ability.values ?? {}, ctx);
-        Object.assign(ctx, result);
+        mergeGameEffectResult(ctx, result);
       } else {
         const isBounce = ability.effectType === 'SelectBounce';
         const hasValidTarget = isBounce ? ctx.field.length >= 1 : ctx.enemyField.length >= 1;
@@ -260,24 +266,19 @@ export function useGameState() {
     });
 
     if (!applyChk) {
-      setMyEP(prev => prev - 1);
-      ctx.hasEvolvedThisTurn = true;
-      ctx.field = ctx.field.map(card => 
-        card.instanceId === targetInstanceId ? {
-          ...card,
-          attack: card.attack + 2,
-          defense: card.defense + 2,
-          isEvolved: true,
-          hasAttacked: false,
-        } : card
-      );
+      applyEvolution(ctx, targetInstanceId);
     }
+  };
+
+  const evolveFollower = (targetId: string) => {
+    const ctx = createCurrentContext();
+    
+    executeEvolveFollower(ctx, targetId);
     
     reflectContext(ctx);
   };
 
-  const exEvolveFollower = (targetInstanceId: string) => {
-    let ctx = createCurrentContext();
+  const executeExEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
     const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
     if (!targetCard) return;
 
@@ -285,7 +286,7 @@ export function useGameState() {
       alert("超進化可能ターンではありません。");
       return;
     }
-    if (myExEp <= 0) {
+    if (ctx.myExEp <= 0) {
       alert("EXEPが足りません。");
       return;
     }
@@ -298,7 +299,7 @@ export function useGameState() {
       return;
     }
 
-    setMyExEp(prev => prev - 1);
+    ctx.myExEp -= 1;
     ctx.hasEvolvedThisTurn = true;
 
     ctx.field = ctx.field.map(card => 
@@ -311,16 +312,20 @@ export function useGameState() {
         isExEvolved: true,
       } : card
     );
-    
+  };
+
+  const exEvolveFollower = (targetInstanceId: string) => {
+    const ctx = createCurrentContext();
+    executeExEvolveFollower(ctx, targetInstanceId);
     reflectContext(ctx);
   };
 
-  const attackToFollower = (myInstanceId: string, enemyInstanceId: string) => {
-    let ctx = createCurrentContext();
+  const executeAttackToFollower = (ctx: GameContext, myInstanceId: string, enemyInstanceId: string) => {
     const targetCard = ctx.field.find(f => f.instanceId === myInstanceId);
     const targetEnemyCard = ctx.enemyField.find(f => f.instanceId === enemyInstanceId);
     if (!targetCard || !targetEnemyCard) return;
 
+    const oldMyField = cloneCards(ctx.field);
     const isExEvolved = targetCard.isExEvolved;
     const currentDefense = isExEvolved ? targetCard.defense : targetCard.defense - targetEnemyCard.attack;
     const currentEnemyDefense = targetEnemyCard.defense - targetCard.attack;
@@ -337,8 +342,7 @@ export function useGameState() {
 
     if (currentEnemyDefense <= 0) {
       ctx.enemyField = ctx.enemyField.filter(f => f.instanceId !== enemyInstanceId);
-      const damage = isExEvolved ? 1 : 0;
-      ctx.enemyHealth -= damage;
+      ctx.enemyHealth -= isExEvolved ? 1 : 0;
     } else {
       ctx.enemyField = ctx.enemyField.map(c =>
         c.instanceId === enemyInstanceId ? { ...c, defense: currentEnemyDefense } : c
@@ -346,16 +350,21 @@ export function useGameState() {
     }
 
     ctx.hand = checkAndApplyZoneEffects(ctx.hand, {
-      oldField: field,
+      oldField: oldMyField,
       newField: ctx.field
     });
 
     if (destroyedMyCards.length > 0) {
       const lwResult = resolveTriggerEffects(destroyedMyCards, ctx, 'LastWord');
-      ctx = { ...ctx, ...lwResult };
+      mergeGameEffectResult(ctx, lwResult);
     }   
 
     setSelectedMyCardId(null);
+  };
+
+  const attackToFollower = (myInstanceId: string, enemyInstanceId: string) => {
+    const ctx = createCurrentContext();
+    executeAttackToFollower(ctx, myInstanceId, enemyInstanceId);
     reflectContext(ctx);
   };
 
@@ -383,38 +392,31 @@ export function useGameState() {
     reflectContext(ctx);
   };
 
-  const executeCardPlay = (targetCard: Card, targetIndex: number | null = null) => {
-    let ctx = createCurrentContext();
-    
+  const executeCardPlay = (ctx: GameContext, targetCard: Card, targetIndex: number | null = null) => {
     ctx.pp -= targetCard.cost;
     
-    if (targetCard.type === 'Follower') {
-      ctx.turnLog.followersSummoned++;
-    } else if (targetCard.type === 'Spell') {
-      ctx.turnLog.spellsCast++;
-    } else if (targetCard.type === 'Amulet') {
-      ctx.turnLog.amuletsPlaced++;
-    }
+    if (targetCard.type === 'Follower') ctx.turnLog.followersSummoned++;
+    else if (targetCard.type === 'Spell') ctx.turnLog.spellsCast++;
+    else if (targetCard.type === 'Amulet') ctx.turnLog.amuletsPlaced++;
+    
     ctx.turnLog.oneTurnPlayCount++;
     ctx.turnLog.cardPlayed = [...ctx.turnLog.cardPlayed, targetCard];
     
     targetCard.playedThisTurn = true;
-
-    const fieldBeforePlay = [...ctx.field];
+    const fieldBeforePlay = cloneCards(ctx.field);
 
     ctx.hand = ctx.hand.filter(c => c && c.instanceId !== targetCard.instanceId);
 
     if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
       const isFollower = targetCard.type === 'Follower';
       const hasShissou = targetCard.abilities?.some(a => a.abilityType === 'SHISSOU') ?? false;
-      const played = {
+      ctx.field.push({
         ...targetCard,
         hasAttacked: isFollower && hasShissou ? false : true
-      };
-      ctx.field.push(played);
+      });
     }
 
-    const oldMyField = [...ctx.field];
+    const oldMyField = cloneCards(ctx.field);
 
     targetCard.abilities.forEach(ability => {
       if (ability.trigger !== 'Fanfare') return;
@@ -427,35 +429,19 @@ export function useGameState() {
       
       let isConditionMet = true;
       if (ability.conditionType && ability.triggerConditions) {
-        const resultObj = conditionCheck(
-          { ...ctx, field: fieldBeforePlay }, 
-          conditionObj
-        );
+        const resultObj = conditionCheck({ ...ctx, field: fieldBeforePlay }, conditionObj);
         isConditionMet = resultObj.condition;
       }
 
-      let isSelectable = true;
-      if (ability.effectType === 'SelectBounce') {
-        isSelectable = ctx.field.length >= 1;
-      } else if (['SelectDamage', 'SelectDestroy', 'SelectStatsFix'].includes(ability.effectType ?? '')) {
-        isSelectable = ctx.enemyField.length >= 1;
-      }
+      const isSelectable = ability.effectType === 'SelectBounce' 
+        ? ctx.field.length >= 1 
+        : ['SelectDamage', 'SelectDestroy', 'SelectStatsFix'].includes(ability.effectType ?? '')
+          ? ctx.enemyField.length >= 1 
+          : true;
 
       if (isConditionMet && isSelectable) {
-        const result = executeGameEffect(
-          ability.effectType ?? '', 
-          ability.values ?? {}, 
-          ctx, 
-          targetIndex, 
-          targetCard.instanceId
-        );
-
-        if (result.myField) ctx.field = result.myField;
-        if (result.enemyField) ctx.enemyField = result.enemyField;
-        if (result.hand) ctx.hand = result.hand.filter(Boolean);
-        if (result.deck) ctx.deck = result.deck;
-        if (result.myHealth !== undefined) ctx.myHealth = result.myHealth;
-        if (result.enemyHealth !== undefined) ctx.enemyHealth = result.enemyHealth;
+        const result = executeGameEffect(ability.effectType ?? '', ability.values ?? {}, ctx, targetIndex, targetCard.instanceId);
+        mergeGameEffectResult(ctx, result);
 
         ctx.hand = checkAndApplyZoneEffects(ctx.hand, {
           oldField: oldMyField,
@@ -463,21 +449,19 @@ export function useGameState() {
         });
       }
     });
-
-    reflectContext(ctx);
   };
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
+    const ctx = createCurrentContext();
     
     if (evoledSelectTargetId === null) {
-      executeCardPlay(targetingContext.card, targetIndex);
+      executeCardPlay(ctx, targetingContext.card, targetIndex);
     } else {
-      let ctx = createCurrentContext();
       const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
-      ctx = { ...ctx, ...result };
+      mergeGameEffectResult(ctx, result);
       
-      setMyEP(prev => prev - 1);
+      ctx.myEp -= 1;
       ctx.hasEvolvedThisTurn = true;
       ctx.field = ctx.field.map(card => 
         card.instanceId === evoledSelectTargetId ? {
@@ -490,10 +474,10 @@ export function useGameState() {
       );
       
       setEvoledSelectTargetId(null);
-      reflectContext(ctx);
     }
     
     setTargetingContext(null);
+    reflectContext(ctx);
   };
 
   const cancelTargeting = () => {
@@ -528,7 +512,7 @@ export function useGameState() {
           oneTurnPlayCount: ctx.turnLog.oneTurnPlayCount + 1
         };
 
-        let virtualField = [...ctx.field];
+        let virtualField = cloneCards(ctx.field);
         if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
           virtualField.push({
             ...targetCard,
@@ -561,13 +545,14 @@ export function useGameState() {
       }
     }
 
-    executeCardPlay(targetCard);
+    executeCardPlay(ctx, targetCard);
+    reflectContext(ctx);
   };
 
   const damageMyLeader = (amount: number) => {
     setMyHealth(prev => Math.max(0, prev - amount));
   };
-  
+
   useEffect(() => {
     fetch('http://localhost:3000/api/game-start')
       .then(res => res.json())
