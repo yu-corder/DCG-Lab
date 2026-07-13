@@ -149,29 +149,23 @@ export function useGameState() {
   };
 
   const endTurn = () => {
-    let ctx = createCurrentContext();
+    executeAction(ctx => {
+      const resetField = ctx.field.map(card => ({
+        ...card,
+        hasAttacked: false,
+        playedThisTurn: false
+      }));
+      ctx.field = resetField;
 
-    const resetField = ctx.field.map(card => ({
-      ...card,
-      hasAttacked: false,
-      playedThisTurn: false
-    }));
-
-    const turnEndResult = resolveTriggerEffects(resetField, {
-      ...ctx,
-      field: resetField
-    }, 'TurnEnd');
-    
-    ctx = { ...ctx, ...turnEndResult };
-
-    ctx.turn += 1;
-    ctx.maxPP = Math.min(ctx.maxPP + 1, 10);
-    ctx.pp = ctx.maxPP;
-    ctx.turnLog.oneTurnPlayCount = 0;
-    ctx.hasEvolvedThisTurn = false;
-
-    drawCardCtx(ctx);
-    reflectContext(ctx);
+      const turnEndResult = resolveTriggerEffects(resetField, ctx, 'TurnEnd');
+      mergeGameEffectResult(ctx, turnEndResult);
+      ctx.turn += 1;
+      ctx.maxPP = Math.min(ctx.maxPP + 1, 10);
+      ctx.pp = ctx.maxPP;
+      ctx.turnLog.oneTurnPlayCount = 0;
+      ctx.hasEvolvedThisTurn = false;
+      drawCardCtx(ctx);
+    });
   };
 
   const attackToLeader = (targetInstanceId: string) => {
@@ -448,7 +442,7 @@ export function useGameState() {
 
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
-    
+
     executeAction(ctx => {
       if (evoledSelectTargetId === null) {
         executeCardPlay(ctx, targetingContext.card, targetIndex);
