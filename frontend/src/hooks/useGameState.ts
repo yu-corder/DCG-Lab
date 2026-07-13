@@ -384,14 +384,6 @@ export function useGameState() {
     reflectContext(ctx);
   };
 
-  const applyCardEffect = (effectType: string | undefined, values: EfectValues, targetIndex?: number, selfInstanceId?: string) => {
-    if (!effectType) return;
-    let ctx = createCurrentContext();
-    const result = executeGameEffect(effectType, values, ctx, targetIndex, selfInstanceId);
-    ctx = { ...ctx, ...result };
-    reflectContext(ctx);
-  };
-
   const executeCardPlay = (ctx: GameContext, targetCard: Card, targetIndex: number | null = null) => {
     ctx.pp -= targetCard.cost;
     
