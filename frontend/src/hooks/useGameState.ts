@@ -12,6 +12,7 @@ import { cloneCards } from '../game/utils/cardUtils';
 
 import { executeEndTurn } from '../game/actions/endTurn';
 import { executeAttackToFollower } from '../game/actions/attackToFollower';
+import { executeCardPlay } from '../game/actions/playCard';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -329,71 +330,17 @@ export function useGameState() {
     reflectContext(ctx);
   };
 
-  const executeCardPlay = (ctx: GameContext, targetCard: Card, targetIndex: number | null = null) => {
-    ctx.pp -= targetCard.cost;
-    
-    if (targetCard.type === 'Follower') ctx.turnLog.followersSummoned++;
-    else if (targetCard.type === 'Spell') ctx.turnLog.spellsCast++;
-    else if (targetCard.type === 'Amulet') ctx.turnLog.amuletsPlaced++;
-    
-    ctx.turnLog.oneTurnPlayCount++;
-    ctx.turnLog.cardPlayed = [...ctx.turnLog.cardPlayed, targetCard];
-    
-    targetCard.playedThisTurn = true;
-    const fieldBeforePlay = cloneCards(ctx.field);
-
-    ctx.hand = ctx.hand.filter(c => c && c.instanceId !== targetCard.instanceId);
-
-    if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
-      const isFollower = targetCard.type === 'Follower';
-      const hasShissou = targetCard.abilities?.some(a => a.abilityType === 'SHISSOU') ?? false;
-      ctx.field.push({
-        ...targetCard,
-        hasAttacked: isFollower && hasShissou ? false : true
-      });
-    }
-
-    const oldMyField = cloneCards(ctx.field);
-
-    targetCard.abilities.forEach(ability => {
-      if (ability.trigger !== 'Fanfare') return;
-
-      const conditionObj = {
-        type: ability.conditionType, 
-        subType: ability.triggerConditions, 
-        value: ability.conditionValue ?? null
-      } as CardCondition;
-      
-      let isConditionMet = true;
-      if (ability.conditionType && ability.triggerConditions) {
-        const resultObj = conditionCheck({ ...ctx, field: fieldBeforePlay }, conditionObj);
-        isConditionMet = resultObj.condition;
-      }
-
-      const isSelectable = ability.effectType === 'SelectBounce' 
-        ? ctx.field.length >= 1 
-        : ['SelectDamage', 'SelectDestroy', 'SelectStatsFix'].includes(ability.effectType ?? '')
-          ? ctx.enemyField.length >= 1 
-          : true;
-
-      if (isConditionMet && isSelectable) {
-        const result = executeGameEffect(ability.effectType ?? '', ability.values ?? {}, ctx, targetIndex, targetCard.instanceId);
-        mergeGameEffectResult(ctx, result);
-
-        ctx.hand = checkAndApplyZoneEffects(ctx.hand, {
-          oldField: oldMyField,
-          newField: ctx.field
-        });
-      }
-    });
-  };
-
   const selectTargetFollower = (targetIndex: number) => {
     if (!targetingContext) return;
 
     executeAction(ctx => {
       if (evoledSelectTargetId === null) {
-        executeCardPlay(ctx, targetingContext.card, targetIndex);
+        executeCardPlay(ctx, targetingContext.card, targetIndex, {
+          conditionCheck,
+          executeGameEffect,
+          mergeGameEffectResult,
+          setTargetingContext
+        });
       } else {
         const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
         mergeGameEffectResult(ctx, result);
@@ -483,7 +430,12 @@ export function useGameState() {
     }
 
     executeAction(ctx => {
-      executeCardPlay(ctx, targetCard);
+      executeCardPlay(ctx, targetCard, null, {
+        conditionCheck,
+        executeGameEffect,
+        mergeGameEffectResult,
+        setTargetingContext
+      });
     });
   };
 
