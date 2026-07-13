@@ -6,8 +6,8 @@ import { executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 import type { CardCondition } from '../conditions';
-import { cloneCards } from '../game/utils/cardUtils';
 
+import { cloneCards, shuffle, assignInstanceIds } from '../game/utils/cardUtils';
 import { executeEndTurn } from '../game/actions/endTurn';
 import { executeAttackToFollower } from '../game/actions/attackToFollower';
 import { executeCardPlay } from '../game/actions/playCard';
@@ -92,24 +92,6 @@ export function useGameState() {
     const ctx = createCurrentContext();
     action(ctx);
     reflectContext(ctx);
-  };
-
-  function shuffle<T>(array: T[]) {
-    const out = Array.from(array);
-    for (let i = out.length - 1; i > 0; i--) {
-      const r = Math.floor(Math.random() * (i + 1));
-      const tmp = out[i];
-      out[i] = out[r];
-      out[r] = tmp;
-    }
-    return out;
-  }
-
-  const assignInstanceIds = (cards: Card[]): Card[] => {
-    return cards.map(card => ({
-      ...card,
-      instanceId: card.instanceId || crypto.randomUUID()
-    }));
   };
 
   const drawCardCtx = (ctx: GameContext) => {
