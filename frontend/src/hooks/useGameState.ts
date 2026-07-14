@@ -15,6 +15,7 @@ import { mergeGameEffectResult } from '../game/utils/gameUtils';
 import { executeDrawCard } from '../game/actions/drawCard';
 import { executeApplyEvolution } from '../game/actions/applyEvolution';
 import { executeAttackToLeader } from '../game/actions/attackToLeader';
+import { executeEnemyPlayCard } from '../game/actions/enemyAI';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -244,19 +245,9 @@ export function useGameState() {
   };
 
   const enemyPlayCard = () => {
-    let ctx = createCurrentContext();
-    let enemyCard: Card | null = null;
-    for (let i = 0; i < ctx.deck.length; i++) {
-      if (ctx.deck[i].type === 'Follower') {
-        enemyCard = ctx.deck[i];
-        break;
-      }
-    }
-    if (!enemyCard || ctx.enemyField.length >= 5) return;
-    const enemyCardWithId = enemyCard.instanceId ? enemyCard : { ...enemyCard, instanceId: crypto.randomUUID() };
-    
-    ctx.enemyField = [...ctx.enemyField, enemyCardWithId];
-    reflectContext(ctx);
+    executeAction(ctx => {
+      executeEnemyPlayCard(ctx);
+    });
   };
 
   const selectTargetFollower = (targetIndex: number) => {
