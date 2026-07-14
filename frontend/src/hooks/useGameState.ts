@@ -16,6 +16,7 @@ import { executeDrawCard } from '../game/actions/drawCard';
 import { executeApplyEvolution } from '../game/actions/applyEvolution';
 import { executeAttackToLeader } from '../game/actions/attackToLeader';
 import { executeEnemyPlayCard } from '../game/actions/enemyAI';
+import { executeMulligan } from '../game/actions/mulligan';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -101,20 +102,11 @@ export function useGameState() {
   };
 
   const handleMulliganConfirm = (selectCards: Card[]) => {
-    const ctx = createCurrentContext();
-    const count = selectCards.length;
-    const newDrawnCards = ctx.deck.slice(0, count);
-    const remainingDeck = ctx.deck.slice(count);
-
-    ctx.hand = ctx.hand
-      .filter(h => !selectCards.some(s => s.instanceId === h.instanceId))
-      .concat(newDrawnCards);
-
-    ctx.deck = shuffle([...remainingDeck, ...selectCards]);
+    executeAction(ctx => {
+      executeMulligan(ctx, selectCards, () => alert("バトルに敗北しました。"));
+    });
+    
     setIsMulligan(false);
-
-    drawCardCtx(ctx);
-    reflectContext(ctx);
   };
 
   const endTurn = () => {
