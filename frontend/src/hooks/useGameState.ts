@@ -14,6 +14,7 @@ import { executeCardPlay } from '../game/actions/playCard';
 import { mergeGameEffectResult } from '../game/utils/gameUtils';
 import { executeDrawCard } from '../game/actions/drawCard';
 import { executeApplyEvolution } from '../game/actions/applyEvolution';
+import { executeAttackToLeader } from '../game/actions/attackToLeader';
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -122,35 +123,14 @@ export function useGameState() {
   };
 
   const attackToLeader = (targetInstanceId: string) => {
-    let ctx = createCurrentContext();
-    const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
-    if (!targetCard) return;
-
-    const hasStorm = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
-    if (targetCard.playedThisTurn && !hasStorm) {
-      alert("このフォロワーは、場に出たターンにはリーダーを攻撃できません。");
-      return;
-    }
-
-    if (targetCard.hasAttacked) {
-      alert("このフォロワーはもう攻撃できません。");
-      return;
-    }
-
-    if (ctx.enemyHealth - targetCard.attack <= 0) {
-      ctx.enemyHealth -= (targetCard.attack || 0);
-      reflectContext(ctx);
-      alert("バトルに勝利しました。");
-      return;
-    }
-
-    ctx.enemyHealth -= (targetCard.attack || 0);
-    ctx.field = ctx.field.map(card => 
-      card.instanceId === targetInstanceId ? { ...card, hasAttacked: true } : card
-    );
+    executeAction(ctx => {
+      executeAttackToLeader(ctx, targetInstanceId, {
+        onInvalidAttack: (msg) => alert(msg),
+        onVictory: (msg) => alert(msg)
+      });
+    });
 
     setSelectedMyCardId(null);
-    reflectContext(ctx);
   };
 
   const executeEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
