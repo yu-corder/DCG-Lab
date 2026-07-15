@@ -11,3 +11,16 @@ export const selectDestroyEffect: CardEffect = {
     };
   }
 };
+
+export const selfDestroyEffect: CardEffect = {
+  execute(context: EffectContext, values?: EfectValues, targetIndex?: number, selfInstanceId?: string): EffectResult {
+    const targetCard = selfInstanceId 
+      ? context.field.find(c => c.instanceId === selfInstanceId)
+      : (targetIndex !== undefined ? context.field[targetIndex] : null);
+
+    const updatedField = context.field.filter(c => c.instanceId !== targetCard.instanceId);
+    return {
+      myField: updatedField
+    };
+  }
+};

@@ -1,6 +1,6 @@
 export type CardType = 'Follower' | 'Spell' | 'Amulet';
 
-export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve' | 'Hand' | 'TurnEnd';
+export type AbilityTrigger = 'Fanfare' | 'LastWord' | 'Strike' | 'Enhance' | 'Evolve' | 'Hand' | 'TurnEnd' | 'Act';
 
 export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLOWER' | 'HAS_MATCHING_CONBO' | 'HAS_MY_LEAVE_FOLLOWER';
 
@@ -29,7 +29,7 @@ export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost' | 'SelfDestroy',
   values?: EfectValues;
   abilityType?: AbilityType;
   conditionType?: ConditionType;
@@ -56,6 +56,7 @@ export interface Card {
   playedThisTurn: boolean;
   isExEvolved: boolean;
   instanceId?: string;
+  actCost?: number;
 }
 
 export interface GameState {

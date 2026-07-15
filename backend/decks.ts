@@ -709,12 +709,24 @@ export const albert: Card[] = [
           triggerConditions: 'HAS_MATCHING_CONBO',
           conditionValue: 3,
           description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        { 
+          trigger: 'Act',
+          effectType: 'SelfDestroy',
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        {
+          trigger: 'Act',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      actCost: 1,
     },
     {
       id: 33,
@@ -731,12 +743,24 @@ export const albert: Card[] = [
           triggerConditions: 'HAS_MATCHING_CONBO',
           conditionValue: 3,
           description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        { 
+          trigger: 'Act',
+          effectType: 'SelfDestroy',
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        {
+          trigger: 'Act',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      actCost: 1,
     },
     {
       id: 34,
@@ -753,12 +777,24 @@ export const albert: Card[] = [
           triggerConditions: 'HAS_MATCHING_CONBO',
           conditionValue: 3,
           description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        { 
+          trigger: 'Act',
+          effectType: 'SelfDestroy',
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+        },
+        {
+          trigger: 'Act',
+          effectType: 'SelectBounce',
+          values: {},
+          description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      actCost: 1,
     },
 
     // ==========================================

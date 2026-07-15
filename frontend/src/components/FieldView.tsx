@@ -11,6 +11,8 @@ interface FieldViewProps {
   onCardClick: (card: Card, index: number) => void;
   onDropEvolve?: (cardId: string, evolveType: 'normal' | 'ex') => void;
   isEnemy?: boolean;
+  pp?: number;
+  onPlayAct?: (card: Card, index: number) => void;
 }
 
 export default function FieldView({
@@ -22,7 +24,9 @@ export default function FieldView({
   selectedMyCardId,
   onCardClick,
   onDropEvolve,
-  isEnemy = false
+  isEnemy = false,
+  pp = 0,
+  onPlayAct
 }: FieldViewProps) {
   
   const isThisFieldTargetMode = isEnemy ? isEnemyTargetMode : isMyTargetMode;
@@ -53,6 +57,8 @@ export default function FieldView({
       {cards.map((card, index) => {
         const isSelected = selectedMyCardId === card.instanceId;
         const canSelectAsAttacker = card.type === 'Follower' && !card.hasAttacked;
+
+        const canPlayAct = !isEnemy && card.actCost !== undefined && pp >= card.actCost;
 
         // カード個別のボーダー色判定
         let borderColor = '2px solid #555';
@@ -156,6 +162,33 @@ export default function FieldView({
                         ? '' 
                         : '選択可'}
             </div>
+
+            {canPlayAct && onPlayAct && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPlayAct(card, index);
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  backgroundColor: '#00ffcc',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  fontSize: '0.65rem',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 8px rgba(0,255,204,0.6)',
+                  zIndex: 10
+                }}
+              >
+                アクト ({card.actCost})
+              </button>
+            )}
 
             {/* フォロワーのスタッツ表示 */}
             {card.type === 'Follower' && (

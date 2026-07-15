@@ -17,6 +17,9 @@ import { executeApplyEvolution } from '../game/actions/applyEvolution';
 import { executeAttackToLeader } from '../game/actions/attackToLeader';
 import { executeEnemyPlayCard } from '../game/actions/enemyAI';
 import { executeMulligan } from '../game/actions/mulligan';
+import { executePlayAct } from '../game/actions/playAct';
+
+
 
 export function useGameState() {
   const [hand, setHand] = useState<Card[]>([]);
@@ -44,6 +47,7 @@ export function useGameState() {
   const [selectedMyCardId, setSelectedMyCardId] = useState<string | null>(null);
   const [targetingContext, setTargetingContext] = useState<TargetingContext | null>(null);
   const [evoledSelectTargetId, setEvoledSelectTargetId] = useState<string | null>(null);
+  const [actSelectTriggereId, setActSelectTriggerId] = useState<string | null>(null);
   
   const [turnLog, setTurnLog] = useState<TurnActionLog>({
     cardPlayed: [],
@@ -124,6 +128,38 @@ export function useGameState() {
     });
 
     setSelectedMyCardId(null);
+  };
+
+  const playAct = (targetCard: Card) => {
+    executeAction(ctx => {
+      executePlayAct(ctx, targetCard, null, {
+        executeGameEffect,
+        mergeGameEffectResult,
+        setTargetingContext
+      });
+
+
+      const ActAbility = targetCard.abilities.find(
+        a => a.trigger === 'Act' && ['SelectDamage', 'SelectDestroy', 'SelectStatsFix', 'SelectBounce'].includes(a.effectType ?? '')
+      );
+
+      if (ActAbility) {
+        const isBounce = ActAbility.effectType === 'SelectBounce';
+        const hasValidTarget = isBounce ? ctx.field.length >= 1 : ctx.enemyField.length >= 1;
+        
+        
+        if (hasValidTarget) {
+          setActSelectTriggerId(targetCard.instanceId!);
+          setTargetingContext({
+            card: targetCard,
+            effectType: ActAbility.effectType as any,
+            values: ActAbility.values ?? {},
+            targetTeam: isBounce ? 'my' : 'enemy'
+          });
+          return;
+        }
+      }
+    });
   };
 
   const executeEvolveFollower = (ctx: GameContext, targetInstanceId: string) => {
@@ -246,13 +282,17 @@ export function useGameState() {
     if (!targetingContext) return;
 
     executeAction(ctx => {
-      if (evoledSelectTargetId === null) {
+      if (evoledSelectTargetId === null && actSelectTriggereId === null) {
         executeCardPlay(ctx, targetingContext.card, targetIndex, {
           conditionCheck,
           executeGameEffect,
           mergeGameEffectResult,
           setTargetingContext
         });
+      } else if (actSelectTriggereId === null) {
+        const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
+        mergeGameEffectResult(ctx, result);
+        setActSelectTriggerId(null);
       } else {
         const result = executeGameEffect(targetingContext.effectType, targetingContext.values, ctx, targetIndex);
         mergeGameEffectResult(ctx, result);
@@ -389,5 +429,6 @@ export function useGameState() {
     playCard,
     cancelTargeting,
     damageMyLeader,
+    playAct,
   };
 }

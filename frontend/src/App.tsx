@@ -31,6 +31,7 @@ function App() {
     playCard,
     cancelTargeting,
     damageMyLeader,
+    playAct,
   } = useGameState();
 
   const isTargetMode = targetingContext !== null;
@@ -142,6 +143,8 @@ function App() {
                       attackToFollower(selectedMyCardId!, card.instanceId!);
                     }
                   }}
+                  pp={pp} 
+                  onPlayAct={(card, index) => playAct(card)}
                 />
               </div>
 
@@ -167,6 +170,8 @@ function App() {
                     if (!canSelectAsAttacker) return;
                     setSelectedMyCardId(selectedMyCardId === card.instanceId ? null : card.instanceId!);
                   }}
+                  pp={pp} 
+                  onPlayAct={(card, index) => playAct(card)}
                 />
               </div>
 
