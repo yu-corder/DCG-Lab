@@ -871,3 +871,39 @@ export const testDeck_31: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
 }));
+
+export const testDeck_32: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 3200 + index,
+  name: 'アクトテストアミュレット',
+  baseCost: 1,
+  cost: 1,
+  type: 'Amulet',
+  subtypes: [],
+  abilities: [
+    { 
+      trigger: 'TurnEnd',
+      effectType: 'Draw',
+      values: { value1: 1 },
+      conditionType: 'PlayCondition',
+      triggerConditions: 'HAS_MATCHING_CONBO',
+      conditionValue: 3,
+      description: '自分のターン終了時、コンボ_3 自分のデッキから1枚を引く。アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。' 
+    },
+    {
+      trigger: 'Act',
+      effectType: 'SelfDestroy',
+      description: 'アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
+    },
+    {
+      trigger: 'Act',
+      effectType: 'SelectBounce',
+      values: {},
+      description: 'アクト これを破壊。自分の場の他のカード1枚を選ぶ。それを手札に戻す。'
+    }
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+  actCost: 1,
+}));
