@@ -14,7 +14,7 @@ export const executeAttackToLeader = (
   const targetCard = ctx.field.find(f => f.instanceId === targetInstanceId);
   if (!targetCard) return;
 
-  const hasStorm = targetCard.abilities.some(a => a.abilityType === 'SHISSOU');
+  const hasStorm = targetCard.cardAbility?.includes('SHISSOU') ?? false;
   if (targetCard.playedThisTurn && !hasStorm) {
     callbacks.onInvalidAttack("このフォロワーは、場に出たターンにはリーダーを攻撃できません。");
     return;

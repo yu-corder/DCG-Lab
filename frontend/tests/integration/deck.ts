@@ -575,7 +575,6 @@ export const testDeck_19: Card[] = Array(40).fill(null).map((_, index) => ({
       effectType: 'StatsBuf',
       values: { attackSource: 'CurrentCombo' },
       description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
-      abilityType: 'SHISSOU'
     }
   ],
   hasAttacked: false,
@@ -906,4 +905,45 @@ export const testDeck_32: Card[] = Array(40).fill(null).map((_, index) => ({
   playedThisTurn: false,
   isExEvolved: false,
   actCost: 1,
+}));
+
+export const testDeck_33: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 3300 + index,
+  name: '疾走テストフォロワー',
+  baseCost: 1,
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  baseAttack: 1,
+  defense: 1,
+  baseDefense: 1,
+  subtypes: [],
+  abilities: [
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+  cardAbility: 'SHISSOU',
+}));
+
+export const testDeck_34: Card[] = Array(40).fill(null).map((_, index) => ({
+  id: 3400 + index,
+  name: '突進テストフォロワー',
+  baseCost: 1,
+  cost: 1,
+  type: 'Follower',
+  attack: 1,
+  baseAttack: 1,
+  defense: 2,
+  baseDefense: 2,
+  subtypes: [],
+  abilities: [
+  ],
+  hasAttacked: false,
+  isEvolved: false,
+  playedThisTurn: false,
+  isExEvolved: false,
+  cardAbility: 'RUSH',
+  isRushActive: false,
 }));
