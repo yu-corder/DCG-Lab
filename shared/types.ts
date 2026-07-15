@@ -6,7 +6,7 @@ export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLO
 
 export type ConditionType = 'FieldCondition' | 'PlayCondition';
 
-export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU' | 'RUSH';
+export type CardAbility = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU' | 'RUSH';
 
 export type Leader = 'Royal' | 'Nemesis' | 'Bishop' | 'Nightmare' | 'Elf' | 'Dragon' | 'Witch';
 
@@ -31,7 +31,6 @@ export interface Ability {
   // 将来的にロジックを組むためのプロパティ
   effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost' | 'SelfDestroy',
   values?: EfectValues;
-  abilityType?: AbilityType;
   conditionType?: ConditionType;
   triggerConditions?: TriggerConditions;
   conditionValue?: number;
@@ -58,6 +57,7 @@ export interface Card {
   isExEvolved: boolean;
   instanceId?: string;
   actCost?: number;
+  cardAbility?: CardAbility;
 }
 
 export interface GameState {

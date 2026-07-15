@@ -607,13 +607,13 @@ export const albert: Card[] = [
           effectType: 'StatsBuf',
           values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
-          abilityType: 'SHISSOU'
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      cardAbility: 'SHISSOU',
     },
     {
       id: 28,
@@ -629,13 +629,13 @@ export const albert: Card[] = [
           effectType: 'StatsBuf',
           values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
-          abilityType: 'SHISSOU'
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      cardAbility: 'SHISSOU',
     },
     {
       id: 29,
@@ -651,13 +651,13 @@ export const albert: Card[] = [
           effectType: 'StatsBuf',
           values: { attackSource: 'CurrentCombo' },
           description: 'ファンファーレ これは+X/+0する。Xは自分のコンボである。',
-          abilityType: 'SHISSOU'
         }
       ],
       hasAttacked: true,
       isEvolved: false,
       playedThisTurn: false,
       isExEvolved: false,
+      cardAbility: 'SHISSOU',
     },
 
     // ==========================================
