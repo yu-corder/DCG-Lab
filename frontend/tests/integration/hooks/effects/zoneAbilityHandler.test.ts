@@ -75,7 +75,7 @@ describe("Zone Ability System - Hand Trigger", () => {
     act(() => { result.current.playCard(anotherCardInHand); });
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     const remainingCardInHand = result.current.hand[0];

@@ -102,7 +102,7 @@ describe("Fanfare Effect", () => {
     expect(result.current.targetingContext?.effectType).toBe("SelectDamage");
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     expect(result.current.enemyField.length).toBe(0);
@@ -147,7 +147,7 @@ describe("Fanfare Effect", () => {
     expect(result.current.targetingContext?.effectType).toBe("SelectDestroy");
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     expect(result.current.enemyField.length).toBe(0);
@@ -422,7 +422,7 @@ describe("Fanfare Effect", () => {
     expect(result.current.targetingContext?.effectType).toBe('SelectStatsFix');
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     const updatedEnemyCard = result.current.enemyField[0];
@@ -477,7 +477,7 @@ describe("Fanfare Effect", () => {
     const handLengthBeforeBounce = result.current.hand.length;
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     expect(result.current.field.some(c => c.instanceId === targetFriendlyCard.instanceId)).toBe(false);

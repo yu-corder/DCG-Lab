@@ -77,7 +77,7 @@ describe("Play Act Effect Workflow", () => {
     const targetIndexOnField = result.current.field.findIndex(c => c.instanceId === activeCardB.instanceId);
     
     act(() => {
-      result.current.selectTargetFollower(targetIndexOnField);
+      result.current.selectTargetCard(targetIndexOnField);
     });
 
     expect(result.current.targetingContext).toBeNull();

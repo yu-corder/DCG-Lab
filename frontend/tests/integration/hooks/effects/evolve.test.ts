@@ -92,7 +92,7 @@ describe("Evolve Effect", () => {
     expect(result.current.targetingContext).not.toBeNull();
     expect(result.current.targetingContext?.effectType).toBe("SelectDamage");
 
-    act(() => { result.current.selectTargetFollower(0); });
+    act(() => { result.current.selectTargetCard(0); });
     expect(result.current.enemyField.length).toBe(0);
     expect(result.current.targetingContext).toBeNull();
   });
@@ -122,7 +122,7 @@ describe("Evolve Effect", () => {
 
     expect(result.current.targetingContext?.effectType).toBe("SelectDestroy");
 
-    act(() => { result.current.selectTargetFollower(0); });
+    act(() => { result.current.selectTargetCard(0); });
     expect(result.current.enemyField.length).toBe(0);
     expect(result.current.targetingContext).toBeNull();
   });

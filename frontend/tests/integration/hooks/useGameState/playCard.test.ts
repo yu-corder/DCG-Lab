@@ -150,7 +150,7 @@ describe("useGameState", () => {
     expect(result.current.targetingContext?.targetTeam).toBe("my");
 
     act(() => {
-      result.current.selectTargetFollower(0);
+      result.current.selectTargetCard(0);
     });
 
     expect(result.current.targetingContext).toBeNull();

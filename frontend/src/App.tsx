@@ -19,7 +19,7 @@ function App() {
     enemyField,
     selectedMyCardId,
     targetingContext,
-    selectTargetFollower,
+    selectTargetCard,
     setSelectedMyCardId,
     handleMulliganConfirm,
     endTurn,
@@ -138,7 +138,7 @@ function App() {
                   isEnemy={true}
                   onCardClick={(card, index) => {
                     if (isEnemyTargetMode) {
-                      selectTargetFollower(index);
+                      selectTargetCard(index);
                     } else if (isCardSelected && !isTargetMode && card.type === 'Follower') {
                       attackToFollower(selectedMyCardId!, card.instanceId!);
                     }
@@ -163,7 +163,7 @@ function App() {
                   }}
                   onCardClick={(card, index) => {
                     if (isMyTargetMode) {
-                      selectTargetFollower(index);
+                      selectTargetCard(index);
                       return;
                     }
                     const canSelectAsAttacker = card.type === 'Follower' && !card.hasAttacked;

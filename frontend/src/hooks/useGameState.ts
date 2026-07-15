@@ -278,7 +278,7 @@ export function useGameState() {
     });
   };
 
-  const selectTargetFollower = (targetIndex: number) => {
+  const selectTargetCard = (targetIndex: number) => {
     if (!targetingContext) return;
 
     executeAction(ctx => {
@@ -417,7 +417,7 @@ export function useGameState() {
     enemyField,
     selectedMyCardId,
     targetingContext,
-    selectTargetFollower,
+    selectTargetCard,
     setSelectedMyCardId,
     handleMulliganConfirm,
     endTurn,
