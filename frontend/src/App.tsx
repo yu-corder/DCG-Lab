@@ -39,6 +39,10 @@ function App() {
   const isMyTargetMode = isTargetMode && targetingContext.targetTeam === 'my';
   const isEnemyTargetMode = isTargetMode && targetingContext.targetTeam === 'enemy';
 
+  const selectedMyCard = field.find(card => card.instanceId === selectedMyCardId);
+  const isRushActiveSelected = selectedMyCard?.isRushActive === true;
+  const canAttackLeader = isCardSelected && !isTargetMode && !isRushActiveSelected;
+
   const handleDragStart = (e: React.DragEvent, evolveType: 'normal' | 'ex') => {
     e.dataTransfer.setData('evolveType', evolveType);
   };
@@ -102,17 +106,17 @@ function App() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '20px',
-                  cursor: (isCardSelected && !isTargetMode) ? 'pointer' : 'default',
+                  cursor: canAttackLeader ? 'pointer' : 'default',
                   padding: '10px',
-                  background: (isCardSelected && !isTargetMode) ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255,255,255,0.02)',
-                  border: (isCardSelected && !isTargetMode) ? '2px dashed #ff4d4d' : '1px solid rgba(255,255,255,0.05)',
+                  background: canAttackLeader ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255,255,255,0.02)',
+                  border: canAttackLeader ? '2px dashed #ff4d4d' : '1px solid rgba(255,255,255,0.05)',
                   borderRadius: '12px',
                   transition: 'all 0.2s',
                   opacity: isTargetMode ? 0.4 : 1,
                   pointerEvents: isTargetMode ? 'none' : 'auto'
                 }}
                 onClick={() => {
-                  if (isCardSelected && !isTargetMode) attackToLeader(selectedMyCardId!);
+                  if (canAttackLeader) attackToLeader(selectedMyCardId!);
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
@@ -120,6 +124,11 @@ function App() {
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#ff4d4d', textShadow: '0 0 10px rgba(255,77,77,0.5)' }}>
                     ライフ: {enemyHealth}
                   </div>
+                  {isRushActiveSelected && (
+                    <div style={{ fontSize: '0.75rem', color: '#ff4d4d', marginTop: '4px', fontWeight: 'bold' }}>
+                      ※突進フォロワーはリーダーを攻撃できません
+                    </div>
+                  )}
                 </div>
                 <button onClick={enemyPlayCard} style={{ backgroundColor: '#2a2f3a', color: '#ccc', border: '1px solid #444', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
                   フォロワー展開 (デバッグ)

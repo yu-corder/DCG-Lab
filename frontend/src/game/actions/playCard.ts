@@ -32,9 +32,11 @@ export const executeCardPlay = (
   if (targetCard.type === 'Follower' || targetCard.type === 'Amulet') {
     const isFollower = targetCard.type === 'Follower';
     const hasShissou = targetCard.abilities?.some(a => a.abilityType === 'SHISSOU') ?? false;
+    const hasRush = targetCard.abilities?.some(a => a.abilityType === 'RUSH') ?? false;
     ctx.field.push({
       ...targetCard,
-      hasAttacked: isFollower && hasShissou ? false : true
+      hasAttacked: isFollower && (hasShissou || hasRush) ? false : true,
+      isRushActive: isFollower && hasRush ? true : false
     });
   }
 

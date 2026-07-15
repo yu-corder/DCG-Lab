@@ -6,7 +6,7 @@ export type TriggerConditions = 'HAS_EVOLED_FOLLOWER' | 'HAS_MATCHING_COST_FOLLO
 
 export type ConditionType = 'FieldCondition' | 'PlayCondition';
 
-export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU';
+export type AbilityType = 'STORM' | 'WARD' | 'DRAIN' | 'SHISSOU' | 'RUSH';
 
 export type Leader = 'Royal' | 'Nemesis' | 'Bishop' | 'Nightmare' | 'Elf' | 'Dragon' | 'Witch';
 
@@ -52,6 +52,7 @@ export interface Card {
   defense?: number;
   abilities: Ability[];
   hasAttacked: boolean;
+  isRushActive?: boolean;
   isEvolved: boolean;
   playedThisTurn: boolean;
   isExEvolved: boolean;
