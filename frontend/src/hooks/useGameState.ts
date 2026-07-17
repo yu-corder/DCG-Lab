@@ -1,13 +1,13 @@
 // src/hooks/useGameState.ts
 import { useState, useEffect } from 'react';
-import type { Card, Leader, TurnActionLog, GameInitResponse } from '../../../shared/types';
+import type { Card, Leader, TurnActionLog, GameInitResponse, Crest } from '../../../shared/types';
 import type { GameContext } from '../../../shared/game';
 import { executeGameEffect } from '../effects';
 import { conditionCheck } from '../conditions';
 import type { TargetingContext } from '../effects/selectTarget';
 import type { CardCondition } from '../conditions';
 
-import { cloneCards, shuffle, assignInstanceIds } from '../game/utils/cardUtils';
+import { cloneCards, shuffle, assignInstanceIds, cloneCrest } from '../game/utils/cardUtils';
 import { executeEndTurn } from '../game/actions/endTurn';
 import { executeAttackToFollower } from '../game/actions/attackToFollower';
 import { executeCardPlay } from '../game/actions/playCard';
@@ -27,6 +27,7 @@ export function useGameState() {
   const [enemyField, setEnemyField] = useState<Card[]>([]);
   const [deck, setDeck] = useState<Card[]>([]);
   const [token, setToken] = useState<Card[]>([]);
+  const [crest, setCrest] = useState<Crest[]>([]);
   
   const [pp, setPP] = useState(1);
   const [maxPP, setMaxPP] = useState(1);
@@ -57,6 +58,9 @@ export function useGameState() {
     oneTurnPlayCount: 0,
   });
 
+  const [myCrest, setMyCrest] = useState<Crest[]>([]);
+  const [enemyCrest, setEnemyCrest] = useState<Crest[]>([]);
+
   const createCurrentContext = (): GameContext => ({
     field: cloneCards(field),
     enemyField: cloneCards(enemyField),
@@ -73,7 +77,10 @@ export function useGameState() {
     enemyExEp,
     hasEvolvedThisTurn,
     turn,
-    turnLog: JSON.parse(JSON.stringify(turnLog)), 
+    turnLog: JSON.parse(JSON.stringify(turnLog)),
+    crest: cloneCrest(crest),
+    myCrest: cloneCrest(myCrest),
+    enemyCrest: cloneCrest(enemyCrest),
   });
 
   const reflectContext = (ctx: GameContext) => {
@@ -93,6 +100,9 @@ export function useGameState() {
     setHasEvolvedThisTurn(ctx.hasEvolvedThisTurn);
     setTurn(ctx.turn);
     setTurnLog(ctx.turnLog);
+    setCrest(ctx.crest);
+    setMyCrest(ctx.myCrest);
+    setEnemyCrest(ctx.enemyCrest);
   };
 
   const executeAction = (action: (ctx: GameContext) => void) => {
@@ -399,6 +409,7 @@ export function useGameState() {
         setMyLeader(data.myLeader);
         setEnemyLeader(data.enemyLeader);
         setToken(data.token);
+        setCrest(data.crest);
       });
   }, []);
 

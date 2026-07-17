@@ -1,5 +1,5 @@
 import type { GameContext } from '../../../../shared/game';
-import { cloneCards } from './cardUtils';
+import { cloneCards, cloneCrest } from './cardUtils';
 
 export const mergeGameEffectResult = (ctx: GameContext, result: any) => {
   if (!result) return;
@@ -11,4 +11,6 @@ export const mergeGameEffectResult = (ctx: GameContext, result: any) => {
   if (result.myHealth !== undefined) ctx.myHealth = result.myHealth;
   if (result.enemyHealth !== undefined) ctx.enemyHealth = result.enemyHealth;
   if (result.pp !== undefined) ctx.pp = result.pp;
+  if (result.myCrest) ctx.myCrest = cloneCrest(result.myCrest);
+  if (result.enemyCrest) ctx.enemyCrest = cloneCrest(result.enemyCrest);
 };

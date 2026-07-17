@@ -896,9 +896,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'MyHealthHeal',
-          values: { value1: 5 },
-          description: 'ファンファーレ 自分のリーダーの体力を5回復する。'
+          effectType: 'SetCrest',
+          values: { value1: 1 },
+          description: 'ファンファーレ 自分は「クレスト: 自然の妖精姫・アリア」を持つ。 進化時 フェアリー3枚を自分の場に出す。'
         }
       ],
       hasAttacked: true,
@@ -917,9 +917,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'MyHealthHeal',
-          values: { value1: 5 },
-          description: 'ファンファーレ 自分のリーダーの体力を5回復する。'
+          effectType: 'SetCrest',
+          values: { value1: 1 },
+          description: 'ファンファーレ 自分は「クレスト: 自然の妖精姫・アリア」を持つ。 進化時 フェアリー3枚を自分の場に出す。'
         }
       ],
       hasAttacked: true,
@@ -938,9 +938,9 @@ export const albert: Card[] = [
       abilities: [
         {
           trigger: 'Fanfare',
-          effectType: 'MyHealthHeal',
-          values: { value1: 5 },
-          description: 'ファンファーレ 自分のリーダーの体力を5回復する。'
+          effectType: 'SetCrest',
+          values: { value1: 1 },
+          description: 'ファンファーレ 自分は「クレスト: 自然の妖精姫・アリア」を持つ。 進化時 フェアリー3枚を自分の場に出す。'
         }
       ],
       hasAttacked: true,

@@ -1,4 +1,4 @@
-import type { Card } from './types';
+import type { Card, Crest } from './types';
 
 export interface GameContext {
   field: Card[];
@@ -20,4 +20,8 @@ export interface GameContext {
   hasEvolvedThisTurn: boolean;
   turn: number;
   turnLog: any;
+
+  crest: Crest[];
+  myCrest: Crest[];
+  enemyCrest: Crest[];
 }

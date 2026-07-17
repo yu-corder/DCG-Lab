@@ -29,7 +29,7 @@ export interface Ability {
   trigger: AbilityTrigger;
   description: string;
   // 将来的にロジックを組むためのプロパティ
-  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost' | 'SelfDestroy',
+  effectType?: 'Damage' | 'Draw' | 'MyHealthHeal' | 'AoeDamage' | 'SelectDamage' | 'SelectDestroy' | 'Draw' | 'GetToken' | 'MyFieldAllBuf' | 'SelectStatsFix' | 'StatsBuf' | 'SelectBounce' |'SplitDamage' | 'RandomDamage' | 'ReduceCost' | 'SelfDestroy' | 'SetCrest',
   values?: EfectValues;
   conditionType?: ConditionType;
   triggerConditions?: TriggerConditions;
@@ -73,6 +73,7 @@ export interface GameInitResponse {
   myLeader: Leader;
   enemyLeader: Leader;
   token: Card[];
+  crest: Crest[];
 }
 
 export interface TurnActionLog {
@@ -81,4 +82,10 @@ export interface TurnActionLog {
   spellsCast: number;
   amuletsPlaced: number;
   oneTurnPlayCount: number;
+}
+
+export interface Crest {
+  id: number;
+  name: string;
+  abilities: Ability[];
 }

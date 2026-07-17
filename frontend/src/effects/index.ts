@@ -9,6 +9,7 @@ import { MyHealthHealEffect } from './heal';
 import { getTokenEffect } from './token';
 import { selectBounceEffect } from './bounce';
 import { selfDestroyEffect } from './destroy';
+import { setCrestEffect } from './crest';
 
 const effectRegistry: Record<string, CardEffect> = {
   SelectDamage: selectDamageEffect,
@@ -24,6 +25,7 @@ const effectRegistry: Record<string, CardEffect> = {
   SplitDamage: splitDamageEffect,
   RandomDamage: randomDamageEffect,
   SelfDestroy: selfDestroyEffect,
+  SetCrest: setCrestEffect,
 };
 
 export const executeGameEffect = (

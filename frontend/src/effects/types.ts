@@ -1,4 +1,4 @@
-import type { Card, EfectValues, TurnActionLog } from '../../../shared/types';
+import type { Card, EfectValues, TurnActionLog, Crest } from '../../../shared/types';
 
 export interface EffectContext {
   field: Card[];
@@ -9,6 +9,9 @@ export interface EffectContext {
   turnLog: TurnActionLog;
   myHealth: number;
   enemyHealth: number;
+  crest: Crest[];
+  myCrest: Crest[];
+  enemyCrest: Crest[];
 }
 
 export interface EffectResult {
@@ -18,6 +21,8 @@ export interface EffectResult {
   deck?: Card[];
   myHealth?: number;
   enemyHealth?: number;
+  myCrest?: Crest[];
+  enemyCrest?: Crest[];
 }
 
 export interface CardEffect {

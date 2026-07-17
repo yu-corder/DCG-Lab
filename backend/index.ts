@@ -5,6 +5,7 @@ import { albert } from './decks';
 import { token } from './token';
 import { myLeader } from './leader';
 import { enemyLeader } from './leader';
+import { allCrests } from './crest';
 
 const app = new Hono()
 
@@ -17,7 +18,7 @@ app.get('/api/hello', (c) => {
 })
 
 app.get('/api/game-start', (c) => {
-  const respons = {cards: albert, myLeader: myLeader, enemyLeader: enemyLeader, token: token};
+  const respons = {cards: albert, myLeader: myLeader, enemyLeader: enemyLeader, token: token, crest: allCrests};
   return c.json(respons);
 })
 

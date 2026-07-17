@@ -1,7 +1,11 @@
-import type { Card } from '../../../../shared/types';
+import type { Card, Crest } from '../../../../shared/types';
 
 export const cloneCards = (cards: Card[]): Card[] => {
   return cards.map(card => ({ ...card }));
+};
+
+export const cloneCrest = (crests: Crest[]): Crest[] => {
+  return crests.map(crest => ({...crest}));
 };
 
 export function shuffle<T>(array: T[]): T[] {
