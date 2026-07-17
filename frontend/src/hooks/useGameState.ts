@@ -424,6 +424,8 @@ export function useGameState() {
     turn,
     myEp,
     myExEp,
+    myCrest,
+    enemyCrest,
     isMulligan,
     enemyField,
     selectedMyCardId,

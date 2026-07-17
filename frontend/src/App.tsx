@@ -15,6 +15,8 @@ function App() {
     turn,
     myEp,
     myExEp,
+    myCrest,
+    enemyCrest,
     isMulligan,
     enemyField,
     selectedMyCardId,
@@ -45,6 +47,38 @@ function App() {
 
   const handleDragStart = (e: React.DragEvent, evolveType: 'normal' | 'ex') => {
     e.dataTransfer.setData('evolveType', evolveType);
+  };
+
+  
+  const renderCrestCircles = (crests: any[], activeColor: string, shadowColor: string) => {
+    return Array.from({ length: 5 }).map((_, index) => {
+      const hasCrest = index < crests.length;
+      const crestId = hasCrest ? crests[index]?.id || crests[index] : null;
+
+      return (
+        <div
+          key={index}
+          style={{
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            border: hasCrest ? `2px solid ${activeColor}` : '2px solid #444',
+            backgroundColor: hasCrest ? shadowColor : 'rgba(0,0,0,0.3)',
+            boxShadow: hasCrest ? `0 0 6px ${activeColor}` : 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.7rem',
+            fontWeight: 'bold',
+            color: hasCrest ? activeColor : '#444',
+            transition: 'all 0.3s ease',
+          }}
+          title={hasCrest ? `クレストID: ${crestId}` : '空き枠'}
+        >
+          {hasCrest ? crestId : '⚪︎'}
+        </div>
+      );
+    });
   };
 
   return (
@@ -130,7 +164,23 @@ function App() {
                     </div>
                   )}
                 </div>
-                <button onClick={enemyPlayCard} style={{ backgroundColor: '#2a2f3a', color: '#ccc', border: '1px solid #444', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>
+
+                {/* ─── 敵のクレスト表示エリア ─── */}
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  gap: '4px',
+                  borderLeft: '1px solid rgba(255,255,255,0.1)',
+                  paddingLeft: '20px'
+                }}>
+                  <div style={{ fontSize: '0.7rem', color: '#aaa' }}>クレスト ({enemyCrest.length}/5)</div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    {renderCrestCircles(enemyCrest, '#ff4d4d', 'rgba(255, 77, 77, 0.15)')}
+                  </div>
+                </div>
+
+                <button onClick={enemyPlayCard} style={{ backgroundColor: '#2a2f3a', color: '#ccc', border: '1px solid #444', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', marginLeft: 'auto' }}>
                   フォロワー展開 (デバッグ)
                 </button>
               </div>
@@ -323,6 +373,19 @@ function App() {
                   </span>
                   <span style={{ fontWeight: 'bold', color: '#b300ff' }}>{myExEp}</span>
                 </div>
+
+                {/* ─── 自分のクレスト表示エリア ─── */}
+                <div style={{
+                  borderTop: '1px solid rgba(255,255,255,0.1)',
+                  marginTop: '6px',
+                  paddingTop: '8px'
+                }}>
+                  <div style={{ fontSize: '0.75rem', color: '#aaa', marginBottom: '6px' }}>クレスト ({myCrest.length} / 5)</div>
+                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'space-between' }}>
+                    {renderCrestCircles(myCrest, '#ffcc00', 'rgba(255, 204, 0, 0.15)')}
+                  </div>
+                </div>
+
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
