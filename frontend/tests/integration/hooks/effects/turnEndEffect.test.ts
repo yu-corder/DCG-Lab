@@ -15,6 +15,7 @@ describe("TurnEnd Effect via endTurn", () => {
             myLeader: 'Elf',
             enemyLeader: 'Royal',
             token: token,
+            crest: []
           }),
       } as Response)
     ) as any;

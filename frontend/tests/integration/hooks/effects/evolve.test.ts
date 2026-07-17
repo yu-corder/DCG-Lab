@@ -12,7 +12,7 @@ describe("Evolve Effect", () => {
   it("should draw 2 cards from deck when draw evolve follower is evolved", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_10, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_10, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -39,7 +39,7 @@ describe("Evolve Effect", () => {
   it("should deal 1 damage to all enemy followers upon evolution", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_11, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_11, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -69,7 +69,7 @@ describe("Evolve Effect", () => {
   it("should enter targeting mode on evolution and deal damage to selected enemy", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_12, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_12, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -100,7 +100,7 @@ describe("Evolve Effect", () => {
   it("should enter targeting mode on evolution and instantly destroy selected enemy", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_13, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_13, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -130,7 +130,7 @@ describe("Evolve Effect", () => {
   it("should heal my leader health by 3 upon evolution", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_14, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_14, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -157,7 +157,7 @@ describe("Evolve Effect", () => {
   it("should add 2 token cards to hand upon evolution", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_15, myLeader: 'Royal', enemyLeader: 'Royal', token: token }),
+        json: () => Promise.resolve({ cards: testDeck_15, myLeader: 'Royal', enemyLeader: 'Royal', token: token, crest: [] }),
       } as Response)
     ) as any;
 
@@ -191,7 +191,7 @@ describe("Evolve Effect", () => {
   it("should allocate split damage to all enemy followers based on the hand length upon evolution", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_25, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_25, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -231,7 +231,7 @@ describe("Evolve Effect", () => {
   it("should deal 1 damage to a random enemy follower X times based on hand subtype count upon evolution", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_26, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_26, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 

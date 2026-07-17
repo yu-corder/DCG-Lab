@@ -15,6 +15,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -73,6 +74,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -119,6 +121,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -164,6 +167,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -198,6 +202,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -245,6 +250,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: token,
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -290,6 +296,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -342,6 +349,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -379,6 +387,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -440,6 +449,7 @@ describe("Fanfare Effect", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;

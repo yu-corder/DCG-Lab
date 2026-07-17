@@ -11,7 +11,7 @@ describe("Card Condition System", () => {
   it("should trigger effect only when combo condition is satisfied", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_16, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_16, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -35,7 +35,7 @@ describe("Card Condition System", () => {
   it("should enter targeting context only when combo condition is satisfied for selective effects", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_22, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_22, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 

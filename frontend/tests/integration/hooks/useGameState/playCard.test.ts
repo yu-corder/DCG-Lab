@@ -14,6 +14,7 @@ globalThis.fetch = mock(() =>
         myLeader: 'Royal',
         enemyLeader: 'Royal',
         token: [],
+        crest: []
       }),
   } as Response)
 ) as any;
@@ -66,6 +67,7 @@ describe("useGameState", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -109,6 +111,7 @@ describe("useGameState", () => {
             myLeader: 'Elf',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -167,6 +170,7 @@ describe("useGameState", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;

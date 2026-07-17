@@ -11,7 +11,7 @@ describe("Zone Ability System - Hand Trigger", () => {
   it("should reduce card cost in hand when a friendly follower leaves the field via combat death", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_27, myLeader: 'Forest', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_27, myLeader: 'Forest', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -51,7 +51,7 @@ describe("Zone Ability System - Hand Trigger", () => {
   it("should reduce card cost in hand when a friendly follower leaves the field via fanfare bounce", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_27, myLeader: 'Forest', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_27, myLeader: 'Forest', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 

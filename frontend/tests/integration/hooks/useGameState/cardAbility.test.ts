@@ -15,6 +15,7 @@ describe("Card Ability", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;
@@ -58,7 +59,8 @@ describe("Card Ability", () => {
             cards: testDeck_34,
             myLeader: 'Royal',
             enemyLeader: 'Royal',
-            token: token, 
+            token: token,
+            crest: []
           }),
       } as Response)
     ) as any;

@@ -11,7 +11,7 @@ describe("Field Condition System", () => {
   it("should trigger effect only when an evolved follower exists on field", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_17, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_17, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 
@@ -43,7 +43,7 @@ describe("Field Condition System", () => {
   it("should trigger effect only when a follower with matching cost exists on field", async () => {
     globalThis.fetch = mock(() =>
       Promise.resolve({
-        json: () => Promise.resolve({ cards: testDeck_18, myLeader: 'Royal', enemyLeader: 'Royal', token: [] }),
+        json: () => Promise.resolve({ cards: testDeck_18, myLeader: 'Royal', enemyLeader: 'Royal', token: [], crest: [] }),
       } as Response)
     ) as any;
 

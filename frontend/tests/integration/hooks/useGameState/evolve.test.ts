@@ -18,6 +18,7 @@ describe("Evolution System", () => {
             myLeader: 'Royal',
             enemyLeader: 'Royal',
             token: [],
+            crest: []
           }),
       } as Response)
     ) as any;

@@ -14,6 +14,7 @@ describe("LastWord Effect via Combat", () => {
             myLeader: 'Elf',
             enemyLeader: 'Royal',
             token: token,
+            crest: []
           }),
       } as Response)
     ) as any;

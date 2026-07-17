@@ -14,6 +14,7 @@ describe("Play Act Effect Workflow", () => {
             myLeader: 'Elf',
             enemyLeader: 'Royal',
             token: token,
+            crest: []
           }),
       } as Response)
     ) as any;

@@ -12,6 +12,7 @@ globalThis.fetch = mock(() =>
         myLeader: 'Royal',
         enemyLeader: 'Royal',
         token: [],
+        crest: []
       }),
   } as Response)
 ) as any;
